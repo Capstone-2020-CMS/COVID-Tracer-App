@@ -1,5 +1,7 @@
 package com.covid;
 
+import com.covid.utils.CodeManager;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -16,7 +18,7 @@ public class ExampleUnitTest {
     }
 
 
-
+    @Test
     public void code_isCorrectLength(){
         String input;
         input = CodeManager.generateCode();
