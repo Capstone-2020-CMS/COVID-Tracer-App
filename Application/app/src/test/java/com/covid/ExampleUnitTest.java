@@ -15,4 +15,13 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
+
+
+    public void code_isCorrectLength(){
+        String input;
+        input = CodeManager.generateCode();
+
+        assertEquals(16, input.length());
+    }
+
 }
