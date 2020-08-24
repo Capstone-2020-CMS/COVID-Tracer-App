@@ -2,23 +2,30 @@ package com.covid;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+
+import static com.covid.bluetooth.leUtils.leScanCallBack;
+
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     static BluetoothAdapter bluetoothAdapter;
+    static BluetoothLeScanner leScanner;
+
+    //TODO remove temp list
+    public static ArrayList list = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+
+        // Sets the bluetooth le scanner
+        leScanner = bluetoothAdapter.getBluetoothLeScanner();
+
+        // Temporary code to start a scan
+        leScanner.startScan(leScanCallBack);
     }
 
 }
