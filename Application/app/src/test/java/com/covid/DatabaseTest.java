@@ -31,7 +31,7 @@ public class DatabaseTest {
 
     @Test
     public void databaseExists_returnsTrue() throws Exception{
-        boolean databaseExists = checkDataBaseExists("MyBubble.db");
+        boolean databaseExists = checkDataBaseExists("/data/data/com.covid/databases/MyBubble.db");
         assertTrue(databaseExists);
     }
 
