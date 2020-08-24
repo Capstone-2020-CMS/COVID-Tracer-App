@@ -11,16 +11,17 @@ public class EncounterDatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String TABLE_NAME = "Encounters_Table";
     public static final String COL1 = "ID";
-    public static final String COL2 = "DATE";
+    public static final String COL2 = "ENCOUNTERDATE";
 
     public EncounterDatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
+        SQLiteDatabase db = getWritableDatabase();
     }
 
-    public static boolean checkDataBaseExists(String DATABASE_NAME) {
+    public static boolean checkDataBaseExists(String DB_FULL_PATH) {
         SQLiteDatabase checkDB = null;
         try{
-            checkDB = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
+            checkDB = SQLiteDatabase.openDatabase(DB_FULL_PATH, null, SQLiteDatabase.OPEN_READONLY);
             checkDB.close();
         }
         catch (SQLException e) {
@@ -30,13 +31,15 @@ public class EncounterDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(" create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY, ENCOUNTERDATE DATE)");
 
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
     }
 
 }
