@@ -5,6 +5,8 @@ import android.bluetooth.le.ScanResult;
 
 import com.covid.MainActivity;
 
+import java.util.List;
+
 public class leUtils {
 
     // Scancallback function that handles the results of the BLE scans
@@ -15,6 +17,16 @@ public class leUtils {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             MainActivity.list.add(result.getDevice());
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            super.onBatchScanResults(results);
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
         }
     };
 
