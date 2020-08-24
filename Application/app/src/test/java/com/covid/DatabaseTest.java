@@ -22,14 +22,20 @@ import static org.junit.Assert.*;
 
 public class DatabaseTest {
 
-    //private EncountersDatabase database;
 
 
 
     @Test
-    public void database_isCreated() throws Exception{
-
+    public void databaseExists_returnsTrue() throws Exception{
+        boolean databaseExists = checkDataBaseExists("ENCOUNTER DATABASE");
+        assertTrue(databaseExists);
     }
+
+    public void databaseExists_returnsFalse() throws Exception{
+        boolean databaseExists = checkDataBaseExists("NONEXISTENT DATABASE");
+        assertFalse(databaseExists);
+    }
+
 
     @Test
     public void UniqueID_isAdded() throws Exception{
@@ -51,9 +57,6 @@ public class DatabaseTest {
 
     }
 
-    @After
-    public void tearDown() {
-        //dbHelper.clearDb();
-    }*/
+
 
 }
