@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -32,7 +33,10 @@ public class EncounterDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(" create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY, ENCOUNTERDATE DATE)");
+        db.execSQL(" create table " + TABLE_NAME + "(ID TEXT PRIMARY KEY CHECK(\n" +
+                "        typeof(\"ID\") = \"text\" AND\n" +
+                "        length(\"ID\") <= 20\n" +
+                "    ), ENCOUNTERDATE DATE)");
 
     }
 
@@ -41,5 +45,4 @@ public class EncounterDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
-
 }
