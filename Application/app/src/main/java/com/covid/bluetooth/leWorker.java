@@ -9,7 +9,7 @@ import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
-import com.covid.MainActivity;
+import com.covid.utils.txtFile;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import static com.covid.MainActivity.leScanner;
@@ -32,7 +32,8 @@ public class leWorker extends ListenableWorker {
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
                     // TODO remove the temp list usage
-                    MainActivity.list.add(result.getDevice());
+                    //MainActivity.list.add(result.getDevice());
+                    txtFile.writeToFile(result.getDevice().getAddress());
                     completer.set(Result.success());
                 }
             };
