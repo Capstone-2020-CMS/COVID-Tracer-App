@@ -1,16 +1,19 @@
 package com.covid.bluetooth;
 
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
+import com.covid.MainActivity;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import static com.covid.MainActivity.leScanner;
 import static com.covid.MainActivity.scanSettings;
-import static com.covid.bluetooth.leUtils.leScanCallBack;
 
 public class leWorker extends ListenableWorker {
 
@@ -21,10 +24,22 @@ public class leWorker extends ListenableWorker {
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
-        // Temporary code to start a scan
-        leScanner.startScan(null,scanSettings,leScanCallBack);
 
-        return (ListenableFuture<Result>) Result.success();
+        return CallbackToFutureAdapter.getFuture(completer -> {
+            ScanCallback callback = new ScanCallback() {
+
+                @Override
+                public void onScanResult(int callbackType, ScanResult result) {
+                    super.onScanResult(callbackType, result);
+                    // TODO remove the temp list usage
+                    MainActivity.list.add(result.getDevice());
+                    completer.set(Result.success());
+                }
+            };
+
+            leScanner.startScan(null,scanSettings,callback);
+            return callback;
+        });
     }
 
 }
