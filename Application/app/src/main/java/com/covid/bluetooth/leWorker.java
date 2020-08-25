@@ -36,6 +36,13 @@ public class leWorker extends ListenableWorker {
                     txtFile.writeToFile(result.getDevice().getAddress());
                     completer.set(Result.success());
                 }
+
+                @Override
+                public void onScanFailed(int errorCode) {
+                    super.onScanFailed(errorCode);
+                    txtFile.writeToFile("Error Code: " + Integer.toString(errorCode) + "\n" + getErrorDescription(errorCode));
+                    completer.set(Result.failure());
+                }
             };
 
             leScanner.startScan(null,scanSettings,callback);
@@ -43,4 +50,13 @@ public class leWorker extends ListenableWorker {
         });
     }
 
+    private String getErrorDescription(int errorCode) {
+        switch (errorCode) {
+            case 1: return "Fails to start scan as BLE scan with the same settings is already started by the app.";
+            case 2: return "Fails to start scan as app cannot be registered.";
+            case 3: return "Fails to start power optimized scan as this feature is not supported.";
+            case 4: return "Fails to start scan due an internal error";
+            default: return "Unknown error code";
+        }
+    }
 }

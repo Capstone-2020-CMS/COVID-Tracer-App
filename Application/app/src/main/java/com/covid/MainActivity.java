@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
-    static BluetoothAdapter bluetoothAdapter;
+    public static BluetoothAdapter bluetoothAdapter;
     public static BluetoothLeScanner leScanner;
     public static ScanSettings scanSettings;
     static PeriodicWorkRequest workRequest;
@@ -86,10 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Checks necessary permissions have been enabled
     private void checkPermissions() {
-        // Coarse Location
-        if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
-        }
         // Fine Location
         if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
