@@ -4,6 +4,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     static BluetoothAdapter bluetoothAdapter;
     static BluetoothLeScanner leScanner;
+    static ScanSettings scanSettings;
 
     //TODO remove temp list
     public static ArrayList list = new ArrayList();
@@ -62,8 +64,11 @@ public class MainActivity extends AppCompatActivity {
         // Sets the bluetooth le scanner
         leScanner = bluetoothAdapter.getBluetoothLeScanner();
 
+        // Setup le scan settings
+        scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
+
         // Temporary code to start a scan
-        leScanner.startScan(leScanCallBack);
+        leScanner.startScan(null,scanSettings,leScanCallBack);
     }
 
     // Checks necessary permissions have been enabled

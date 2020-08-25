@@ -22,6 +22,9 @@ public class leUtils {
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
+            for(ScanResult result : results) {
+                MainActivity.list.add(result.getDevice());
+            }
         }
 
         @Override
