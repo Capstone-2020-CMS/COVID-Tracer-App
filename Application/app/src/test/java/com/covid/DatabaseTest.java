@@ -1,6 +1,8 @@
 package com.covid;
 import com.covid.database.EncounterDatabaseHelper;
 import android.content.Context;
+import android.os.Build;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,24 +22,24 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 
-//@Config(sdk = 27)
+@Config(sdk = {Build.VERSION_CODES.O_MR1})
 @RunWith(RobolectricTestRunner.class)
 public class DatabaseTest {
 
-//    @Test
-//    public void databaseExists_returnsFalse() throws Exception{
-//        boolean databaseExists = checkDataBaseExists("NonexistentDatabase.db");
-//        assertFalse(databaseExists);
-//    }
-//
-//    @Test
-//    public void databaseExists_returnsTrue() throws Exception{
-//        boolean databaseExists = checkDataBaseExists("/data/data/com.covid/databases/MyBubble.db");
-//        assertTrue(databaseExists);
-//    }
-
+    @Test
+    public void databaseExists_returnsFalse() throws Exception{
+        boolean databaseExists = checkDataBaseExists("NonexistentDatabase.db");
+        assertFalse(databaseExists != true);
+    }
 
     @Test
+    public void databaseExists_returnsTrue() throws Exception{
+        boolean databaseExists = checkDataBaseExists("/data/data/com.covid/databases/MyBubble.db");
+        assertTrue(databaseExists = true);
+    }
+
+
+  @Test
     public void UniqueID_isAdded() throws Exception{
 
     }
