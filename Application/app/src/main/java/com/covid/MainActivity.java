@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public static BluetoothLeScanner leScanner;
     public static ScanSettings scanSettings;
     static PeriodicWorkRequest workRequest;
+    public static String logPath;
 
     //TODO remove temp list
     public static ArrayList list = new ArrayList();
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set the path to the logs folder
+        logPath = String.valueOf(getExternalFilesDir("Logs"));
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -96,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
         //Bluetooth Admin
         if (ContextCompat.checkSelfPermission(this, "android.permission.BLUETOOTH_ADMIN") != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN},1);
+        }
+        //External Storage
+        if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         }
     }
 
