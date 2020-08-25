@@ -6,8 +6,6 @@ import java.util.Calendar;
 
 public class CodeManager {
 
-    private static int codeLength = 12;
-
     public CodeManager(){
 
     }
