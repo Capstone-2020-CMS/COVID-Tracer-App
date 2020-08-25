@@ -17,18 +17,21 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import com.covid.bluetooth.leWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-
-import static com.covid.bluetooth.leUtils.leScanCallBack;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     static BluetoothAdapter bluetoothAdapter;
-    static BluetoothLeScanner leScanner;
-    static ScanSettings scanSettings;
+    public static BluetoothLeScanner leScanner;
+    public static ScanSettings scanSettings;
+    static PeriodicWorkRequest workRequest;
 
     //TODO remove temp list
     public static ArrayList list = new ArrayList();
@@ -67,8 +70,13 @@ public class MainActivity extends AppCompatActivity {
         // Setup le scan settings
         scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
 
-        // Temporary code to start a scan
-        leScanner.startScan(null,scanSettings,leScanCallBack);
+        // Periodic work request
+        workRequest = new PeriodicWorkRequest.Builder(leWorker.class, 90, TimeUnit.SECONDS).build();
+
+        // Queues the task to be executed
+        WorkManager
+                .getInstance(this)
+                .enqueue(workRequest);
     }
 
     // Checks necessary permissions have been enabled
