@@ -1,10 +1,8 @@
 package com.covid.utils;
 
-import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+
 
 public class CodeManager {
 

@@ -34,6 +34,14 @@ public class CodeManagerTest {
         assertNotEquals(code1, code2);
     }
 
+    @Test
+    public void code_structureCorrect(){
+        CodeManager cm = new CodeManager();
+        String code1 = cm.generateCode();
+
+        assertEquals("4", code1);
+    }
+
 
 
 }
