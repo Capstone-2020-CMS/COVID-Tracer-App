@@ -36,7 +36,7 @@ public class DatabaseTest {
     //Checking existence of database: Return true when database does exist
     public void databaseExists_returnsTrue() throws Exception{
         //Check that test passes when database exists
-        boolean databaseExists = checkDataBaseExists("/data/data/com.covid/databases/MyBubble.db");
+        boolean databaseExists = checkDataBaseExists("MyBubble.db");
         assertTrue(databaseExists);
     }
 
