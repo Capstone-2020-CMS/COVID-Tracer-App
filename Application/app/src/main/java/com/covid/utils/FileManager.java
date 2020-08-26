@@ -1,12 +1,12 @@
 package com.covid.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+
+import java.util.ArrayList;
+
 
 
 
@@ -19,31 +19,57 @@ import java.util.Date;
 // - user phone number, if supplied
 // - user settings and preference data
 public class FileManager {
-    FileOutputStream fOS;
-    FileInputStream fIS;
+
+    String saveFileName = "tracerFile.txt";
 
         public FileManager(){
 
     }
 
 
+    public int writeSave(String input){
+        File saveFile = new File(saveFileName);
+        int responseCode = 0;
+
+        try{
+            FileWriter fw = new FileWriter(saveFile);
+            fw.write(input);
+            fw.close();
+
+            responseCode = 1;
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return responseCode;
+    }
 
 
+    public ArrayList<String> readSave(){
+        ArrayList<String>readData = new ArrayList<>();
 
-/*    SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss'Z'");
+        try{
+            FileReader fr = new FileReader(saveFileName);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
 
-    Date date = Calendar.getInstance().getTime();
-    String fileName = dateformat.format(date) + ".txt";
+            while((line = br.readLine())!= null){
+                readData.add(line);
+            }
 
-    File test = new File(logPath, fileName);
+            br.close();
+            fr.close();
 
-        try {
-        FileWriter fileWriter = new FileWriter(test);
-        fileWriter.write(input);
-        fileWriter.close();
-    } catch (java.io.IOException ex) {
-        ex.printStackTrace();
-    }*/
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
+        //TODO
+        //Consider creating a class attribute of read data, and assigning the data there so that it
+        //is accessible and comparable with newer reads/updates
+        return readData;
+    }
 
 }
