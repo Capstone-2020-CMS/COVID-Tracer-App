@@ -3,7 +3,11 @@ package com.covid.utils;
 import java.security.SecureRandom;
 import java.util.Calendar;
 
-
+//Class
+//Called to generate a random string with prefix NZ, 3 random chars, and the timestamp in milliseconds (c.13 digits long)
+// "NZ-XXX-0000000000000"
+//This class should be created and run once on install.
+//Can be modified to generate more codes to intensify privacy preservation
 public class CodeManager {
 
     public CodeManager(){
