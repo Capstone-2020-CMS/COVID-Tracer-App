@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import static com.covid.database.DatabaseHelper.ENCOUNTERS_TABLE;
 import static com.covid.database.DatabaseHelper.checkDataBaseExists;
 import static org.junit.Assert.*;
 
@@ -60,7 +61,8 @@ public class DatabaseTest {
 
     @Test
     public void UniqueID_isRetrieved() throws Exception{
-        String actualUniqueID = "1234";
+        myDB.insertEncounterData("ID567891235673dd2aCt", "");
+        String actualUniqueID = MainActivity.encounterDB.getEncounterData("ID567891235673dd2aCt");
         String expectedUniqueID = "ID567891235673dd2aCt";
         assertEquals(expectedUniqueID, actualUniqueID);
     }
