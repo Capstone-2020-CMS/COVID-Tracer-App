@@ -12,27 +12,30 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
-import com.covid.bluetooth.leWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+
+import static com.covid.utils.utilNotification.createNotificationChannel;
+import static com.covid.utils.utilNotification.displayNotification;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
+    public static final String NOTIFICATION_CHANNEL = "0";
     public static BluetoothAdapter bluetoothAdapter;
     public static BluetoothLeScanner leScanner;
     public static ScanSettings scanSettings;
     static PeriodicWorkRequest workRequest;
     public static String logPath;
+    public static NotificationManagerCompat notificationManager;
 
     //TODO remove temp list
     public static ArrayList list = new ArrayList();
@@ -44,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
+
+        // Notification setup
+        createNotificationChannel(getApplicationContext());
+        notificationManager = NotificationManagerCompat.from(this);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -76,12 +83,15 @@ public class MainActivity extends AppCompatActivity {
         scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
 
         // Periodic work request
-        workRequest = new PeriodicWorkRequest.Builder(leWorker.class, 90, TimeUnit.SECONDS).build();
+//        workRequest = new PeriodicWorkRequest.Builder(leWorker.class, 90, TimeUnit.SECONDS).build();
 
         // Queues the task to be executed
-        WorkManager
-                .getInstance(this)
-                .enqueue(workRequest);
+//        WorkManager
+//                .getInstance(getApplicationContext())
+//                .enqueue(workRequest);
+
+        // Example notification
+        displayNotification(getApplicationContext(), "Title", "Hello World");
     }
 
     // Checks necessary permissions have been enabled
