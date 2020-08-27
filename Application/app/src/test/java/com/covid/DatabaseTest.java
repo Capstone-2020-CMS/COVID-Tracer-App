@@ -1,5 +1,5 @@
 package com.covid;
-import com.covid.database.EncounterDatabaseHelper;
+import com.covid.database.DatabaseHelper;
 
 import android.os.Build;
 
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static com.covid.database.EncounterDatabaseHelper.checkDataBaseExists;
+import static com.covid.database.DatabaseHelper.checkDataBaseExists;
 import static org.junit.Assert.*;
 
 /**
@@ -24,11 +24,11 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 public class DatabaseTest {
 
-    public EncounterDatabaseHelper encounterDB;
+    public DatabaseHelper encounterDB;
 
     @Before
     public void Setup() {
-        encounterDB = new EncounterDatabaseHelper(ApplicationProvider.getApplicationContext());
+        encounterDB = new DatabaseHelper(ApplicationProvider.getApplicationContext());
     }
 
 
@@ -52,7 +52,7 @@ public class DatabaseTest {
   //Checking valid ID can be added to database: Return true when ID is added successfully
     public void IDisAdded_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
-        //MainActivity.encounterDB = new EncounterDatabaseHelper(MainActivity.getApplicationContext());
+        //MainActivity.encounterDB = new DatabaseHelper(MainActivity.getApplicationContext());
         boolean IDisAdded = encounterDB.insertEncounterData("ID567891235673dd2aCt", "");
         assertTrue(IDisAdded == true);
     }

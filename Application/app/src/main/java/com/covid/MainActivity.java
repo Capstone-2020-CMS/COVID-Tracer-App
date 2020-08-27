@@ -2,7 +2,10 @@ package com.covid;
 
 import android.os.Bundle;
 
-import com.covid.database.EncounterDatabaseHelper;
+import com.covid.database.DatabaseHelper;
+import com.covid.database.EncountersData;
+import com.covid.database.PersonalData;
+import com.covid.utils.CodeManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,12 +16,12 @@ import androidx.navigation.ui.NavigationUI;
 
 
 public class MainActivity extends AppCompatActivity {
-    public static EncounterDatabaseHelper encounterDB;
+    public static DatabaseHelper encounterDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        encounterDB = new EncounterDatabaseHelper(this);
+        encounterDB = new DatabaseHelper(this);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -29,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        encounterDB.insertEncounterData("ID567891235673dd2aQt", "");
-        encounterDB.insertPersonalData("282838cfhucnW1");
+        // Adding personal user information to database on installation
+        PersonalData.addOnInstallData();
+
+        //Recording encounters
+        EncountersData.recordEncountersData();
     }
 }
