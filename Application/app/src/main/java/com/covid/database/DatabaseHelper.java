@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -84,7 +85,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String getEncounterData(String ID) {
-        String placementText = "placement Text";
-        return placementText;
+        String result = "Data Not Found";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = "ID=?";
+        String[] whereArgs = new String[]{String.valueOf(ID)};
+        Cursor csr = db.query(ENCOUNTERS_TABLE, null, whereClause, whereArgs, null, null, null);
+        if (csr.moveToFirst()) {
+            result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1));
+        }
+        return result;
     }
+
 }

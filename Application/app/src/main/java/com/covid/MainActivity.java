@@ -3,6 +3,7 @@ package com.covid;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.covid.database.DatabaseHelper;
 import com.covid.database.EncountersData;
@@ -47,5 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Recording encounters
         EncountersData.recordEncountersData();
+
+        String ID = encounterDB.getEncounterData("567891235673dd2aQt");
+
+        Log.v("DBDate", ID);
     }
 }

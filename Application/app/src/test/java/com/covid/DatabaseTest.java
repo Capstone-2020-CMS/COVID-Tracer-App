@@ -59,13 +59,6 @@ public class DatabaseTest {
         assertTrue(IDisAdded == true);
     }
 
-    @Test
-    public void UniqueID_isRetrieved() throws Exception{
-        myDB.insertEncounterData("ID567891235673dd2aCt", "");
-        String actualUniqueID = MainActivity.encounterDB.getEncounterData("ID567891235673dd2aCt");
-        String expectedUniqueID = "ID567891235673dd2aCt";
-        assertEquals(expectedUniqueID, actualUniqueID);
-    }
 
     @Test
     //Checking invalid ID cannot be added to Encounters table in database: Return false when ID is not unique
@@ -73,6 +66,22 @@ public class DatabaseTest {
         //Check that test passes when an ID that is not unique CANNOT be added to the database
         boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "");
         assertFalse(IDisAdded == false);
+    }
+
+    @Test
+    public void UniqueIDisRetrieved_returnsTrue() throws Exception{
+        myDB.insertEncounterData("IDtestUniqueID", "");
+        String actualUniqueID = myDB.getEncounterData("IDtestUniqueID");
+        String expectedUniqueID = "IDtestUniqueID";
+        assertEquals(expectedUniqueID, actualUniqueID);
+    }
+
+    @Test
+    public void UniqueIDisRetrieved_returnsFalse() throws Exception{
+        myDB.insertEncounterData("IDtestUniqueID", "");
+        String actualUniqueID = myDB.getEncounterData("IDtestUniqueID");
+        String expectedUniqueID = "RANDOMIDtestUniqueID";
+        assertNotEquals(expectedUniqueID, actualUniqueID);
     }
 
     @Test
