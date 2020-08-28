@@ -25,13 +25,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 
 import static com.covid.utils.utilNotification.createNotificationChannel;
-import static com.covid.utils.utilNotification.displayNotification;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     public static final String NOTIFICATION_CHANNEL = "0";
+    public static BluetoothManager bluetoothManager;
     public static BluetoothAdapter bluetoothAdapter;
-    public static BluetoothLeScanner leScanner;
+    public static BluetoothLeScanner bleScanner;
     public static ScanSettings scanSettings;
     static PeriodicWorkRequest workRequest;
     public static String logPath;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
 
         // Initialises Bluetooth adapter
-        BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
 
         // Ensures Bluetooth is available on the device and it is enabled. If not,
@@ -77,13 +77,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Sets the bluetooth le scanner
-        leScanner = bluetoothAdapter.getBluetoothLeScanner();
+        bleScanner = bluetoothAdapter.getBluetoothLeScanner();
 
         // Setup le scan settings
-        scanSettings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
+        scanSettings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
+                .build();
 
         // Periodic work request
-//        workRequest = new PeriodicWorkRequest.Builder(leWorker.class, 90, TimeUnit.SECONDS).build();
+//        workRequest = new PeriodicWorkRequest.Builder(bleWorker.class, 90, TimeUnit.SECONDS).build();
 
         // Queues the task to be executed
 //        WorkManager
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 //                .enqueue(workRequest);
 
         // Example notification
-        displayNotification(getApplicationContext(), "Title", "Hello World");
+        // displayNotification(getApplicationContext(), "Title", "Hello World");
     }
 
     // Checks necessary permissions have been enabled

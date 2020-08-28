@@ -1,29 +1,43 @@
 package com.covid.bluetooth;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.concurrent.futures.CallbackToFutureAdapter;
+import androidx.core.app.NotificationCompat;
+import androidx.work.ForegroundInfo;
 import androidx.work.ListenableWorker;
+import androidx.work.WorkManager;
 import androidx.work.WorkerParameters;
 
+import com.covid.R;
 import com.covid.utils.txtFile;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import static com.covid.MainActivity.leScanner;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.covid.MainActivity.NOTIFICATION_CHANNEL;
+import static com.covid.MainActivity.bleScanner;
 import static com.covid.MainActivity.scanSettings;
 
-public class leWorker extends ListenableWorker {
+public class bleWorker extends ListenableWorker {
 
-    public leWorker(@NonNull Context context, @NonNull WorkerParameters params) {
+    public bleWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
+        setForegroundAsync(createForegroundInfo());
     }
 
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
+
+        //setForegroundAsync(createForegroundInfo());
 
         return CallbackToFutureAdapter.getFuture(completer -> {
             ScanCallback callback = new ScanCallback() {
@@ -45,7 +59,7 @@ public class leWorker extends ListenableWorker {
                 }
             };
 
-            leScanner.startScan(null,scanSettings,callback);
+            bleScanner.startScan(null,scanSettings,callback);
             return callback;
         });
     }
@@ -58,5 +72,30 @@ public class leWorker extends ListenableWorker {
             case 4: return "Fails to start scan due an internal error";
             default: return "Unknown error code";
         }
+    }
+
+    private ForegroundInfo createForegroundInfo() {
+        // Build a notification using bytesRead and contentLength
+
+        Context context = getApplicationContext();
+
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss'Z'");
+
+        Date date = Calendar.getInstance().getTime();
+
+        String title = dateformat.format(date);
+        // This PendingIntent can be used to cancel the worker
+        PendingIntent intent = WorkManager.getInstance(context)
+                .createCancelPendingIntent(getId());
+
+        Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+                .setContentTitle(title)
+                .setContentText("Hello World")
+                .setOngoing(true)
+                .setPriority(Notification.PRIORITY_DEFAULT)
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .build();
+
+        return new ForegroundInfo(1, notification);
     }
 }
