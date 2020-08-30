@@ -69,19 +69,19 @@ public class DatabaseTest {
     }
 
     @Test
-    public void UniqueIDisRetrieved_returnsTrue() throws Exception{
-        myDB.insertEncounterData("IDtestUniqueID", "");
-        String actualUniqueID = myDB.getEncounterData("IDtestUniqueID");
-        String expectedUniqueID = "IDtestUniqueID";
-        assertEquals(expectedUniqueID, actualUniqueID);
+    public void DataisRetrieved_returnsTrue() throws Exception{
+        myDB.insertEncounterData("IDtestUniqueID", "13/02/1999 4.00pm");
+        String actualData = myDB.getEncounterData("IDtestUniqueID");
+        String expectedData = "IDtestUniqueID, 13/02/1999 4.00pm";
+        assertEquals(expectedData, actualData);
     }
 
     @Test
-    public void UniqueIDisRetrieved_returnsFalse() throws Exception{
-        myDB.insertEncounterData("IDtestUniqueID", "");
-        String actualUniqueID = myDB.getEncounterData("IDtestUniqueID");
-        String expectedUniqueID = "RANDOMIDtestUniqueID";
-        assertNotEquals(expectedUniqueID, actualUniqueID);
+    public void DataisRetrieved_returnsFalse() throws Exception{
+        myDB.insertEncounterData("IDtestUniqueID", "13/02/1999 4.00pm");
+        String actualData = myDB.getEncounterData("IDtestUniqueID");
+        String expectedData = "RANDOMIDtestUniqueID";
+        assertNotEquals(expectedData, actualData);
     }
 
     @Test

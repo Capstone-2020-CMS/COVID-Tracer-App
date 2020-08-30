@@ -91,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] whereArgs = new String[]{String.valueOf(ID)};
         Cursor csr = db.query(ENCOUNTERS_TABLE, null, whereClause, whereArgs, null, null, null);
         if (csr.moveToFirst()) {
-            result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1));
+            result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL2));
         }
         return result;
     }
