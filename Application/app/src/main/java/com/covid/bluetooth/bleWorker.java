@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.concurrent.futures.CallbackToFutureAdapter;
@@ -21,6 +23,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.LogRecord;
 
 import static com.covid.MainActivity.NOTIFICATION_CHANNEL;
 import static com.covid.MainActivity.bleScanner;
@@ -28,25 +31,27 @@ import static com.covid.MainActivity.scanSettings;
 
 public class bleWorker extends ListenableWorker {
 
+    private static final long SCAN_PERIOD = 900000;
+    private Handler handler;
+    private boolean isScanning = false;
+
     public bleWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
-        setForegroundAsync(createForegroundInfo());
     }
 
     @NonNull
     @Override
     public ListenableFuture<Result> startWork() {
 
-        //setForegroundAsync(createForegroundInfo());
+        Log.d("Run attempt count", String.valueOf(getRunAttemptCount()));
 
         return CallbackToFutureAdapter.getFuture(completer -> {
-            ScanCallback callback = new ScanCallback() {
+            handler = new Handler();
 
+            ScanCallback callback = new ScanCallback() {
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
-                    // TODO remove the temp list usage
-                    //MainActivity.list.add(result.getDevice());
                     txtFile.writeToFile(result.getDevice().getAddress());
                     completer.set(Result.success());
                 }
@@ -59,10 +64,34 @@ public class bleWorker extends ListenableWorker {
                 }
             };
 
-            bleScanner.startScan(null,scanSettings,callback);
+            setForegroundAsync(createForegroundInfo());
+
+            startLeScan(callback);
+
             return callback;
         });
     }
+
+    private void startLeScan(ScanCallback callback) {
+        if(!isScanning) {
+            // stops the scan after a predefined period
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isScanning = false;
+                    bleScanner.stopScan(callback);
+                }
+            }, SCAN_PERIOD);
+
+            isScanning = true;
+            bleScanner.startScan(null,scanSettings,callback);
+
+        } else {
+            isScanning = false;
+            bleScanner.stopScan(callback);
+        }
+    }
+
 
     private String getErrorDescription(int errorCode) {
         switch (errorCode) {

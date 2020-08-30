@@ -18,11 +18,16 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import com.covid.bluetooth.BLEService;
+import com.covid.bluetooth.bleWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
@@ -86,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         // Periodic work request
-//        workRequest = new PeriodicWorkRequest.Builder(bleWorker.class, 90, TimeUnit.SECONDS).build();
+        workRequest = new PeriodicWorkRequest.Builder(bleWorker.class, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS).build();
 
         // Queues the task to be executed
 //        WorkManager
@@ -95,6 +100,18 @@ public class MainActivity extends AppCompatActivity {
 
         // Example notification
         // displayNotification(getApplicationContext(), "Title", "Hello World");
+
+        // Start the bluetooth le service on a new thread
+        Thread bleThread = new Thread() {
+            @Override
+            public void run() {
+                // Do something martin
+                Intent intent = new Intent(getApplicationContext(), BLEService.class);
+                startService(intent);
+            }
+        };
+
+        bleThread.start();
     }
 
     // Checks necessary permissions have been enabled
