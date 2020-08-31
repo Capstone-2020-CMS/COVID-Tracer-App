@@ -36,7 +36,7 @@ public class BLEService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //bleScanner.startScan(scanFilters,scanSettings,callback);
         bleScanner.startScan(null,scanSettings,callback);
-        return super.onStartCommand(intent, flags, startId);
+        return super.onStartCommand(intent, flags, Service.START_STICKY);
     }
 
     @Nullable
