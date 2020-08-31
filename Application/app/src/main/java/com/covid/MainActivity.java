@@ -18,16 +18,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import com.covid.bluetooth.BLEService;
-import com.covid.bluetooth.bleWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
@@ -38,12 +31,8 @@ public class MainActivity extends AppCompatActivity {
     public static BluetoothAdapter bluetoothAdapter;
     public static BluetoothLeScanner bleScanner;
     public static ScanSettings scanSettings;
-    static PeriodicWorkRequest workRequest;
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
-
-    //TODO remove temp list
-    public static ArrayList list = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,17 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
                 .build();
-
-        // Periodic work request
-        workRequest = new PeriodicWorkRequest.Builder(bleWorker.class, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS).build();
-
-        // Queues the task to be executed
-//        WorkManager
-//                .getInstance(getApplicationContext())
-//                .enqueue(workRequest);
-
-        // Example notification
-        // displayNotification(getApplicationContext(), "Title", "Hello World");
 
         // Start the bluetooth le service on a new thread
         Thread bleThread = new Thread() {
