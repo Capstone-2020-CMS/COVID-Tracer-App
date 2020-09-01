@@ -1,5 +1,8 @@
 package com.covid.utils;
 
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.LongBuffer;
 import java.security.SecureRandom;
 import java.util.Calendar;
 
@@ -15,25 +18,19 @@ public class CodeManager {
     }
 
 
-    public static String generateCode(){
-
+    public static long generateCode(){
         //Get time from calendar in milliseconds
-        long longTime = Calendar.getInstance().getTimeInMillis();
-        //Convert time to string
-        String timeString = String.valueOf(longTime);
-        //Create empty prefix string
-        String prefixString = "";
-        //randomly generate three characters and add to the prefix string as an adhoc salt
-        for (int i = 0; i < 3; i++){
-            SecureRandom r = new SecureRandom();
-            int rNum = r.nextInt(125 - 33 + 1) + 33;
-            char rChar = (char) rNum;
-            prefixString += rChar;
-        }
+        return Calendar.getInstance().getTimeInMillis();
+    }
 
-        //Create the codeString
-        String codeString = "NZ-" + prefixString + "-" + timeString;
-        //return the codeString
-        return codeString;
+    public static byte[] longToByteArray(final long i) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.putLong(i);
+        return buffer.array();
+    }
+
+    public static long getLongFromByteArray(byte[] array) {
+        ByteBuffer b = ByteBuffer.wrap(array);
+        return b.getLong();
     }
 }

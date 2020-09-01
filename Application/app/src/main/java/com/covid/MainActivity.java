@@ -3,12 +3,17 @@ package com.covid;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.AdvertiseData;
+import android.bluetooth.le.AdvertiseSettings;
+import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,6 +27,11 @@ import androidx.navigation.ui.NavigationUI;
 import com.covid.bluetooth.BLEService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.UUID;
+
+import static com.covid.utils.CodeManager.longToByteArray;
+import static com.covid.utils.CodeManager.generateCode;
+import static com.covid.utils.CodeManager.getLongFromByteArray;
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,8 +39,18 @@ public class MainActivity extends AppCompatActivity {
     public static final String NOTIFICATION_CHANNEL = "0";
     public static BluetoothManager bluetoothManager;
     public static BluetoothAdapter bluetoothAdapter;
+
+    // Scanner
     public static BluetoothLeScanner bleScanner;
     public static ScanSettings scanSettings;
+    public static ScanFilter scanFilter;
+
+    // Advertiser
+    public static BluetoothLeAdvertiser bleAdvertiser;
+    public static AdvertiseSettings advertiseSettings;
+    public static AdvertiseData advertiseData;
+    public static UUID serviceUUID;
+
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
 
@@ -77,6 +97,37 @@ public class MainActivity extends AppCompatActivity {
         scanSettings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
+                .build();
+
+        // Setup le scan filter
+        serviceUUID = new UUID(1313,1313);
+
+        scanFilter = new ScanFilter.Builder()
+                .setServiceUuid(new ParcelUuid(serviceUUID))
+                .build();
+
+        // Sets the bluetooth le advertiser
+        bleAdvertiser = bluetoothAdapter.getBluetoothLeAdvertiser();
+
+        // Setup le advertiser settings
+        advertiseSettings = new AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+                // TODO check whether this should be true or not
+                .setConnectable(false)
+                .build();
+
+        long code = generateCode();
+
+        byte[] byteCode = longToByteArray(code);
+
+        long backFromTheDead = getLongFromByteArray(byteCode);
+
+        // Set advertise data
+        advertiseData = new AdvertiseData.Builder()
+                .setIncludeDeviceName(false)
+                .setIncludeTxPowerLevel(false)
+                .addServiceUuid(new ParcelUuid(serviceUUID))
+                .addServiceData(new ParcelUuid(serviceUUID), byteCode)
                 .build();
 
         // Start the bluetooth le service on a new thread
