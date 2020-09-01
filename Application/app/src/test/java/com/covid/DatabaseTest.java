@@ -42,26 +42,6 @@ public class DatabaseTest {
     }
 
 
-    /*=============================================================================
- |          Task: Build Database and define tables
- |   Description: Checking that database exists and method checkDatabaseExists() works
- *===========================================================================*/
-    @Test
-    //Checking existence of database: Return true when database does exist
-    public void databaseExists_returnsTrue() throws Exception{
-        //Check that test passes when database exists
-        boolean databaseExists = checkDataBaseExists("MyBubble.db");
-        assertTrue(databaseExists == true);
-    }
-
-    @Test
-    //Checking existence of database: Return False when database does not exist
-    public void databaseNotExists_returnsFalse() throws Exception{
-        //Check that passes when database does not exist
-        boolean databaseExists = checkDataBaseExists("NonexistentDatabase.db");
-        assertFalse(databaseExists == false);
-    }
-
 
         /*=============================================================================
  |          Task: Build Database and define tables
@@ -72,15 +52,7 @@ public class DatabaseTest {
     public void IDisAdded_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
         boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "", "");
-        assertTrue(IDisAdded == true);
-    }
-
-    @Test
-    //Checking invalid ID cannot be added to Encounters table in database: Return false when ID is not unique *test will fail once update works
-    public void IDisAdded_returnsFalse() throws Exception{
-        //Check that test passes when an ID that is not unique CANNOT be added to the database
-        boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "", "");
-        assertFalse(IDisAdded == false);
+        assertTrue(IDisAdded);
     }
 
     @Test
@@ -104,7 +76,7 @@ public class DatabaseTest {
     public void encounterDate_isAdded() throws Exception{
         //Check that test passes when a date that is text CAN be added to the database
         boolean IDisAdded = myDB.insertEncounterData("", "2020-08-27", "");
-        assertTrue(IDisAdded == true);
+        assertTrue(IDisAdded);
     }
 
     @Test
@@ -112,7 +84,7 @@ public class DatabaseTest {
     public void encounterTime_isAdded() throws Exception{
         //Check that test passes when a date that is text CAN be added to the database
         boolean IDisAdded = myDB.insertEncounterData("", "", "14:59");
-        assertTrue(IDisAdded == true);
+        assertTrue(IDisAdded);
     }
 
 
@@ -125,15 +97,16 @@ public class DatabaseTest {
     public void PersonalIDisAdded_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
         boolean IDisAdded = myDB.insertPersonalData("ID567891235673dd2tfLC");
-        assertTrue(IDisAdded == true);
+        assertTrue(IDisAdded);
     }
 
     @Test
     //Checking invalid ID cannot be added to Personal Data table in database: Return false when ID is not unique
     public void PersonalIDisAdded_returnsFalse() throws Exception{
         //Check that test passes when an ID that is not unique CANNOT be added to the database
+        myDB.insertPersonalData("ID567891235673dd2tfLC");
         boolean IDisAdded = myDB.insertPersonalData("ID567891235673dd2tfLC");
-        assertFalse(IDisAdded == false);
+        assertFalse(IDisAdded);
     }
 
     @Test
@@ -141,7 +114,7 @@ public class DatabaseTest {
     public void PersonalIDisAddedCodeManager_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
         boolean IDisAdded = myDB.insertPersonalData(CodeManager.generateCode());
-        assertTrue(IDisAdded == true);
+        assertTrue(IDisAdded);
     }
 
     @Test
@@ -149,15 +122,16 @@ public class DatabaseTest {
     public void PersonalIDisAddedGeneratedString_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
         boolean IDisAdded = myDB.insertPersonalData(personalID);
-        assertTrue(IDisAdded == true);
+        assertTrue(IDisAdded);
     }
 
     @Test
     //Checking invalid ID cannot be added to Personal Data table in database: Return false when ID is not unique
     public void PersonalIDisAddedGeneratedString_returnsFalse() throws Exception{
         //Check that test passes when an ID that is not unique CANNOT be added to the database
+        myDB.insertPersonalData(personalID);
         boolean IDisAdded = myDB.insertPersonalData(personalID);
-        assertFalse(IDisAdded == false);
+        assertFalse(IDisAdded);
     }
 
 
@@ -223,6 +197,50 @@ public class DatabaseTest {
     public void EncounterDate_isUpdated() throws Exception{
             myDB.insertEncounterData("ID567891235673dd2aUp", "2020-08-31", "10:09");
             boolean DataIsUpdated = myDB.insertEncounterData("ID567891235673dd2aUp", "2020-09-01", "01:44");
-            assertTrue(DataIsUpdated == true);
+            assertTrue(DataIsUpdated);
         }
+
+
+    /*=============================================================================
+|          Task:  Update date in database
+|   Description: Checking that date is updated if ID already exists in database
+*===========================================================================*/
+    private String Date() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = dateFormat.format(cal.getTime()).toString();
+        return currentDate;
+    }
+
+    @Test
+    public void currentDate_isAdded() throws Exception{
+        String encounterDate = Date();
+        myDB.insertEncounterData("IDtestUniqueID", encounterDate, "4.00pm");
+        String actualData = myDB.getEncounterData("IDtestUniqueID");
+        String expectedData = "IDtestUniqueID, 2020-09-01, 4.00pm";
+        assertEquals(expectedData, actualData);
+    }
+
+
+        /*=============================================================================
+|          Task:  Update date in database
+|   Description: Checking that date is updated if ID already exists in database
+*===========================================================================*/
+        private String Time() {
+            Calendar cal = Calendar.getInstance();
+            DateFormat dateFormat = new SimpleDateFormat("HH-mm");
+            String currentTime = dateFormat.format(cal.getTime()).toString();
+            return currentTime;
+        }
+
+    @Test
+    public void currentTime_isAdded() throws Exception{
+        String encounterTime = Time();
+        myDB.insertEncounterData("IDtestUniqueID", "2020-09-01", encounterTime);
+        String actualData = myDB.getEncounterData("IDtestUniqueID");
+        String expectedData = "IDtestUniqueID, 2020-09-01, " + encounterTime;
+        assertEquals(expectedData, actualData);
+    }
+
+
 }

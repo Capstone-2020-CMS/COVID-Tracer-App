@@ -49,8 +49,5 @@ public class MainActivity extends AppCompatActivity {
         //Recording encounters
         EncountersData.recordEncountersData();
 
-        String ID = encounterDB.getEncounterData("567891235673dd2aQt");
-
-        Log.v("DBDate", ID);
     }
 }
