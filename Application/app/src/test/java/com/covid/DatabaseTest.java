@@ -143,41 +143,30 @@ public class DatabaseTest {
     @Test
     //Checking that dates older than 21 days are deleted: Return true when dates are deleted
     public void agedDateIsDeleted_returnsTrue() throws Exception{
-        //boolean dateIsDeleted = myDB.deletedAgedEncounterData();
-        //boolean dateIsDeleted = false;
-        //assertTrue(dateIsDeleted);
-    }
-
-    private Date yesterday() {
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        return cal.getTime();
-    }
-
-    private Instant yesterday2() {
-        Instant now = Instant.now();
-        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-        return yesterday;
-    }
-
-    private String yesterdayDate() {
-        Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        //System.out.println("Today's date is "+dateFormat.format(cal.getTime()));
-        cal.add(Calendar.DATE, -1);
-        String yesterday = dateFormat.format(cal.getTime()).toString();
-        return yesterday;
+        myDB.insertEncounterData("IDOldDate>21days", "2020-01-01", "14:59");
+        String unexpectedData = myDB.getEncounterData("IDOldDate>21days");
+        myDB.deletedAgedEncounterData();
+        String actualData = myDB.getEncounterData("IDOldDate>21days");
+        assertNotEquals(unexpectedData, actualData);
     }
 
     @Test
     //Checking that dates less than 21 days aren't deleted
     public void agedDateIsDeleted_returnsFalse() throws Exception{
-        //myDB.insertEncounterData("IDTestAgedDate", "13/02/1999, 4.00pm");
-        String actualData = myDB.getEncounterData("IDtestAgedDate");
-        //String dateYesterday = yesterday().toString();
-        //String dateYesterday = yesterday2().toString();
-        String dateYesterday = yesterdayDate();
-        String expectedData = "IDTestAgedDate, 30/08/2020, 4.00pm";
+        myDB.insertEncounterData("IDDate<21days", "2020-08-27", "4.00pm");
+        String expectedData = myDB.getEncounterData("IDDate<21days");
+        myDB.deletedAgedEncounterData();
+        String actualData = myDB.getEncounterData("IDDate<21days");
+        assertEquals(expectedData, actualData);
+    }
+
+    @Test
+    //Checking that dates less than 21 days aren't deleted
+    public void agedDateIsDeletedExactly21_returnsFalse() throws Exception{
+        myDB.insertEncounterData("IDDate=21days", "2020-08-11", "4.00pm");
+        String expectedData = myDB.getEncounterData("IDDate=21days");
+        myDB.deletedAgedEncounterData();
+        String actualData = myDB.getEncounterData("IDDate=21days");
         assertEquals(expectedData, actualData);
     }
 }
