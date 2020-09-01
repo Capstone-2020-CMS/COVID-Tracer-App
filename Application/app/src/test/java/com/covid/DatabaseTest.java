@@ -12,6 +12,13 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.covid.database.DatabaseHelper.ENCOUNTERS_TABLE;
 import static com.covid.database.DatabaseHelper.checkDataBaseExists;
 import static org.junit.Assert.*;
@@ -55,7 +62,7 @@ public class DatabaseTest {
   //Checking valid ID can be added to Encounters table in database: Return true when ID is added successfully
     public void IDisAdded_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
-        boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "");
+        boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "", "");
         assertTrue(IDisAdded == true);
     }
 
@@ -64,13 +71,13 @@ public class DatabaseTest {
     //Checking invalid ID cannot be added to Encounters table in database: Return false when ID is not unique
     public void IDisAdded_returnsFalse() throws Exception{
         //Check that test passes when an ID that is not unique CANNOT be added to the database
-        boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "");
+        boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "", "");
         assertFalse(IDisAdded == false);
     }
 
     @Test
     public void DataisRetrieved_returnsTrue() throws Exception{
-        myDB.insertEncounterData("IDtestUniqueID", "13/02/1999 4.00pm");
+        myDB.insertEncounterData("IDtestUniqueID", "13/02/1999", "4.00pm");
         String actualData = myDB.getEncounterData("IDtestUniqueID");
         String expectedData = "IDtestUniqueID, 13/02/1999 4.00pm";
         assertEquals(expectedData, actualData);
@@ -78,7 +85,7 @@ public class DatabaseTest {
 
     @Test
     public void DataisRetrieved_returnsFalse() throws Exception{
-        myDB.insertEncounterData("IDtestUniqueID", "13/02/1999 4.00pm");
+        myDB.insertEncounterData("IDtestUniqueID", "13/02/1999", "4.00pm");
         String actualData = myDB.getEncounterData("IDtestUniqueID");
         String expectedData = "RANDOMIDtestUniqueID";
         assertNotEquals(expectedData, actualData);
@@ -129,18 +136,48 @@ public class DatabaseTest {
     //Checking valid date can be added to Encounters table in database: Return true when date is added successfully
     public void encounterDate_isAdded() throws Exception{
         //Check that test passes when a date that is text CAN be added to the database
-        boolean IDisAdded = myDB.insertEncounterData("", "27-08-2020 12:10:18pm");
+        boolean IDisAdded = myDB.insertEncounterData("", "27-08-2020", "12:10:18");
         assertTrue(IDisAdded == true);
     }
-//
-//
 
-//
-//
-//    @Test
-//    public void encounterDate_isRetrieved() throws Exception{
-//
-//    }
+    @Test
+    //Checking that dates older than 21 days are deleted: Return true when dates are deleted
+    public void agedDateIsDeleted_returnsTrue() throws Exception{
+        //boolean dateIsDeleted = myDB.deletedAgedEncounterData();
+        //boolean dateIsDeleted = false;
+        //assertTrue(dateIsDeleted);
+    }
 
+    private Date yesterday() {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        return cal.getTime();
+    }
 
+    private Instant yesterday2() {
+        Instant now = Instant.now();
+        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+        return yesterday;
+    }
+
+    private String yesterdayDate() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //System.out.println("Today's date is "+dateFormat.format(cal.getTime()));
+        cal.add(Calendar.DATE, -1);
+        String yesterday = dateFormat.format(cal.getTime()).toString();
+        return yesterday;
+    }
+
+    @Test
+    //Checking that dates less than 21 days aren't deleted
+    public void agedDateIsDeleted_returnsFalse() throws Exception{
+        //myDB.insertEncounterData("IDTestAgedDate", "13/02/1999, 4.00pm");
+        String actualData = myDB.getEncounterData("IDtestAgedDate");
+        //String dateYesterday = yesterday().toString();
+        //String dateYesterday = yesterday2().toString();
+        String dateYesterday = yesterdayDate();
+        String expectedData = "IDTestAgedDate, 30/08/2020, 4.00pm";
+        assertEquals(expectedData, actualData);
+    }
 }

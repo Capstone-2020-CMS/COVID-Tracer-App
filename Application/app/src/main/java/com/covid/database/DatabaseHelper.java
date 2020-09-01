@@ -16,6 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PERSONAL_INFO_TABLE = "Personal_Info_Table";
     public static final String ENCOUNTERS_COL1 = "ID";
     public static final String ENCOUNTERS_COL2 = "ENCOUNTER_DATE";
+    public static final String ENCOUNTERS_COL3 = "ENCOUNTER_TIME";
     public static final String PERSONAL_INFO_COL1 = "PERSONAL_ID";
 
 
@@ -44,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(" create table " + ENCOUNTERS_TABLE + "(ID TEXT PRIMARY KEY CHECK(\n" +
                 "        typeof(\"ID\") = \"text\" AND\n" +
                 "        length(\"ID\") <= 20\n" +
-                "    ), ENCOUNTER_DATE TEXT)");
+                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT)");
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
 
@@ -57,11 +58,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertEncounterData(String ID, String EncounterDate) {
+    public boolean insertEncounterData(String ID, String EncounterDate, String EncounterTime) {
             SQLiteDatabase db = getWritableDatabase();
             ContentValues newValues = new ContentValues();
             newValues.put("ID", ID);
             newValues.put("ENCOUNTER_DATE", EncounterDate);
+            newValues.put("ENCOUNTER_TIME", EncounterTime);
             long result = db.insert(ENCOUNTERS_TABLE, null, newValues);
             if (result == -1) {
                 return false;
@@ -91,9 +93,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] whereArgs = new String[]{String.valueOf(ID)};
         Cursor csr = db.query(ENCOUNTERS_TABLE, null, whereClause, whereArgs, null, null, null);
         if (csr.moveToFirst()) {
-            result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL2));
+            result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL2)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL3));
         }
         return result;
+    }
+
+    public void deletedAgedEncounterData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "DELETE FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_DATE < date('now','-21 day')";
+        db.execSQL(sql);
     }
 
 }
