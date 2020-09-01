@@ -51,7 +51,7 @@ public class DatabaseTest {
     public void databaseExists_returnsTrue() throws Exception{
         //Check that test passes when database exists
         boolean databaseExists = checkDataBaseExists("MyBubble.db");
-        assertTrue(databaseExists);
+        assertTrue(databaseExists == true);
     }
 
     @Test
@@ -84,15 +84,15 @@ public class DatabaseTest {
     }
 
     @Test
-    public void DataisRetrieved_returnsTrue() throws Exception{
+    public void validDataisRetrieved() throws Exception{
         myDB.insertEncounterData("IDtestUniqueID", "13/02/1999", "4.00pm");
         String actualData = myDB.getEncounterData("IDtestUniqueID");
-        String expectedData = "IDtestUniqueID, 13/02/1999 4.00pm";
+        String expectedData = "IDtestUniqueID, 13/02/1999, 4.00pm";
         assertEquals(expectedData, actualData);
     }
 
     @Test
-    public void DataisRetrieved_returnsFalse() throws Exception{
+    public void invalidDataisNotRetrieved() throws Exception{
         myDB.insertEncounterData("IDtestUniqueID", "13/02/1999", "4.00pm");
         String actualData = myDB.getEncounterData("IDtestUniqueID");
         String expectedData = "RANDOMIDtestUniqueID";
@@ -167,7 +167,7 @@ public class DatabaseTest {
 *===========================================================================*/
     @Test
     //Checking that dates older than 21 days are deleted: Return true when dates are deleted
-    public void agedDateIsDeleted_returnsTrue() throws Exception{
+    public void agedDateIsDeleted() throws Exception{
         myDB.insertEncounterData("IDOldDate>21days", "2020-01-01", "14:59");
         String unexpectedData = myDB.getEncounterData("IDOldDate>21days");
         myDB.deletedAgedEncounterData();
@@ -185,7 +185,7 @@ public class DatabaseTest {
 
     @Test
     //Checking that dates less than 21 days aren't deleted
-    public void agedDateIsDeleted_returnsFalse() throws Exception{
+    public void notAgedDateIsNotDeleted() throws Exception{
         String encounterDate = yesterdayDate();
         myDB.insertEncounterData("IDDate<21days", encounterDate, "4.00pm");
         String expectedData = myDB.getEncounterData("IDDate<21days");
@@ -204,7 +204,7 @@ public class DatabaseTest {
 
     @Test
     //Checking that dates less than 21 days aren't deleted
-    public void agedDateIsDeletedExactly21_returnsFalse() throws Exception{
+    public void agedDateIsDeletedExactly21() throws Exception{
         String encounterDate = date21daysAgo();
         myDB.insertEncounterData("IDDate=21days", encounterDate, "4.00pm");
         String expectedData = myDB.getEncounterData("IDDate=21days");
@@ -212,4 +212,15 @@ public class DatabaseTest {
         String actualData = myDB.getEncounterData("IDDate=21days");
         assertEquals(expectedData, actualData);
     }
+
+
+        /*=============================================================================
+|          Task:  Update date in database
+|   Description:
+*===========================================================================*/
+        @Test
+    //Checking that date is updated if ID exists
+    public void EncounterDate_isUpdated() throws Exception{
+
+        }
 }
