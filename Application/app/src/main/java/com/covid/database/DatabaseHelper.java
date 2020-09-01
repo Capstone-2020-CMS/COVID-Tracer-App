@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             newValues.put("ID", ID);
             newValues.put("ENCOUNTER_DATE", EncounterDate);
             newValues.put("ENCOUNTER_TIME", EncounterTime);
-            long result = db.insert(ENCOUNTERS_TABLE, null, newValues);
+            long result = db.replace(ENCOUNTERS_TABLE, null, newValues);
             if (result == -1) {
                 return false;
             }
