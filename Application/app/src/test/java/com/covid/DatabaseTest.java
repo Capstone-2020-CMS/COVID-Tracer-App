@@ -76,7 +76,7 @@ public class DatabaseTest {
     }
 
     @Test
-    //Checking invalid ID cannot be added to Encounters table in database: Return false when ID is not unique
+    //Checking invalid ID cannot be added to Encounters table in database: Return false when ID is not unique *test will fail once update works
     public void IDisAdded_returnsFalse() throws Exception{
         //Check that test passes when an ID that is not unique CANNOT be added to the database
         boolean IDisAdded = myDB.insertEncounterData("ID567891235673dd2aCt", "", "");
@@ -216,11 +216,13 @@ public class DatabaseTest {
 
         /*=============================================================================
 |          Task:  Update date in database
-|   Description:
+|   Description: Checking that date is updated if ID already exists in database
 *===========================================================================*/
         @Test
     //Checking that date is updated if ID exists
     public void EncounterDate_isUpdated() throws Exception{
-
+            myDB.insertEncounterData("ID567891235673dd2aUp", "2020-08-31", "10:09");
+            boolean DataIsUpdated = myDB.insertEncounterData("ID567891235673dd2aUp", "2020-09-01", "01:44");
+            assertTrue(DataIsUpdated == true);
         }
 }
