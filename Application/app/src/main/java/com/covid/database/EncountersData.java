@@ -13,9 +13,9 @@ public class EncountersData {
         //MainActivity.encounterDB.insertEncounterData(btEncounter, date);
 
         //Recording encounters (keep only 4 lines below when bluetooth is working, changing only the Strings content)
-        String btEncounterID =  "567891235673dd2aQt"; //placeholder ID
-        String btEncounterDate = "2020-02-15"; // placeholder Date
-        String btEncounterTime = "10:00"; //placeholder Time
+        String btEncounterID =  "567891235673dd2aQt"; //placeholder ID - insert ID method taken from bluetooth encounter here
+        String btEncounterDate = "2020-02-15"; // placeholder Date - insert  method taken from bluetooth encounter here
+        String btEncounterTime = "10:00"; //placeholder Time - insert Time method taken from bluetooth encounter here
         MainActivity.encounterDB.insertEncounterData(btEncounterID, btEncounterDate, btEncounterTime);
 
 
