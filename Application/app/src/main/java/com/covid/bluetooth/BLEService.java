@@ -16,9 +16,14 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.covid.R;
+import com.covid.database.EncountersData;
 import com.covid.utils.txtFile;
 
+
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.text.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import java.util.Random;
 
 import static com.covid.MainActivity.NOTIFICATION_CHANNEL;
 import static com.covid.MainActivity.advertiseData;
@@ -42,6 +49,9 @@ public class BLEService extends Service {
     private ScanCallback scanCallback;
     private AdvertiseCallback advertiseCallback;
     private List<ScanFilter> scanFilters = new ArrayList<>();
+    public String bleEncounterDate;
+    public String bleEncounterTime;
+    public String bleEncounterID;
 
     @Override
     public void onCreate() {
@@ -86,11 +96,40 @@ public class BLEService extends Service {
         return notification;
     }
 
+    private String getCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = dateFormat.format(cal.getTime());
+        return currentDate;
+    }
+
+    private String getCurrentTime() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("HH-mm");
+        String currentTime = dateFormat.format(cal.getTime());
+        return currentTime;
+    }
+
+    public String randomString() {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        return generatedString;
+    }
+
     private void createCallback() {
         scanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
+
                 Map<ParcelUuid, byte[]> raw = result.getScanRecord().getServiceData();
 
                 Object[] uuidAGAIN;
@@ -110,7 +149,12 @@ public class BLEService extends Service {
                     txtFile.writeToFile(ex.toString());
                 }
 
-//                txtFile.writeToFile(result.getDevice().getAddress());
+                txtFile.writeToFile(result.getDevice().getAddress());
+
+                bleEncounterID = randomString();
+                bleEncounterDate = getCurrentDate();
+                bleEncounterTime = getCurrentTime();
+                EncountersData.recordEncountersData(bleEncounterID, bleEncounterDate, bleEncounterTime);
             }
 
             @Override

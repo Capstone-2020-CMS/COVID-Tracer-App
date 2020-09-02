@@ -1,5 +1,6 @@
 package com.covid;
 
+import android.content.SharedPreferences;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -14,6 +15,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.covid.database.DatabaseHelper;
+import com.covid.database.EncountersData;
+import com.covid.database.PersonalData;
+import com.covid.utils.CodeManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -53,11 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
-
+    public static DatabaseHelper encounterDB;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        encounterDB = new DatabaseHelper(this);
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
@@ -141,6 +155,19 @@ public class MainActivity extends AppCompatActivity {
         };
 
         bleThread.start();
+
+
+        //Access and modify preference data
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("firstTime", false)) {
+            // Runs initial one time on install code here
+            // Adding personal user information to database on installation
+            PersonalData.addOnInstallData();
+            // marks the first time the code has run.
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
     }
 
     // Checks necessary permissions have been enabled
