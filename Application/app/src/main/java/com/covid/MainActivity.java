@@ -17,12 +17,9 @@ import android.os.Bundle;
 import android.os.ParcelUuid;
 
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.covid.database.DatabaseHelper;
-import com.covid.database.EncountersData;
 import com.covid.database.PersonalData;
-import com.covid.utils.CodeManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -36,7 +33,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.covid.bluetooth.BLEService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.UUID;
 
@@ -64,14 +60,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
-    public static DatabaseHelper encounterDB;
+    public static DatabaseHelper myDB;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        encounterDB = new DatabaseHelper(this);
+        myDB = new DatabaseHelper(this);
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
@@ -79,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         // Notification setup
         createNotificationChannel(getApplicationContext());
         notificationManager = NotificationManagerCompat.from(this);
+
+        // First time setup
+        firstTimeSetup();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -130,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 .setConnectable(false)
                 .build();
 
+        //TODO remove placeholder code stuff
         long code = generateCode();
 
         byte[] byteCode = longToByteArray(code);
@@ -153,24 +153,8 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         };
-//Access and modify preference data
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        boolean test = prefs.getBoolean("firstTime", false);
-
-        if (!prefs.getBoolean("firstTime", false)) {
-            // Runs initial one time on install code here
-            // Adding personal user information to database on installation
-            PersonalData.addOnInstallData();
-            // marks the first time the code has run.
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("firstTime", true);
-            editor.commit();
-        }
         bleThread.start();
-
-
-
     }
 
     // Checks necessary permissions have been enabled
@@ -193,4 +177,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void firstTimeSetup() {
+        //Access and modify preference data
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (!prefs.getBoolean("firstTime", false)) {
+            // Runs initial one time on install code here
+            // Adding personal user information to database on installation
+            PersonalData.addOnInstallData();
+            // marks the first time the code has run.
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
+    }
 }
