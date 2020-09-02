@@ -2,12 +2,15 @@ package com.covid.bluetooth;
 
 import android.app.Notification;
 import android.app.Service;
+import android.bluetooth.le.AdvertiseCallback;
+import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.ParcelUuid;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -16,22 +19,35 @@ import com.covid.R;
 import com.covid.database.EncountersData;
 import com.covid.utils.txtFile;
 
+
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import java.util.Random;
 
 import static com.covid.MainActivity.NOTIFICATION_CHANNEL;
+import static com.covid.MainActivity.advertiseData;
+import static com.covid.MainActivity.advertiseSettings;
+import static com.covid.MainActivity.bleAdvertiser;
 import static com.covid.MainActivity.bleScanner;
+import static com.covid.MainActivity.scanFilter;
 import static com.covid.MainActivity.scanSettings;
+import static com.covid.MainActivity.serviceUUID;
+import static com.covid.utils.CodeManager.getLongFromByteArray;
 
 public class BLEService extends Service {
-    private ScanCallback callback;
+    private ScanCallback scanCallback;
+    private AdvertiseCallback advertiseCallback;
     private List<ScanFilter> scanFilters = new ArrayList<>();
     public String bleEncounterDate;
     public String bleEncounterTime;
@@ -41,13 +57,13 @@ public class BLEService extends Service {
     public void onCreate() {
         super.onCreate();
         createCallback();
-        scanFilters.add(new ScanFilter.Builder().build());
+        scanFilters.add(scanFilter);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //bleScanner.startScan(scanFilters,scanSettings,callback);
-        bleScanner.startScan(null,scanSettings,callback);
+        bleAdvertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
+        bleScanner.startScan(scanFilters,scanSettings, scanCallback);
         startForeground(1, createForegroundNotification());
         return Service.START_STICKY;
     }
@@ -109,10 +125,30 @@ public class BLEService extends Service {
     }
 
     private void createCallback() {
-        callback = new ScanCallback() {
+        scanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
+
+                Map<ParcelUuid, byte[]> raw = result.getScanRecord().getServiceData();
+
+                Object[] uuidAGAIN;
+
+                Set<ParcelUuid> set = raw.keySet();
+                uuidAGAIN = set.toArray();
+
+                UUID uuid = result.getScanRecord().getServiceUuids().get(0).getUuid();
+
+                long bigBrain = getLongFromByteArray(raw.get(uuidAGAIN[0]));
+
+                try {
+                    //int id = getIntFromByteArray(bigBrain);
+                    txtFile.writeToFile(String.valueOf(bigBrain));
+                }
+                catch (NullPointerException ex) {
+                    txtFile.writeToFile(ex.toString());
+                }
+
                 txtFile.writeToFile(result.getDevice().getAddress());
 
                 bleEncounterID = randomString();
@@ -125,6 +161,20 @@ public class BLEService extends Service {
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
                 txtFile.writeToFile("Error Code: " + Integer.toString(errorCode) + "\n" + getErrorDescription(errorCode));
+            }
+        };
+
+        advertiseCallback = new AdvertiseCallback() {
+            @Override
+            public void onStartSuccess(AdvertiseSettings settingsInEffect) {
+                super.onStartSuccess(settingsInEffect);
+                txtFile.writeToFile("Successfully started advertising");
+            }
+
+            @Override
+            public void onStartFailure(int errorCode) {
+                super.onStartFailure(errorCode);
+                txtFile.writeToFile("Failed to start advertising");
             }
         };
     }
