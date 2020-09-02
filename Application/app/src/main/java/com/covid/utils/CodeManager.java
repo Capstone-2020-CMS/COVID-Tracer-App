@@ -23,6 +23,20 @@ public class CodeManager {
         return Calendar.getInstance().getTimeInMillis();
     }
 
+
+    //TODO
+    //New Generator Skeleton
+    public static long generateAppID(){
+        //Check to ensure code hasn't already run
+
+        //Generate code in correct format
+
+        return (long) 0;
+
+    }
+
+
+
     public static byte[] longToByteArray(final long i) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(i);
