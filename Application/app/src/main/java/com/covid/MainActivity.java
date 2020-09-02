@@ -102,6 +102,19 @@ public class MainActivity extends AppCompatActivity {
         };
 
         bleThread.start();
+
+
+        //Access and modify preference data
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("firstTime", false)) {
+            // Runs initial one time on install code here
+            // Adding personal user information to database on installation
+            PersonalData.addOnInstallData();
+            // marks the first time the code has run.
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
     }
 
     // Checks necessary permissions have been enabled
@@ -124,19 +137,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean("firstTime", false)) {
-            // Runs initial one time on install code here
-            // Adding personal user information to database on installation
-            PersonalData.addOnInstallData();
-            // marks the first time the code has run.
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("firstTime", true);
-            editor.commit();
-        }
-
-        //Recording encounters
-        EncountersData.recordEncountersData();
-    }
 }
