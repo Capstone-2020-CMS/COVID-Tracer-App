@@ -43,6 +43,7 @@ import static com.covid.MainActivity.bleScanner;
 import static com.covid.MainActivity.scanFilter;
 import static com.covid.MainActivity.scanSettings;
 import static com.covid.MainActivity.serviceUUID;
+import static com.covid.database.EncountersData.recordEncountersData;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
 
 public class BLEService extends Service {
@@ -110,20 +111,6 @@ public class BLEService extends Service {
         return currentTime;
     }
 
-    public String randomString() {
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 10;
-        Random random = new Random();
-
-        String generatedString = random.ints(leftLimit, rightLimit + 1)
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-
-        return generatedString;
-    }
-
     private void createCallback() {
         scanCallback = new ScanCallback() {
             @Override
@@ -142,19 +129,24 @@ public class BLEService extends Service {
                 long bigBrain = getLongFromByteArray(raw.get(uuidAGAIN[0]));
 
                 try {
-                    //int id = getIntFromByteArray(bigBrain);
-                    txtFile.writeToFile(String.valueOf(bigBrain));
+                    //txtFile.writeToFile(String.valueOf(bigBrain));
+                    bleEncounterID = String.valueOf(bigBrain);
                 }
                 catch (NullPointerException ex) {
                     txtFile.writeToFile(ex.toString());
                 }
 
-                txtFile.writeToFile(result.getDevice().getAddress());
-
-                bleEncounterID = randomString();
                 bleEncounterDate = getCurrentDate();
                 bleEncounterTime = getCurrentTime();
-                EncountersData.recordEncountersData(bleEncounterID, bleEncounterDate, bleEncounterTime);
+                boolean dbResult = recordEncountersData(bleEncounterID, bleEncounterDate, bleEncounterTime);
+
+                String message = "";
+                if (dbResult) {
+                    message = "Successful db stuff";
+                } else {
+                    message = "Failed db stuff";
+                }
+                txtFile.writeToFile(message);
             }
 
             @Override

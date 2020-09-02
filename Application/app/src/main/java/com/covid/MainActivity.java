@@ -153,12 +153,11 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         };
-
-        bleThread.start();
-
-
-        //Access and modify preference data
+//Access and modify preference data
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean test = prefs.getBoolean("firstTime", false);
+
         if (!prefs.getBoolean("firstTime", false)) {
             // Runs initial one time on install code here
             // Adding personal user information to database on installation
@@ -168,6 +167,10 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("firstTime", true);
             editor.commit();
         }
+        bleThread.start();
+
+
+
     }
 
     // Checks necessary permissions have been enabled

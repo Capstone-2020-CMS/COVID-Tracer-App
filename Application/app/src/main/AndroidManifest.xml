@@ -28,6 +28,13 @@
             </intent-filter>
         </activity>
         <service android:name=".bluetooth.BLEService" android:enabled="true"/>
+        <receiver android:name=".bluetooth.BLEReceiver" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.REBOOT"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
