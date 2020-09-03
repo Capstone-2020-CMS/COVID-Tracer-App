@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.covid.R;
 import com.covid.database.DatabaseHelper;
-import com.covid.utils.txtFile;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,7 +51,7 @@ public class BLEService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         bleManager.startAdvertising(advertiseCallback);
-        bleManager.startScanning(scanCallback);
+        //bleManager.startScanning(scanCallback);
         startForeground(1, createForegroundNotification());
         return Service.START_STICKY;
     }
@@ -123,7 +122,7 @@ public class BLEService extends Service {
                     Log.e(logTag, ex.toString());
                 }
 
-                Log.i("COVID", bleEncounterID);
+                Log.i(logTag, bleEncounterID);
 
                 bleEncounterDate = getCurrentDate();
                 bleEncounterTime = getCurrentTime();
@@ -141,7 +140,7 @@ public class BLEService extends Service {
             @Override
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
-                Log.e(logTag, getErrorDescription(errorCode));
+                Log.e(logTag, getScanErrorDescription(errorCode));
             }
         };
 
@@ -155,18 +154,29 @@ public class BLEService extends Service {
             @Override
             public void onStartFailure(int errorCode) {
                 super.onStartFailure(errorCode);
-                Log.e(logTag, "Failed to start advertising");
+                Log.e(logTag, getAdvertiseErrorDescription(errorCode));
             }
         };
     }
 
-    private String getErrorDescription(int errorCode) {
+    private String getScanErrorDescription(int errorCode) {
         switch (errorCode) {
-            case 1: return "Fails to start scan as BLE scan with the same settings is already started by the app.";
-            case 2: return "Fails to start scan as app cannot be registered.";
-            case 3: return "Fails to start power optimized scan as this feature is not supported.";
-            case 4: return "Fails to start scan due an internal error";
-            default: return "Unknown error code";
+            case 1: return "Failed to start scan as BLE scan with the same settings is already started by the app.";
+            case 2: return "Failed to start scan as app cannot be registered.";
+            case 3: return "Failed to start power optimized scan as this feature is not supported.";
+            case 4: return "Failed to start scan due an internal error.";
+            default: return "Unknown error code.";
+        }
+    }
+
+    private String getAdvertiseErrorDescription(int errorCode) {
+        switch (errorCode) {
+            case 1: return "Failed to start advertising as the advertise data to be broadcast is larger than 31 bytes.";
+            case 2: return "Failed to start advertising because no advertising instance is available.";
+            case 3: return "Failed to start advertising as the advertising is already started.";
+            case 4: return "Operation failed due to an internal error.";
+            case 5: return "This feature is not supported on this platform.";
+            default: return "Unknown error code.";
         }
     }
 }
