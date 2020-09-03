@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         encounterDB = new DatabaseHelper(this);
 
+
+
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
 
@@ -167,9 +169,14 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("firstTime", true);
             editor.commit();
         }
+
+
+        ///DELETE WHEN TEST WORKS/////////////////////////////////////
+        String personalID = encounterDB.getPersonalInfoData();
+        Log.v("PersonalID", personalID);
+        /////////////////////////////////////////////////////////////
+
         bleThread.start();
-
-
 
     }
 

@@ -104,4 +104,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    String[] tableColumns = new String[] {
+            "PERSONAL_ID",
+            "(SELECT PERSONAL_ID FROM Personal_Info_Table)"
+    };
+
+    public String getPersonalInfoData() {
+        String result = "Data Not Found";
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String whereClause = "ID=?";
+        //String[] whereArgs = new String[]{String.valueOf(ID)};
+        Cursor csr = db.query(PERSONAL_INFO_TABLE, tableColumns, null, null, null, null, null);
+        if (csr.moveToFirst()) {
+            result = csr.getString(csr.getColumnIndex(PERSONAL_INFO_COL1));
+        }
+        return result;
+    }
+
 }
