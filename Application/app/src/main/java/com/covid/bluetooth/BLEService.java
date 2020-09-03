@@ -39,6 +39,7 @@ public class BLEService extends Service {
     public String bleEncounterTime;
     public String bleEncounterID;
     public static DatabaseHelper myDB;
+    private String logTag = "COVID";
 
     @Override
     public void onCreate() {
@@ -116,11 +117,10 @@ public class BLEService extends Service {
                 long bigBrain = getLongFromByteArray(raw.get(uuidAGAIN[0]));
 
                 try {
-                    //txtFile.writeToFile(String.valueOf(bigBrain));
                     bleEncounterID = String.valueOf(bigBrain);
                 }
                 catch (NullPointerException ex) {
-                    txtFile.writeToFile(ex.toString());
+                    Log.e(logTag, ex.toString());
                 }
 
                 Log.i("COVID", bleEncounterID);
@@ -135,13 +135,13 @@ public class BLEService extends Service {
                 } else {
                     message = "Failed db stuff";
                 }
-                //txtFile.writeToFile(message);
+                Log.i(logTag, message);
             }
 
             @Override
             public void onScanFailed(int errorCode) {
                 super.onScanFailed(errorCode);
-                //txtFile.writeToFile("Error Code: " + Integer.toString(errorCode) + "\n" + getErrorDescription(errorCode));
+                Log.e(logTag, getErrorDescription(errorCode));
             }
         };
 
@@ -149,13 +149,13 @@ public class BLEService extends Service {
             @Override
             public void onStartSuccess(AdvertiseSettings settingsInEffect) {
                 super.onStartSuccess(settingsInEffect);
-                //txtFile.writeToFile("Successfully started advertising");
+                Log.i(logTag, "Successfully started advertising");
             }
 
             @Override
             public void onStartFailure(int errorCode) {
                 super.onStartFailure(errorCode);
-                //txtFile.writeToFile("Failed to start advertising");
+                Log.e(logTag, "Failed to start advertising");
             }
         };
     }
