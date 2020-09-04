@@ -118,7 +118,7 @@ public class DatabaseTest {
     }
 
     @Test
-    //Checking valid ID from codeManager can be added to Personal Data table in database: Return true when ID is added successfully
+    //Checking valid ID from codeManager can be added to Personal Data table in database when codemanager ID is stored in a string: Return true when ID is added successfully
     public void PersonalIDisAddedGeneratedString_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
         boolean IDisAdded = myDB.insertPersonalData(personalID);
@@ -193,7 +193,7 @@ public class DatabaseTest {
 |   Description: Checking that date is updated if ID already exists in database
 *===========================================================================*/
         @Test
-    //Checking that date is updated if ID exists
+    //Checking that date is updated in Encounters table if ID exists
     public void EncounterDate_isUpdated() throws Exception{
             myDB.insertEncounterData("ID567891235673dd2aUp", "2020-08-31", "10:09");
             boolean DataIsUpdated = myDB.insertEncounterData("ID567891235673dd2aUp", "2020-09-01", "01:44");
@@ -213,12 +213,12 @@ public class DatabaseTest {
     }
 
     @Test
-    //Checking that current date is added to database
+    //Checking that current date is added to Encounters table
     public void currentDate_isAdded() throws Exception{
         String encounterDate = Date();
         myDB.insertEncounterData("IDtestUniqueID", encounterDate, "4.00pm");
         String actualData = myDB.getEncounterData("IDtestUniqueID");
-        String expectedData = "IDtestUniqueID, 2020-09-01, 4.00pm";
+        String expectedData = "IDtestUniqueID, " + Date() + ", 4.00pm";
         assertEquals(expectedData, actualData);
     }
 
@@ -240,7 +240,7 @@ public class DatabaseTest {
         String encounterTime = Time();
         myDB.insertEncounterData("IDtestUniqueID", "2020-09-01", encounterTime);
         String actualData = myDB.getEncounterData("IDtestUniqueID");
-        String expectedData = "IDtestUniqueID, 2020-09-01, " + encounterTime;
+        String expectedData = "IDtestUniqueID, 2020-09-01, " + Time();
         assertEquals(expectedData, actualData);
     }
 
