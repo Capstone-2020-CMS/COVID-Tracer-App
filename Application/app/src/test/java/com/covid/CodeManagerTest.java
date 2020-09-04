@@ -11,7 +11,7 @@ public class CodeManagerTest {
     @Test
     public void code_isGenerated(){
         CodeManager cm = new CodeManager();
-        String codeString = cm.generateCode();
+        String codeString = String.valueOf(cm.generateCode());
 
         assertNotNull(codeString);
     }
@@ -19,7 +19,7 @@ public class CodeManagerTest {
     @Test
     public void code_isLength(){
         CodeManager cm = new CodeManager();
-        String codeString = cm.generateCode();
+        String codeString = String.valueOf(cm.generateCode());
 
         assertEquals(20, codeString.length());
 
@@ -28,8 +28,8 @@ public class CodeManagerTest {
     @Test
     public void code_isDifferent(){
         CodeManager cm = new CodeManager();
-        String code1 = cm.generateCode();
-        String code2 = cm.generateCode();
+        String code1 = String.valueOf(cm.generateCode());
+        String code2 = String.valueOf(cm.generateCode());
 
         assertNotEquals(code1, code2);
     }
@@ -37,7 +37,7 @@ public class CodeManagerTest {
     @Test
     public void code_structureCorrect(){
         CodeManager cm = new CodeManager();
-        String code1 = cm.generateCode();
+        String code1 = String.valueOf(cm.generateCode());
 
         assertEquals("4", code1);
     }

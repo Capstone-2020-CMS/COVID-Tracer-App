@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class DatabaseTest {
 
     public DatabaseHelper myDB;
-    public String personalID = CodeManager.generateCode();
+    public String personalID = String.valueOf(CodeManager.generateCode());
 
     @Before
     public void Setup() {
@@ -113,7 +113,7 @@ public class DatabaseTest {
     //Checking valid ID from codeManager can be added to Personal Data table in database: Return true when ID is added successfully
     public void PersonalIDisAddedCodeManager_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
-        boolean IDisAdded = myDB.insertPersonalData(CodeManager.generateCode());
+        boolean IDisAdded = myDB.insertPersonalData(String.valueOf(CodeManager.generateCode()));
         assertTrue(IDisAdded);
     }
 
