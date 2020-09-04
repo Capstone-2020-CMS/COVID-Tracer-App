@@ -177,7 +177,7 @@ public class DatabaseTest {
     }
 
     @Test
-    //Checking that dates less than 21 days aren't deleted
+    //Checking that dates exactly 21 days ago aren't deleted
     public void agedDateIsDeletedExactly21() throws Exception{
         String encounterDate = date21daysAgo();
         myDB.insertEncounterData("IDDate=21days", encounterDate, "4.00pm");
@@ -202,8 +202,8 @@ public class DatabaseTest {
 
 
     /*=============================================================================
-|          Task:  Update date in database
-|   Description: Checking that date is updated if ID already exists in database
+|          Task:  Get date
+|   Description: Testing to check Date() method
 *===========================================================================*/
     private String Date() {
         Calendar cal = Calendar.getInstance();
@@ -213,6 +213,7 @@ public class DatabaseTest {
     }
 
     @Test
+    //Checking that current date is added to database
     public void currentDate_isAdded() throws Exception{
         String encounterDate = Date();
         myDB.insertEncounterData("IDtestUniqueID", encounterDate, "4.00pm");
@@ -223,8 +224,8 @@ public class DatabaseTest {
 
 
         /*=============================================================================
-|          Task:  Update date in database
-|   Description: Checking that date is updated if ID already exists in database
+|          Task:  Get time
+|   Description: Testing to check Time() method
 *===========================================================================*/
         private String Time() {
             Calendar cal = Calendar.getInstance();
@@ -234,6 +235,7 @@ public class DatabaseTest {
         }
 
     @Test
+    //Checking that current time is added to database
     public void currentTime_isAdded() throws Exception{
         String encounterTime = Time();
         myDB.insertEncounterData("IDtestUniqueID", "2020-09-01", encounterTime);
