@@ -3,6 +3,7 @@ package com.covid.bluetooth;
 import android.app.Notification;
 import android.app.Service;
 import android.bluetooth.le.AdvertiseCallback;
+import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
@@ -51,7 +52,7 @@ public class BLEService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         bleManager.startAdvertising(advertiseCallback);
-        //bleManager.startScanning(scanCallback);
+        bleManager.startScanning(scanCallback);
         startForeground(1, createForegroundNotification());
         return Service.START_STICKY;
     }
@@ -104,37 +105,34 @@ public class BLEService extends Service {
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
 
-                Map<ParcelUuid, byte[]> raw = result.getScanRecord().getServiceData();
+                byte[] byteData = result.getScanRecord().getManufacturerSpecificData(1313);
 
-                Object[] uuidAGAIN;
+                if (byteData != null) {
+                    long bigBrain = getLongFromByteArray(byteData);
 
-                Set<ParcelUuid> set = raw.keySet();
-                uuidAGAIN = set.toArray();
+                    try {
+                        bleEncounterID = String.valueOf(bigBrain);
+                    }
+                    catch (NullPointerException ex) {
+                        Log.e(logTag, ex.toString());
+                    }
 
-                UUID uuid = result.getScanRecord().getServiceUuids().get(0).getUuid();
+                    Log.i(logTag, bleEncounterID);
 
-                long bigBrain = getLongFromByteArray(raw.get(uuidAGAIN[0]));
+                    bleEncounterDate = getCurrentDate();
+                    bleEncounterTime = getCurrentTime();
+                    boolean dbResult = recordEncountersData(bleEncounterID, bleEncounterDate, bleEncounterTime);
 
-                try {
-                    bleEncounterID = String.valueOf(bigBrain);
-                }
-                catch (NullPointerException ex) {
-                    Log.e(logTag, ex.toString());
-                }
-
-                Log.i(logTag, bleEncounterID);
-
-                bleEncounterDate = getCurrentDate();
-                bleEncounterTime = getCurrentTime();
-                boolean dbResult = recordEncountersData(bleEncounterID, bleEncounterDate, bleEncounterTime);
-
-                String message = "";
-                if (dbResult) {
-                    message = "Successful db stuff";
+                    String message = "";
+                    if (dbResult) {
+                        message = "Successful db stuff";
+                    } else {
+                        message = "Failed db stuff";
+                    }
+                    Log.i(logTag, message);
                 } else {
-                    message = "Failed db stuff";
+                    Log.e(logTag, "No service data was found");
                 }
-                Log.i(logTag, message);
             }
 
             @Override
