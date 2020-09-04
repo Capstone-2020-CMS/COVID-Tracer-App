@@ -190,7 +190,7 @@ public class DatabaseTest {
 
         /*=============================================================================
 |          Task:  Update date in database
-|   Description: Checking that date is updated if ID already exists in database
+|   Description: Checking that date is updated if ID already exists in Encounters table
 *===========================================================================*/
         @Test
     //Checking that date is updated in Encounters table if ID exists
