@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.covid.MainActivity;
 
-import static com.covid.bluetooth.BLEService.myDB;
+import static com.covid.MainActivity.myDB;
 
 public class EncountersData {
 

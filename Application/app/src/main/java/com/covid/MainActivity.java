@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.ParcelUuid;
 
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.covid.bluetooth.BLEReceiver;
 import com.covid.database.DatabaseHelper;
@@ -26,6 +28,12 @@ import com.covid.database.PersonalData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -37,6 +45,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.covid.bluetooth.BLEService;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.covid.utils.CodeManager.longToByteArray;
@@ -51,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
+
+    private boolean readyToStart = false;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +70,12 @@ public class MainActivity extends AppCompatActivity {
 
         myDB = new DatabaseHelper(this);
 
-
-
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
 
         // Notification setup
         createNotificationChannel(getApplicationContext());
         notificationManager = NotificationManagerCompat.from(this);
-
-        // First time setup
-        firstTimeSetup();
 
         // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -83,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
+    }
+
+    private void start() {
+        firstTimeSetup();
 
         // Start the bluetooth le service on a new thread
         Thread bleThread = new Thread() {
@@ -99,22 +109,43 @@ public class MainActivity extends AppCompatActivity {
 
     // Checks necessary permissions have been enabled
     private void checkPermissions() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        String[] permissions;
+
         // Fine Location
         if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        }
-        // Bluetooth
-        if (ContextCompat.checkSelfPermission(this, "android.permission.BLUETOOTH") != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH},1);
-        }
-        // Bluetooth Admin
-        if (ContextCompat.checkSelfPermission(this, "android.permission.BLUETOOTH_ADMIN") != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN},1);
+            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         // External Storage
         if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+            arrayList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
+
+        if (arrayList.size() != 0) {
+            permissions = new String[arrayList.size()];
+
+            for (int i = 0; i < arrayList.size(); i++) {
+                permissions[i] = arrayList.get(i);
+            }
+
+            ActivityCompat.requestPermissions(this, permissions,1);
+        } else {
+            start();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int i = 0; i < grantResults.length; i++) {
+            if (grantResults[i] == -1) {
+                Toast.makeText(MainActivity.this, "Please enable permissions or the application won't work as intended", Toast.LENGTH_SHORT);
+                return;
+            }
+        }
+        start();
     }
 
     private void firstTimeSetup() {

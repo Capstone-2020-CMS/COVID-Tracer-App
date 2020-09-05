@@ -38,7 +38,6 @@ public class BLEService extends Service {
     public String bleEncounterDate;
     public String bleEncounterTime;
     public String bleEncounterID;
-    public static DatabaseHelper myDB;
     private String logTag = "COVID";
 
     @Override
@@ -46,7 +45,6 @@ public class BLEService extends Service {
         super.onCreate();
         createCallback();
         bleManager = new BLEManager(getApplicationContext());
-        myDB = new DatabaseHelper(getApplicationContext());
     }
 
     @Override

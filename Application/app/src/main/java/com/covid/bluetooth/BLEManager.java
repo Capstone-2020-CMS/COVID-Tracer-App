@@ -11,14 +11,12 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
-import android.content.Intent;
-import android.os.ParcelUuid;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
+import static com.covid.MainActivity.myDB;
 import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.longToByteArray;
 
@@ -60,8 +58,9 @@ public class BLEManager {
                 .setConnectable(false)
                 .build();
         // Advertise data
-        // TODO replace with cuba's get code method
-        long code = generateCode();
+        String strCode = myDB.getPersonalInfoData();
+        Log.i("COVID", "Personal Code from DB " + strCode);
+        long code = Long.parseLong(strCode);
         byte[] byteCode = longToByteArray(code);
         this.advertiseData = new AdvertiseData.Builder()
                 .setIncludeDeviceName(false)
