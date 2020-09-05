@@ -47,23 +47,6 @@ import static com.covid.utils.utilNotification.createNotificationChannel;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     public static final String NOTIFICATION_CHANNEL = "0";
-//    public static BluetoothManager bluetoothManager;
-//    public static BluetoothAdapter bluetoothAdapter;
-
-    // Scanner
-//    public static BluetoothLeScanner bleScanner;
-//    public static ScanSettings scanSettings;
-//    public static ScanFilter scanFilter;
-
-    // Advertiser
-//    public static BluetoothLeAdvertiser bleAdvertiser;
-//    public static AdvertiseSettings advertiseSettings;
-//    public static AdvertiseData advertiseData;
-//    public static UUID serviceUUID;
-
-    // Receiver
-//    public static BLEReceiver bleReceiver;
-//    public static IntentFilter intentFilter;
 
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
@@ -86,16 +69,9 @@ public class MainActivity extends AppCompatActivity {
         // First time setup
         firstTimeSetup();
 
-        // Register broadcast
-//        bleReceiver = new BLEReceiver();
-//        intentFilter = new IntentFilter();
-//        intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
-//        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-//        getApplicationContext().registerReceiver(bleReceiver, intentFilter);
-
+        // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
@@ -115,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         };
-
         bleThread.start();
     }
 
