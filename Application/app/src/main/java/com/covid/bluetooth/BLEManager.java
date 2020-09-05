@@ -28,7 +28,6 @@ public class BLEManager {
 
     private BluetoothLeScanner bluetoothLeScanner;
     private ScanSettings scanSettings;
-    private ParcelUuid serviceUUID;
     private ScanFilter scanFilter;
 
     private BluetoothLeAdvertiser bluetoothLeAdvertiser;
@@ -45,17 +44,13 @@ public class BLEManager {
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
                 .build();
-
-        this.serviceUUID = new ParcelUuid(UUID.fromString("00000000-0000-0521-0000-000000000521"));
+        // Scan filter
         int manufacturerID = 1313;
         byte[] manufacturerByte = new byte[8];
         for (byte b : manufacturerByte) {
             b = 0;
         }
         this.scanFilter = new ScanFilter.Builder()
-                // TODO return back to normal if it doesn't work
-                //.setServiceUuid(serviceUUID)
-                //.setServiceData(serviceUUID, null)
                 .setManufacturerData(manufacturerID, manufacturerByte, manufacturerByte)
                 .build();
         // Advertiser
@@ -64,14 +59,13 @@ public class BLEManager {
                 .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
                 .setConnectable(false)
                 .build();
+        // Advertise data
         // TODO replace with cuba's get code method
         long code = generateCode();
         byte[] byteCode = longToByteArray(code);
         this.advertiseData = new AdvertiseData.Builder()
                 .setIncludeDeviceName(false)
                 .setIncludeTxPowerLevel(false)
-                // TODO if filter does not work look at this
-                .addServiceUuid(serviceUUID)
                 .addManufacturerData(manufacturerID, byteCode)
                 .build();
     }
@@ -80,7 +74,6 @@ public class BLEManager {
         List<ScanFilter> scanFilters = new ArrayList<>();
         scanFilters.add(this.scanFilter);
         this.bluetoothLeScanner.startScan(scanFilters,scanSettings, scanCallback);
-        //this.bluetoothLeScanner.startScan(null,scanSettings, scanCallback);
     }
 
     public void startAdvertising(AdvertiseCallback advertiseCallback) {
