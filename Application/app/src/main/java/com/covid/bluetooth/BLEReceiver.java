@@ -3,23 +3,16 @@ package com.covid.bluetooth;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
+import android.widget.Toast;
 
-import com.covid.utils.txtFile;
+import androidx.core.content.ContextCompat;
 
 public class BLEReceiver extends BroadcastReceiver {
-    public BLEReceiver() {
-        super();
-    }
-
-    @Override
-    public IBinder peekService(Context myContext, Intent service) {
-        return super.peekService(myContext, service);
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String intentAction = intent.getAction();
-        txtFile.writeToFile("WORKING WORKING WORKING");
+        Intent serviceIntent = new Intent(context.getApplicationContext(), BLEService.class);
+        ContextCompat.startForegroundService(context.getApplicationContext(), serviceIntent);
+        Toast.makeText(context.getApplicationContext(), "Service has started", Toast.LENGTH_LONG).show();
     }
 }
