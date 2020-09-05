@@ -13,22 +13,20 @@ import java.util.Calendar;
 //Can be modified to generate more codes to intensify privacy preservation
 public class CodeManager {
 
-    public CodeManager(){
-
-    }
-
-
+    // Generates a 13 character code based off of time in milliseconds
     public static long generateCode(){
         //Get time from calendar in milliseconds
         return Calendar.getInstance().getTimeInMillis();
     }
 
+    // Converts a long number to a byte array
     public static byte[] longToByteArray(final long i) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(i);
         return buffer.array();
     }
 
+    // Converts a byte array to a long number
     public static long getLongFromByteArray(byte[] array) {
         ByteBuffer b = ByteBuffer.wrap(array);
         return b.getLong();
