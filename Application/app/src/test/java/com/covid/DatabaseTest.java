@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 public class DatabaseTest {
 
     public DatabaseHelper myDB;
-    public String personalID = CodeManager.generateCode();
+    public String personalID = String.valueOf(CodeManager.generateCode());
 
     @Before
     public void Setup() {
@@ -113,12 +113,12 @@ public class DatabaseTest {
     //Checking valid ID from codeManager can be added to Personal Data table in database: Return true when ID is added successfully
     public void PersonalIDisAddedCodeManager_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
-        boolean IDisAdded = myDB.insertPersonalData(CodeManager.generateCode());
+        boolean IDisAdded = myDB.insertPersonalData(String.valueOf(CodeManager.generateCode()));
         assertTrue(IDisAdded);
     }
 
     @Test
-    //Checking valid ID from codeManager can be added to Personal Data table in database: Return true when ID is added successfully
+    //Checking valid ID from codeManager can be added to Personal Data table in database when codemanager ID is stored in a string: Return true when ID is added successfully
     public void PersonalIDisAddedGeneratedString_returnsTrue() throws Exception{
         //Check that test passes when an ID that is text CAN be added to the database
         boolean IDisAdded = myDB.insertPersonalData(personalID);
@@ -177,7 +177,7 @@ public class DatabaseTest {
     }
 
     @Test
-    //Checking that dates less than 21 days aren't deleted
+    //Checking that dates exactly 21 days ago aren't deleted
     public void agedDateIsDeletedExactly21() throws Exception{
         String encounterDate = date21daysAgo();
         myDB.insertEncounterData("IDDate=21days", encounterDate, "4.00pm");
@@ -190,10 +190,10 @@ public class DatabaseTest {
 
         /*=============================================================================
 |          Task:  Update date in database
-|   Description: Checking that date is updated if ID already exists in database
+|   Description: Checking that date is updated if ID already exists in Encounters table
 *===========================================================================*/
         @Test
-    //Checking that date is updated if ID exists
+    //Checking that date is updated in Encounters table if ID exists
     public void EncounterDate_isUpdated() throws Exception{
             myDB.insertEncounterData("ID567891235673dd2aUp", "2020-08-31", "10:09");
             boolean DataIsUpdated = myDB.insertEncounterData("ID567891235673dd2aUp", "2020-09-01", "01:44");
@@ -202,8 +202,8 @@ public class DatabaseTest {
 
 
     /*=============================================================================
-|          Task:  Update date in database
-|   Description: Checking that date is updated if ID already exists in database
+|          Task:  Get date
+|   Description: Testing to check Date() method
 *===========================================================================*/
     private String Date() {
         Calendar cal = Calendar.getInstance();
@@ -213,18 +213,19 @@ public class DatabaseTest {
     }
 
     @Test
+    //Checking that current date is added to Encounters table
     public void currentDate_isAdded() throws Exception{
         String encounterDate = Date();
         myDB.insertEncounterData("IDtestUniqueID", encounterDate, "4.00pm");
         String actualData = myDB.getEncounterData("IDtestUniqueID");
-        String expectedData = "IDtestUniqueID, 2020-09-01, 4.00pm";
+        String expectedData = "IDtestUniqueID, " + Date() + ", 4.00pm";
         assertEquals(expectedData, actualData);
     }
 
 
         /*=============================================================================
-|          Task:  Update date in database
-|   Description: Checking that date is updated if ID already exists in database
+|          Task:  Get time
+|   Description: Testing to check Time() method
 *===========================================================================*/
         private String Time() {
             Calendar cal = Calendar.getInstance();
@@ -234,11 +235,12 @@ public class DatabaseTest {
         }
 
     @Test
+    //Checking that current time is added to database
     public void currentTime_isAdded() throws Exception{
         String encounterTime = Time();
         myDB.insertEncounterData("IDtestUniqueID", "2020-09-01", encounterTime);
         String actualData = myDB.getEncounterData("IDtestUniqueID");
-        String expectedData = "IDtestUniqueID, 2020-09-01, " + encounterTime;
+        String expectedData = "IDtestUniqueID, 2020-09-01, " + Time();
         assertEquals(expectedData, actualData);
     }
 

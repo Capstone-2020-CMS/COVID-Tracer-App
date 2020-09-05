@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         myDB = new DatabaseHelper(this);
 
+
+
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
 
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         };
+
         bleThread.start();
     }
 

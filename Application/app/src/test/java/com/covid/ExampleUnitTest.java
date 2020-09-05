@@ -47,7 +47,7 @@ public class ExampleUnitTest {
     @Test
     public void code_isCorrectLength(){
         String input;
-        input = CodeManager.generateCode();
+        input = String.valueOf(CodeManager.generateCode());
 
         assertEquals(16, input.length());
     }
