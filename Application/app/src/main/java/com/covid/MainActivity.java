@@ -60,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
-
-    private boolean readyToStart = false;
+    public static int bubbleSize = 0;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         bleThread.start();
+
+        bubbleSize = myDB.getNumOfEncounters();
     }
 
     // Checks necessary permissions have been enabled

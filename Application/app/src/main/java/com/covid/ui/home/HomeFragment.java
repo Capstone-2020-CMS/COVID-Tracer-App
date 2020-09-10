@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.covid.R;
 
+import static com.covid.MainActivity.bubbleSize;
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -30,6 +32,9 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });
+        // Get the text view for bubble size and set it
+        TextView txtBubbleSize = root.findViewById(R.id.txtBubbleSize);
+        txtBubbleSize.setText(Integer.toString(bubbleSize));
         return root;
     }
 }
