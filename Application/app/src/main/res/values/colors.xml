@@ -8,4 +8,5 @@
     <color name="secondaryDarkColor">#0094cc</color>
     <color name="primaryTextColor">#fafafa</color>
     <color name="secondaryTextColor">#fafafa</color>
+    <color name="charcoalGrey">#404040</color>
 </resources>
