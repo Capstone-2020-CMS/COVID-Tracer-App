@@ -48,6 +48,10 @@ import com.covid.bluetooth.BLEService;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import com.amazonaws.mobileconnectors.lambdainvoker.*;
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.regions.Regions;
+
 import static com.covid.utils.CodeManager.longToByteArray;
 import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
