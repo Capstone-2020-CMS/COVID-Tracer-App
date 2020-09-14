@@ -8,8 +8,8 @@ public class RequestCloudData {
         return infectedUserID;
     }
 
-    public void setFirstName(String firstName) {
-        this.infectedUserID = firstName;
+    public void setInfectedUsers(String infectedUserID) {
+        this.infectedUserID = infectedUserID;
     }
 
 

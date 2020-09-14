@@ -7,12 +7,12 @@ public class ResponseCloudData {
         return infectedUserEncounters;
     }
 
-    public void setInfectedUsers(String greetings) {
+    public void setInfectedUsers(String infectedUserEncounters) {
         this.infectedUserEncounters = infectedUserEncounters;
     }
 
-    public ResponseCloudData(String greetings) {
-        this.infectedUserEncounters = greetings;
+    public ResponseCloudData(String infectedUserEncounters) {
+        this.infectedUserEncounters = infectedUserEncounters;
     }
 
     public ResponseCloudData() {
