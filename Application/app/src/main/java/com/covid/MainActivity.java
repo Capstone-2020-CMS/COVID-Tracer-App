@@ -48,6 +48,7 @@ import com.covid.bluetooth.BLEService;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static com.covid.ui.home.HomeFragment.toggleCardColour;
 import static com.covid.utils.CodeManager.longToByteArray;
 import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
@@ -89,20 +90,18 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
     }
 
+    private void checkBluetoothService() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (!adapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
     private void start() {
         firstTimeSetup();
-
-        // Start the bluetooth le service on a new thread
-        Thread bleThread = new Thread() {
-            @Override
-            public void run() {
-                // Do something martin
-                Intent intent = new Intent(getApplicationContext(), BLEService.class);
-                startService(intent);
-            }
-        };
-
-        bleThread.start();
+        checkBluetoothService();
 
         bubbleSize = myDB.getNumOfEncounters();
     }
@@ -114,12 +113,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Fine Location
         if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") != PackageManager.PERMISSION_GRANTED) {
-            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
             arrayList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         // External Storage
         if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
-            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
             arrayList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
@@ -146,6 +143,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Bluetooth
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                // Start the bluetooth le service on a new thread
+                Thread bleThread = new Thread() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(getApplicationContext(), BLEService.class);
+                        startService(intent);
+                    }
+                };
+
+                bleThread.start();
+
+                toggleCardColour();
+            } else {
+                Toast.makeText(MainActivity.this, "Please enable bluetooth so the app works as intended", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void firstTimeSetup() {
