@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.LocationManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public static BluetoothAdapter adapter;
     public static LocationManager locationManager;
     public static String providerName;
+    public static WifiManager wifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,9 @@ public class MainActivity extends AppCompatActivity {
         // Get the location manager
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         providerName = locationManager.getBestProvider(new Criteria(), true);
+
+        // Get the WIFI manager
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
@@ -127,6 +132,10 @@ public class MainActivity extends AppCompatActivity {
         // External Storage
         if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
             arrayList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        // WIFI
+        if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_WIFI_STATE") != PackageManager.PERMISSION_GRANTED) {
+            arrayList.add(Manifest.permission.ACCESS_WIFI_STATE);
         }
 
         if (arrayList.size() != 0) {

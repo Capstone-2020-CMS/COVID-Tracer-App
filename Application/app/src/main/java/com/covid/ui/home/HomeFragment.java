@@ -29,6 +29,7 @@ import static com.covid.MainActivity.adapter;
 import static com.covid.MainActivity.bubbleSize;
 import static com.covid.MainActivity.locationManager;
 import static com.covid.MainActivity.providerName;
+import static com.covid.MainActivity.wifiManager;
 
 public class HomeFragment extends Fragment {
 
@@ -70,6 +71,13 @@ public class HomeFragment extends Fragment {
             toggleCardColour(false, cardLocationStatus);
         }
 
+        // Wifi
+        if (wifiManager.isWifiEnabled()) {
+            toggleCardColour(true, cardInternetStatus);
+        } else {
+            toggleCardColour(false, cardInternetStatus);
+        }
+
         cardBluetoothStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +98,18 @@ public class HomeFragment extends Fragment {
                     startActivity(enableGPSIntent);
                 } else {
                     Toast.makeText(getContext(), "Location services are already enabled", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        cardInternetStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!wifiManager.isWifiEnabled()) {
+                    Intent enableWifiIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(enableWifiIntent);
+                } else {
+                    Toast.makeText(getContext(), "WIFI is already enabled", Toast.LENGTH_SHORT).show();
                 }
             }
         });
