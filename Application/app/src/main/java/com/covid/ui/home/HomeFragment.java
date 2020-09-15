@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.covid.R;
 import com.google.android.material.card.MaterialCardView;
 
+import static com.covid.MainActivity.bluetoothEnabled;
 import static com.covid.MainActivity.bubbleSize;
 
 public class HomeFragment extends Fragment {
@@ -31,10 +32,15 @@ public class HomeFragment extends Fragment {
         txtBubbleSize.setText(Integer.toString(bubbleSize));
         cardBluetoothStatus = root.findViewById(R.id.cardBluetoothStatus);
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
+
+        if (bluetoothEnabled) {
+            toggleCardColour();
+        }
+
         return root;
     }
 
-    public static void toggleCardColour() {
+    private void toggleCardColour() {
         cardBluetoothStatus.setCardBackgroundColor(motorwayGreen);
     }
 }

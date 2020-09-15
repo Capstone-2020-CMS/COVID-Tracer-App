@@ -46,12 +46,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.covid.bluetooth.BLEService;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-import static com.covid.ui.home.HomeFragment.toggleCardColour;
-import static com.covid.utils.CodeManager.longToByteArray;
-import static com.covid.utils.CodeManager.generateCode;
-import static com.covid.utils.CodeManager.getLongFromByteArray;
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
+    public static boolean bluetoothEnabled = false;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         if (!adapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+            startBluetoothService();
         }
     }
 
@@ -152,18 +150,7 @@ public class MainActivity extends AppCompatActivity {
         // Bluetooth
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
-                // Start the bluetooth le service on a new thread
-                Thread bleThread = new Thread() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(getApplicationContext(), BLEService.class);
-                        startService(intent);
-                    }
-                };
-
-                bleThread.start();
-
-                toggleCardColour();
+                startBluetoothService();
             } else {
                 Toast.makeText(MainActivity.this, "Please enable bluetooth so the app works as intended", Toast.LENGTH_SHORT).show();
             }
@@ -183,5 +170,19 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("firstTime", true);
             editor.commit();
         }
+    }
+
+    private void startBluetoothService() {
+        // Start the bluetooth le service on a new thread
+        Thread bleThread = new Thread() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getApplicationContext(), BLEService.class);
+                startService(intent);
+            }
+        };
+
+        bleThread.start();
+        bluetoothEnabled = true;
     }
 }
