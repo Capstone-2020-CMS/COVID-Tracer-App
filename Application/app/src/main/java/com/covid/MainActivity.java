@@ -15,6 +15,8 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 
@@ -58,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
     public static BluetoothAdapter adapter;
-    
+    public static LocationManager locationManager;
+    public static String providerName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the bluetooth adapter
         adapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Get the location manager
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        providerName = locationManager.getBestProvider(new Criteria(), true);
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();

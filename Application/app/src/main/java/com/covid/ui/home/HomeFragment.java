@@ -3,7 +3,11 @@ package com.covid.ui.home;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +27,20 @@ import com.google.android.material.card.MaterialCardView;
 import static android.app.Activity.RESULT_OK;
 import static com.covid.MainActivity.adapter;
 import static com.covid.MainActivity.bubbleSize;
+import static com.covid.MainActivity.locationManager;
+import static com.covid.MainActivity.providerName;
 
 public class HomeFragment extends Fragment {
 
     private final int REQUEST_ENABLE_BT = 1;
-    private static MaterialCardView cardBluetoothStatus;
+    private final int REQUEST_ENABLE_GPS = 2;
+    private final int REQUEST_ENABLE_INTERNET = 3;
     private int motorwayGreen;
     private int red;
+
+    private MaterialCardView cardBluetoothStatus;
+    private MaterialCardView cardLocationStatus;
+    private MaterialCardView cardInternetStatus;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -37,14 +48,26 @@ public class HomeFragment extends Fragment {
         // Get the text view for bubble size and set it
         TextView txtBubbleSize = root.findViewById(R.id.txtBubbleSize);
         txtBubbleSize.setText(Integer.toString(bubbleSize));
+
         cardBluetoothStatus = root.findViewById(R.id.cardBluetoothStatus);
+        cardLocationStatus = root.findViewById(R.id.cardLocationStatus);
+        cardInternetStatus = root.findViewById(R.id.cardInternetStatus);
+
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         red = getResources().getColor(R.color.red);
 
+        // Bluetooth
         if (adapter.isEnabled()) {
-            toggleCardColour(true);
+            toggleCardColour(true, cardBluetoothStatus);
         } else {
-            toggleCardColour(false);
+            toggleCardColour(false, cardBluetoothStatus);
+        }
+
+        // Location
+        if (locationManager.isProviderEnabled(providerName)) {
+            toggleCardColour(true, cardLocationStatus);
+        } else {
+            toggleCardColour(false, cardLocationStatus);
         }
 
         cardBluetoothStatus.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +82,18 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        cardLocationStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (providerName == null || !locationManager.isProviderEnabled(providerName)) {
+                    Intent enableGPSIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(enableGPSIntent);
+                } else {
+                    Toast.makeText(getContext(), "Location services are already enabled", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         return root;
     }
 
@@ -69,18 +104,18 @@ public class HomeFragment extends Fragment {
         // Bluetooth
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
-                toggleCardColour(true);
+                toggleCardColour(true, cardBluetoothStatus);
             } else {
                 Toast.makeText(this.getContext(), "Bluetooth was not enabled", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void toggleCardColour(boolean green) {
+    private void toggleCardColour(boolean green, MaterialCardView cardView) {
         if (green) {
-            cardBluetoothStatus.setCardBackgroundColor(motorwayGreen);
+            cardView.setCardBackgroundColor(motorwayGreen);
         } else {
-            cardBluetoothStatus.setCardBackgroundColor(red);
+            cardView.setCardBackgroundColor(red);
         }
     }
 }
