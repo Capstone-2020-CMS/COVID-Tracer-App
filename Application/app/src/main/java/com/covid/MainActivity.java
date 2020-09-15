@@ -50,14 +50,14 @@ import java.util.ArrayList;
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_ENABLE_BT = 1;
+    private final int REQUEST_ENABLE_BT = 1;
     public static final String NOTIFICATION_CHANNEL = "0";
 
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
-    public static boolean bluetoothEnabled = false;
+    public static BluetoothAdapter adapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // Get the bluetooth adapter
+        adapter = BluetoothAdapter.getDefaultAdapter();
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
@@ -183,6 +186,5 @@ public class MainActivity extends AppCompatActivity {
         };
 
         bleThread.start();
-        bluetoothEnabled = true;
     }
 }
