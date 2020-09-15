@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
             Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
+
+
+                    JSONArray jsonArray = response;
+
                     Log.d("response", response.toString());
 
                 }
