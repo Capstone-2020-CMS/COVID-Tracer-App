@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
 
+    public static boolean activeExpo;
+
 
 
     
@@ -184,8 +186,9 @@ public class MainActivity extends AppCompatActivity {
             // marks the first time the code has run.
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("firstTime", true);
-            // Set the infectionActive boolean to mark the user as un-infected
-            editor.putBoolean("infectionActive", false);
+
+            activeExpo = false;
+
 
             editor.commit();
         }

@@ -17,6 +17,9 @@ import androidx.lifecycle.ViewModelProviders;
 import com.covid.R;
 import com.google.android.material.card.MaterialCardView;
 
+import static com.covid.MainActivity.activeExpo;
+
+
 public class NotificationsFragment extends Fragment {
 
     private static MaterialCardView cardExposure;
@@ -24,7 +27,8 @@ public class NotificationsFragment extends Fragment {
     private static int babyBlue;
     private static LinearLayout layout;
 
-    private Boolean expoState;
+
+
 
 
 
@@ -38,6 +42,7 @@ public class NotificationsFragment extends Fragment {
 
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         babyBlue = getResources().getColor(R.color.primaryLightColor);
+
 
 
 
@@ -62,16 +67,15 @@ public class NotificationsFragment extends Fragment {
 
 
     public void expoHandler(){
-        if (expoState == null || expoState == false){
-            expoState = true;
+        if (activeExpo == false){
+            activeExpo = true;
             cardExposure.setCardBackgroundColor(motorwayGreen);
+
         }
         else{
-            expoState = false;
+            activeExpo = false;
             cardExposure.setCardBackgroundColor(babyBlue);
         }
-
-
     }
 
 
