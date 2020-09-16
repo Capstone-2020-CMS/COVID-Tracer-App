@@ -57,6 +57,74 @@ public class HomeFragment extends Fragment {
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         red = getResources().getColor(R.color.red);
 
+        // Check the status of vital services
+        checkStatus();
+
+        // Bluetooth card on click
+        cardBluetoothStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!adapter.isEnabled()) {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                } else {
+                    Toast.makeText(getContext(), "Bluetooth is already enabled", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Location card on click
+        cardLocationStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (providerName == null || !locationManager.isProviderEnabled(providerName)) {
+                    Intent enableGPSIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(enableGPSIntent);
+                } else {
+                    Toast.makeText(getContext(), "Location services are already enabled", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Internet card on click
+        cardInternetStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!wifiManager.isWifiEnabled()) {
+                    Intent enableWifiIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(enableWifiIntent);
+                } else {
+                    Toast.makeText(getContext(), "WIFI is already enabled", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        checkStatus();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Bluetooth
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                toggleCardColour(true, cardBluetoothStatus);
+            } else {
+                Toast.makeText(this.getContext(), "Bluetooth was not enabled", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Function that checks the status of services and toggles colour as required
+    private void checkStatus() {
         // Bluetooth
         if (adapter.isEnabled()) {
             toggleCardColour(true, cardBluetoothStatus);
@@ -76,58 +144,6 @@ public class HomeFragment extends Fragment {
             toggleCardColour(true, cardInternetStatus);
         } else {
             toggleCardColour(false, cardInternetStatus);
-        }
-
-        cardBluetoothStatus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!adapter.isEnabled()) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                } else {
-                    Toast.makeText(getContext(), "Bluetooth is already enabled", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        cardLocationStatus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (providerName == null || !locationManager.isProviderEnabled(providerName)) {
-                    Intent enableGPSIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(enableGPSIntent);
-                } else {
-                    Toast.makeText(getContext(), "Location services are already enabled", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        cardInternetStatus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!wifiManager.isWifiEnabled()) {
-                    Intent enableWifiIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                    startActivity(enableWifiIntent);
-                } else {
-                    Toast.makeText(getContext(), "WIFI is already enabled", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        return root;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Bluetooth
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                toggleCardColour(true, cardBluetoothStatus);
-            } else {
-                Toast.makeText(this.getContext(), "Bluetooth was not enabled", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
