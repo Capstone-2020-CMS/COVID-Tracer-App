@@ -2,13 +2,19 @@ package com.covid.gps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.covid.MainActivity;
 import com.covid.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,8 +22,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import java.util.concurrent.Executor;
+
+import static com.covid.MainActivity.mFusedLocationProviderClient;
 
 public class MapsFragment extends Fragment {
+
+    private GoogleMap nMap;
+    private static final int DEFAULT_ZOOM = 15;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -32,9 +47,12 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            LatLng sydney = new LatLng(-34, 151);
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            nMap = googleMap;
+
+            if (ContextCompat.checkSelfPermission(getContext(), "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+                googleMap.setMyLocationEnabled(true);
+                getLocation();
+            }
         }
     };
 
@@ -54,5 +72,20 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+    }
+
+    private void getLocation() {
+        Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+        locationResult.addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful()) {
+                    Location mLastKnownLocation = task.getResult();
+                    if (mLastKnownLocation != null) {
+                        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                    }
+                }
+            }
+        });
     }
 }

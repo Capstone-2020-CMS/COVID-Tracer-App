@@ -1,40 +1,17 @@
 package com.covid;
 
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.AdvertiseData;
-import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.BluetoothLeAdvertiser;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanSettings;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.ParcelUuid;
-
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.covid.bluetooth.BLEReceiver;
-import com.covid.database.DatabaseHelper;
-import com.covid.database.PersonalData;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +24,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.covid.bluetooth.BLEService;
+import com.covid.database.DatabaseHelper;
+import com.covid.database.PersonalData;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
@@ -64,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static LocationManager locationManager;
     public static String providerName;
     public static WifiManager wifiManager;
+    public static FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the WIFI manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        // Get the fused location provider client
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
