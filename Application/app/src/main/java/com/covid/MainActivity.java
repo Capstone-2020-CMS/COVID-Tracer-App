@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myDB = new DatabaseHelper(this);
+        if (myDB == null) {
+            myDB = new DatabaseHelper(this);
+        }
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
@@ -82,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
         // Get the fused location provider client
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (mFusedLocationProviderClient == null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        }
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();

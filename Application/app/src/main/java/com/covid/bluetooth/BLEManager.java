@@ -13,6 +13,8 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.util.Log;
 
+import com.covid.database.DatabaseHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +60,9 @@ public class BLEManager {
                 .setConnectable(false)
                 .build();
         // Advertise data
+        if (myDB == null) {
+            myDB = new DatabaseHelper(context);
+        }
         String strCode = myDB.getPersonalInfoData();
         Log.i("COVID", "Personal Code from DB " + strCode);
         long code = Long.parseLong(strCode);
