@@ -15,9 +15,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.covid.R;
+import com.covid.database.DatabaseHelper;
 import com.google.android.material.card.MaterialCardView;
 
 import static com.covid.MainActivity.activeExpo;
+import static com.covid.MainActivity.myID;
 
 
 public class NotificationsFragment extends Fragment {
@@ -26,6 +28,8 @@ public class NotificationsFragment extends Fragment {
     private static int motorwayGreen;
     private static int babyBlue;
     private static LinearLayout layout;
+
+    private TextView txtIDValue;
 
 
 
@@ -53,6 +57,11 @@ public class NotificationsFragment extends Fragment {
         cardExposure = root.findViewById(R.id.cardExposure);
         layout = root.findViewById(R.id.linearlayoutH);
 
+        txtIDValue = root.findViewById(R.id.txtIDValue);
+        txtIDValue.setText(myID);
+
+
+
 
         txtExposure.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +73,8 @@ public class NotificationsFragment extends Fragment {
 
         return root;
     }
+
+
 
 
     public void expoHandler(){

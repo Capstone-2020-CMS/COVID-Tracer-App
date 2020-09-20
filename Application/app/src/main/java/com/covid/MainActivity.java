@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
+    public static String myID;
 
     public static boolean activeExpo;
 
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         checkBluetoothService();
 
         bubbleSize = myDB.getNumOfEncounters();
+        myID =  myDB.getPersonalInfoData();
     }
 
     // Checks necessary permissions have been enabled
