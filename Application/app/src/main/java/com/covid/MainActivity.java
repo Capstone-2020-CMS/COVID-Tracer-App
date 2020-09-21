@@ -1,5 +1,6 @@
 package com.covid;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
 
@@ -22,6 +24,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.JsonRequest;
 import com.covid.bluetooth.BLEReceiver;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
@@ -36,6 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
@@ -47,6 +51,13 @@ import com.covid.bluetooth.BLEService;
 
 import java.util.ArrayList;
 import java.util.UUID;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import static com.covid.ui.home.HomeFragment.toggleCardColour;
 import static com.covid.utils.CodeManager.longToByteArray;
@@ -66,9 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static boolean activeExpo;
 
+    private String responseJSON;
 
 
-    
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
+
+
+
     }
 
     private void checkBluetoothService() {
@@ -111,6 +128,37 @@ public class MainActivity extends AppCompatActivity {
 
         bubbleSize = myDB.getNumOfEncounters();
         myID =  myDB.getPersonalInfoData();
+
+
+//--------------------------------------------------------------------------------------------------
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
+
+        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                responseJSON = response;
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                responseJSON = "ERROR";
+
+            }
+        };
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
+
+        requestQueue.add(stringRequest);
+
+//--------------------------------------------------------------------------------------------------
+
     }
 
     // Checks necessary permissions have been enabled
@@ -195,5 +243,31 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
     }
-    
+
+
+
+/*    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }*/
+
+
+/*    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, 1)
+            .setSmallIcon(R.drawable.iconbubble)
+            .setContentTitle("Hello")
+            .setContentText("You're a winner")
+            .setPriority(1);*/
+
+
 }
