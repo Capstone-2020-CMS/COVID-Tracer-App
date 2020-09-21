@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
         checkBluetoothService();
 
         bubbleSize = myDB.getNumOfEncounters();
+        // TODO evaluate position of this call
+        myDB.deleteAgedGPSData();
     }
 
     // Checks necessary permissions have been enabled

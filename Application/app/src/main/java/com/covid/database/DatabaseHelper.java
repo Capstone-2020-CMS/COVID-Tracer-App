@@ -127,6 +127,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    public void deleteAgedGPSData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "DELETE FROM GPS_TABLE WHERE DATE < date('now','-21 day')";
+        db.execSQL(sql);
+    }
+
     String[] tableColumns = new String[] {
             "PERSONAL_ID",
             "(SELECT PERSONAL_ID FROM Personal_Info_Table)"
