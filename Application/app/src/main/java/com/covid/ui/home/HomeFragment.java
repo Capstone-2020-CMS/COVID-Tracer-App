@@ -28,6 +28,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.covid.MainActivity.adapter;
 import static com.covid.MainActivity.bubbleSize;
 import static com.covid.MainActivity.locationManager;
+import static com.covid.MainActivity.mainSetupDone;
 import static com.covid.MainActivity.providerName;
 import static com.covid.MainActivity.wifiManager;
 
@@ -58,7 +59,9 @@ public class HomeFragment extends Fragment {
         red = getResources().getColor(R.color.red);
 
         // Check the status of vital services
-        checkStatus();
+        if (mainSetupDone) {
+            checkStatus();
+        }
 
         // Bluetooth card on click
         cardBluetoothStatus.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +109,9 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        checkStatus();
+        if (mainSetupDone) {
+            checkStatus();
+        }
     }
 
     @Override

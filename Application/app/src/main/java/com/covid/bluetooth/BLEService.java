@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.covid.MainActivity.mFusedLocationProviderClient;
+import static com.covid.MainActivity.myDB;
 import static com.covid.database.EncountersData.recordEncountersData;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
 
@@ -80,6 +81,7 @@ public class BLEService extends Service {
                                 if (task.isSuccessful()) {
                                     Location mLastKnownLocation = task.getResult();
                                     if (mLastKnownLocation != null) {
+                                        myDB.insertGPSData(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), getCurrentDate(), getCurrentTime());
                                         Log.i(logTag, String.format("%s,%s", String.valueOf(mLastKnownLocation.getLatitude()), mLastKnownLocation.getLongitude()));
                                     }
                                 }

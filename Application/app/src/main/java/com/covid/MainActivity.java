@@ -31,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
@@ -44,9 +45,10 @@ public class MainActivity extends AppCompatActivity {
     public static int bubbleSize = 0;
     public static BluetoothAdapter adapter;
     public static LocationManager locationManager;
-    public static String providerName;
+    public static String providerName = "gps";
     public static WifiManager wifiManager;
     public static FusedLocationProviderClient mFusedLocationProviderClient;
+    public static boolean mainSetupDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the location manager
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        providerName = locationManager.getBestProvider(new Criteria(), true);
+        //List<String> allProviders = locationManager.getAllProviders();
+        //providerName = locationManager.getBestProvider(new Criteria(), true);
 
         // Get the WIFI manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
+
+        mainSetupDone = true;
     }
 
     private void checkBluetoothService() {
