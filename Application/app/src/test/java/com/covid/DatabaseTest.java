@@ -251,4 +251,15 @@ public class DatabaseTest {
         myDB.insertEncounterData("IDtestUniqueID", "2020-09-01", encounterTime);
         assertEquals(1, myDB.getNumOfEncounters());
     }
+
+    // Test that deleting old GPS data works
+    @Test
+    public void agedGPSDataIsDeleted() {
+        myDB.insertGPSData(1.1, 1.1, "2020-01-01", "14-59");
+        myDB.insertGPSData(1.1, 1.1, "2020-08-31", "10-00");
+        int numBeforeDeletion = myDB.getNumOfGPSData();
+        myDB.deleteAgedGPSData();
+        int numAfterDeletion = myDB.getNumOfGPSData();
+        assertNotEquals(numAfterDeletion, numBeforeDeletion);
+    }
 }

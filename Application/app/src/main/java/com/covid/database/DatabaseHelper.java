@@ -158,4 +158,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int result = cursor.getCount();
         return result;
     }
+
+    public int getNumOfGPSData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM GPS_TABLE";
+        Cursor cursor = db.rawQuery(query, null);
+        int result = cursor.getCount();
+        return result;
+    }
 }
