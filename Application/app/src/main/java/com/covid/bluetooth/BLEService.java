@@ -1,5 +1,6 @@
 package com.covid.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Service;
 import android.bluetooth.le.AdvertiseCallback;
@@ -9,15 +10,22 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.covid.R;
 import com.covid.database.DatabaseHelper;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,6 +35,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.covid.MainActivity.mFusedLocationProviderClient;
+import static com.covid.MainActivity.myDB;
 import static com.covid.database.EncountersData.recordEncountersData;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
 
@@ -45,6 +55,46 @@ public class BLEService extends Service {
         super.onCreate();
         createCallback();
         bleManager = new BLEManager(getApplicationContext());
+        recordGPSCoordinates();
+    }
+
+    private void recordGPSCoordinates() {
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                int delay = 10000;
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mFusedLocationProviderClient == null) {
+                            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(BLEService.this);
+                        }
+
+                        @SuppressLint("MissingPermission") Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+
+                        locationResult.addOnCompleteListener(new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                if (task.isSuccessful()) {
+                                    Location mLastKnownLocation = task.getResult();
+                                    if (mLastKnownLocation != null) {
+                                        myDB.insertGPSData(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), getCurrentDate(), getCurrentTime());
+                                        Log.i(logTag, String.format("%s,%s", String.valueOf(mLastKnownLocation.getLatitude()), mLastKnownLocation.getLongitude()));
+                                    }
+                                }
+                            }
+                        });
+
+                        handler.postDelayed(this, delay);
+                    }
+                }, delay);
+            }
+        };
+
+        thread.start();
     }
 
     @Override
