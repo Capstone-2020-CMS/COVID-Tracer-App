@@ -142,7 +142,7 @@ public class BLEService extends Service {
 
     private String getCurrentTime() {
         Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("HH-mm");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
         String currentTime = dateFormat.format(cal.getTime());
         return currentTime;
     }

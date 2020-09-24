@@ -173,7 +173,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<GPSRecord> getAllGPSData() {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM GPS_TABLE";
+        String query = "SELECT * FROM GPS_TABLE ORDER BY date(DATE)";
 
         ArrayList<GPSRecord> arrayList = new ArrayList<>();
 
@@ -196,7 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<GPSRecord> getGPSDataForDay(String dateCondition) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM GPS_TABLE WHERE strftime('%Y-%m-%d', DATE) = '"+ dateCondition +"'";
+        String query = "SELECT * FROM GPS_TABLE WHERE strftime('%Y-%m-%d', DATE) = '"+ dateCondition +"' ORDER BY time(TIME)";
 
         ArrayList<GPSRecord> arrayList = new ArrayList<>();
 
