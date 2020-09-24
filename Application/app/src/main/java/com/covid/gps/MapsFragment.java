@@ -23,12 +23,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
 import static com.covid.MainActivity.mFusedLocationProviderClient;
+import static com.covid.MainActivity.myDB;
 
 public class MapsFragment extends Fragment {
 
@@ -49,6 +53,17 @@ public class MapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             nMap = googleMap;
+
+            ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay("2020-09-24");
+
+            PolylineOptions options = new PolylineOptions().clickable(true);
+
+            for (GPSRecord record : arrayList) {
+                options.add(new LatLng(record.getLatitude(), record.getLongitude()));
+                nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
+            }
+
+            Polyline polyline = nMap.addPolyline(options);
 
             if (ContextCompat.checkSelfPermission(getContext(), "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
                 googleMap.setMyLocationEnabled(true);
