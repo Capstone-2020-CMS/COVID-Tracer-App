@@ -98,6 +98,36 @@ public class MapsFragment extends Fragment {
 
         // Set the title to the current day
         txtDay.setText(formatDateForTitle(getCurrentDate()));
+
+        txtDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtDay.setText(formatDateForTitle(getCurrentDate()));
+                String dateForDB = formatDateForDB((String) txtDay.getText());
+                ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+                drawTimeline(arrayList);
+            }
+        });
+
+        btnPrevDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtDay.setText(getDate((String) txtDay.getText(), -1));
+                String dateForDB = formatDateForDB((String) txtDay.getText());
+                ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+                drawTimeline(arrayList);
+            }
+        });
+
+        btnNextDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtDay.setText(getDate((String) txtDay.getText(), 1));
+                String dateForDB = formatDateForDB((String) txtDay.getText());
+                ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+                drawTimeline(arrayList);
+            }
+        });
     }
 
     private void getLocation() {
@@ -117,6 +147,8 @@ public class MapsFragment extends Fragment {
 
     // Draws line and markers for specified list
     private void drawTimeline(ArrayList<GPSRecord> arrayList) {
+        nMap.clear();
+
         PolylineOptions options = new PolylineOptions().clickable(true);
 
         for (GPSRecord record : arrayList) {
@@ -133,6 +165,24 @@ public class MapsFragment extends Fragment {
         return dateFormat.format(cal.getTime());
     }
 
+    private String getDate(String input, int difference) {
+        DateFormat dateFormat = new SimpleDateFormat("d MMM yyyy");
+
+        Date date = null;
+        try {
+            date = dateFormat.parse(input);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR, difference);
+
+        Date previousDate = calendar.getTime();
+        return dateFormat.format(previousDate);
+    }
+
     private String formatDateForTitle(String input) {
         Date date = null;
         try {
@@ -141,6 +191,16 @@ public class MapsFragment extends Fragment {
             e.printStackTrace();
         }
         return new SimpleDateFormat("d MMM yyyy").format(date);
+    }
+
+    private String formatDateForDB(String input) {
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("d MMM yyyy").parse(input);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
     private String getCurrentTime() {
