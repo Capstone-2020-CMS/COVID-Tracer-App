@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.covid.MainActivity;
 import com.covid.R;
@@ -28,7 +30,12 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.Executor;
 
 import static com.covid.MainActivity.mFusedLocationProviderClient;
@@ -38,6 +45,10 @@ public class MapsFragment extends Fragment {
 
     private GoogleMap nMap;
     private static final int DEFAULT_ZOOM = 15;
+
+    private TextView txtDay;
+    private Button btnPrevDay;
+    private Button btnNextDay;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -54,21 +65,14 @@ public class MapsFragment extends Fragment {
         public void onMapReady(GoogleMap googleMap) {
             nMap = googleMap;
 
-            ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay("2020-09-24");
-
-            PolylineOptions options = new PolylineOptions().clickable(true);
-
-            for (GPSRecord record : arrayList) {
-                options.add(new LatLng(record.getLatitude(), record.getLongitude()));
-                nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
-            }
-
-            Polyline polyline = nMap.addPolyline(options);
-
             if (ContextCompat.checkSelfPermission(getContext(), "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
                 googleMap.setMyLocationEnabled(true);
                 getLocation();
             }
+
+            // Draw the timeline for today
+            ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(getCurrentDate());
+            drawTimeline(arrayList);
         }
     };
 
@@ -88,6 +92,12 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+        txtDay = view.findViewById(R.id.txtDay);
+        btnPrevDay = view.findViewById(R.id.btnPrevDay);
+        btnNextDay = view.findViewById(R.id.btnNextDay);
+
+        // Set the title to the current day
+        txtDay.setText(formatDateForTitle(getCurrentDate()));
     }
 
     private void getLocation() {
@@ -103,5 +113,39 @@ public class MapsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    // Draws line and markers for specified list
+    private void drawTimeline(ArrayList<GPSRecord> arrayList) {
+        PolylineOptions options = new PolylineOptions().clickable(true);
+
+        for (GPSRecord record : arrayList) {
+            options.add(new LatLng(record.getLatitude(), record.getLongitude()));
+            nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
+        }
+
+        Polyline polyline = nMap.addPolyline(options);
+    }
+
+    private String getCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(cal.getTime());
+    }
+
+    private String formatDateForTitle(String input) {
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(input);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new SimpleDateFormat("d MMM yyyy").format(date);
+    }
+
+    private String getCurrentTime() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        return dateFormat.format(cal.getTime());
     }
 }

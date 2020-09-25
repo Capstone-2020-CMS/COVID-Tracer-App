@@ -136,15 +136,13 @@ public class BLEService extends Service {
     private String getCurrentDate() {
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String currentDate = dateFormat.format(cal.getTime());
-        return currentDate;
+        return dateFormat.format(cal.getTime());
     }
 
     private String getCurrentTime() {
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        String currentTime = dateFormat.format(cal.getTime());
-        return currentTime;
+        return dateFormat.format(cal.getTime());
     }
 
     private void createCallback() {
