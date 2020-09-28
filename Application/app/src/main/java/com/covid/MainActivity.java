@@ -1,5 +1,6 @@
 package com.covid;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.covid.bluetooth.BLEReceiver;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
+import com.covid.utils.NoteManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -63,7 +65,10 @@ import static com.covid.ui.home.HomeFragment.toggleCardColour;
 import static com.covid.utils.CodeManager.longToByteArray;
 import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
+import static com.covid.utils.NoteManager.CHANNEL_1_ID;
+import static com.covid.utils.NoteManager.CHANNEL_2_ID;
 import static com.covid.utils.utilNotification.createNotificationChannel;
+import static com.covid.utils.NoteManager.createNotificationChannels;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;
@@ -78,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
     public static boolean activeExpo;
 
     private String responseJSON;
+
+    // Notification Manager (use compat as it supports backwards compatibility with earlier notifications)
+    private NotificationManagerCompat noteManagerCompat;
 
 
 
@@ -96,6 +104,18 @@ public class MainActivity extends AppCompatActivity {
         // Notification setup
         createNotificationChannel(getApplicationContext());
         notificationManager = NotificationManagerCompat.from(this);
+
+
+        // Note Manager
+
+        createNotificationChannels(getApplicationContext());
+        noteManagerCompat = NotificationManagerCompat.from(this);
+
+
+
+
+
+
 
         // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -128,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
 
         bubbleSize = myDB.getNumOfEncounters();
         myID =  myDB.getPersonalInfoData();
+
+        sendHighPriorityNote("Hello");
 
 
 //--------------------------------------------------------------------------------------------------
@@ -246,28 +268,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-/*    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }*/
+
+    //----------------------------------------------------------------------------------------------
+    // Notifications in MAIN ACTIVITY
+    //----------------------------------------------------------------------------------------------
+    public void sendHighPriorityNote(String contents){
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_emptybubble)
+                .setContentTitle("ALART!")
+                .setContentText("Big Alart Please CODE: Expono")
+                // Set priority is used for API lower than 26/Oreo works like Channel system
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+
+        noteManagerCompat.notify(1, notification);
+
+    }
+    public void sendLowPriorityNote(String contents){
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_emptybubble)
+                .setContentTitle("alart?!")
+                .setContentText("small alart Please CODE: No expono")
+                // Set priority is used for API lower than 26/Oreo works like Channel system
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
+                //.setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+
+        noteManagerCompat.notify(2, notification);
 
 
-/*    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, 1)
-            .setSmallIcon(R.drawable.iconbubble)
-            .setContentTitle("Hello")
-            .setContentText("You're a winner")
-            .setPriority(1);*/
+   }
+
 
 
 }
