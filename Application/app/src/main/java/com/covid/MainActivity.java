@@ -20,19 +20,30 @@ import android.os.ParcelUuid;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.covid.bluetooth.BLEReceiver;
 import com.covid.database.CloudInfectedUsers;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
+import com.covid.database.api.ApiClient;
+import com.covid.database.api.InfectedUserRequest;
+import com.covid.database.api.InfectedUserResponse;
+import com.covid.database.api.PostmanCall;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -52,15 +63,23 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.covid.bluetooth.BLEService;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
+import retrofit2.Call;
+import retrofit2.Callback;
 
+import static com.covid.database.CloudInfectedUsers.createRequest;
 import static com.covid.utils.CodeManager.longToByteArray;
 import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
@@ -75,13 +94,66 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseHelper myDB;
 
     private boolean readyToStart = false;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         myDB = new DatabaseHelper(this);
+
+
+//        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
+//
+//
+//        String url2 = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+//        JsonArrayRequest request2;
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject.put("InfectedUserID","john4449ffff68");
+//        } catch (JSONException e){}
+//        JSONArray jsonRequest = new JSONArray();
+//        jsonRequest.put(jsonObject);
+//
+//        {
+//            Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
+//                @Override
+//                public void onResponse(JSONArray response) {
+//
+//
+//                    JSONArray jsonArray = response;
+//
+//                    Log.d("response", response.toString());
+//
+//                }
+//            };
+//
+//            Response.ErrorListener errorListener = new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    Log.e("error", error.getMessage());
+//                }
+//            };
+//
+//
+//
+//            request2 = new JsonArrayRequest(Request.Method.POST, url2, jsonRequest, responseListener, errorListener);
+//            requestQueue.add(request2);
+//
+//        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
@@ -102,7 +174,51 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
+
+         ///////////////////////////////////////////////////////////////
+
+
+
+        //CloudInfectedUsers.saveInfectedUser(createRequest());
+
+
+
+//    Button addInfectedUsers;
+//
+//
+//        addInfectedUsers = findViewById(R.id.addUserToDB);
+
+//        addInfectedUsers.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                CloudInfectedUsers cloudInfectedUsers = new CloudInfectedUsers(this)
+//                CloudInfectedUsers.saveInfectedUser(createRequest());
+//                Log.v("DbButton", "Successfully setOnClickListener");
+//            }
+//        });
+
+
+    ////////////////////////////////////////////////////////////////
+
     }
+
+  /*  ///////////////////////////////////////////////////////////////
+
+    Button addInfectedUsers;
+
+
+        addInfectedUsers = findViewById(R.id.addUserToDB);
+
+        addInfectedUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CloudInfectedUsers.saveInfectedUser(createRequest());
+                Log.v("DbButton", "Successfully setOnClickListener");
+            }
+        });
+
+
+    ////////////////////////////////////////////////////////////////*/
 
     private void start() {
         firstTimeSetup();
@@ -118,6 +234,62 @@ public class MainActivity extends AppCompatActivity {
         };
 
         bleThread.start();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            String dbValue = myDB.getPersonalInfoData();
+            String URL = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("InfectedUserID", dbValue);
+            final String mRequestBody = jsonBody.toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("LOG_VOLLEY", response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("LOG_VOLLEY", error.toString());
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    try {
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                        return null;
+                    }
+                }
+
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    String responseString = "";
+                    if (response != null) {
+
+                        responseString = String.valueOf(response.statusCode);
+
+                    }
+                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                }
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 
     // Checks necessary permissions have been enabled
@@ -186,6 +358,49 @@ public class MainActivity extends AppCompatActivity {
 
             requestQueue.add(request);
         }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        String url2 = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+        JsonArrayRequest request2;
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("InfectedUserID","john4449ffff68");
+        } catch (JSONException e){}
+        JSONArray jsonRequest = new JSONArray();
+        jsonRequest.put(jsonObject);
+
+        {
+            Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+
+
+                    JSONArray jsonArray = response;
+
+                    Log.d("response", response.toString());
+
+                }
+            };
+
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("error", error.getMessage());
+                }
+            };
+
+
+
+            request2 = new JsonArrayRequest(Request.Method.POST, url2, jsonRequest, responseListener, errorListener);
+            requestQueue.add(request2);
+
+        }
+
+
+
+        //CloudInfectedUsers cloudInfectedUsers = new CloudInfectedUsers();
+
+
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -193,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        //CloudInfectedUsers.setInfectedUsers();
     }
 
     @Override
