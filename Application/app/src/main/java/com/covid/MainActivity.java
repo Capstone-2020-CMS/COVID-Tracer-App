@@ -2,6 +2,7 @@ package com.covid;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -273,6 +274,15 @@ public class MainActivity extends AppCompatActivity {
     // Notifications in MAIN ACTIVITY
     //----------------------------------------------------------------------------------------------
     public void sendHighPriorityNote(String contents){
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                0
+        );
+
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_emptybubble)
                 .setContentTitle("ALART!")
@@ -281,12 +291,24 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                // Set the intent to be called when the notification is tapped
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
                 .build();
 
         noteManagerCompat.notify(1, notification);
 
     }
     public void sendLowPriorityNote(String contents){
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                0
+        );
+
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_emptybubble)
                 .setContentTitle("alart?!")
@@ -295,6 +317,9 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
                 //.setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                // Set the intent to be called when the notification is tapped
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
                 .build();
 
         noteManagerCompat.notify(2, notification);
