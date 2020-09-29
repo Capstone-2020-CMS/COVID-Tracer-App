@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -14,15 +15,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
     public static final String PERSONAL_INFO_TABLE = "Personal_Info_Table";
+    public static final String INFECTED_ENCOUNTERS_TABLE = "Infected_Encounters_Table";
     public static final String ENCOUNTERS_COL1 = "ID";
     public static final String ENCOUNTERS_COL2 = "ENCOUNTER_DATE";
     public static final String ENCOUNTERS_COL3 = "ENCOUNTER_TIME";
     public static final String PERSONAL_INFO_COL1 = "PERSONAL_ID";
+    public static final String INFECTED_ENCOUNTERS_COL1 = "INFECTED_USER_ID";
 
 
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 2);
     }
 
     public static boolean checkDataBaseExists(String DB_FULL_PATH) {
@@ -49,12 +52,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
 
+        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY)");
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS " + ENCOUNTERS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + PERSONAL_INFO_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + INFECTED_ENCOUNTERS_TABLE);
         onCreate(db);
     }
 
@@ -81,6 +87,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues newValues = new ContentValues();
         newValues.put("PERSONAL_ID", PERSONAL_ID);
         long result = db.insert(PERSONAL_INFO_TABLE, null, newValues);
+        if (result == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean insertInfectedEncounterData(String INFECTED_USER_ID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("INFECTED_USER_ID", INFECTED_USER_ID);
+        long result = db.replace(INFECTED_ENCOUNTERS_TABLE, null, newValues);
         if (result == -1) {
             return false;
         }

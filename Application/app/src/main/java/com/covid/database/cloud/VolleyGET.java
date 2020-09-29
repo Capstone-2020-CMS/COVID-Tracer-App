@@ -56,6 +56,10 @@ public class VolleyGET {
                             boolean encounteredInfectedUser = myDB.CheckIsDataInDB(infectedUserID);
                             long date = (long) userData.get("date");
                             int j = 7;
+
+                            if(encounteredInfectedUser == true) {
+                                myDB.insertInfectedEncounterData(infectedUserID);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
