@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.covid.R;
-import com.covid.database.cloud.VolleyPost;
+import com.covid.database.cloud.VolleyPOST;
 import com.google.android.material.card.MaterialCardView;
 
 import static com.covid.MainActivity.activeExpo;
@@ -63,13 +63,12 @@ public class NotificationsFragment extends Fragment {
 
 
 
-        Intent i = new Intent(getContext(), VolleyPost.class);
 
         txtExposure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 expoHandler();
-                VolleyPost.setInfectedUsers(getContext());
+                VolleyPOST.setInfectedUsers(getContext());
             }
         });
 

@@ -45,6 +45,7 @@ import com.covid.bluetooth.BLEReceiver;
 import com.covid.database.CloudInfectedUsers;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
+import com.covid.database.cloud.VolleyGET;
 import com.covid.utils.NoteManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -185,35 +186,35 @@ public class MainActivity extends AppCompatActivity {
 
 //--------------------------------------------------------------------------------------------------
 
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
-
-        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-
-
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                responseJSON = response;
-            }
-        };
-
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                responseJSON = "ERROR";
-
-            }
-        };
-
-        //bleThread.start();
-
-
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
-
-        requestQueue.add(stringRequest);
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
+//
+//        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+//
+//
+//        Response.Listener<String> responseListener = new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                responseJSON = response;
+//            }
+//        };
+//
+//        Response.ErrorListener errorListener = new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                responseJSON = "ERROR";
+//
+//            }
+//        };
+//
+//        //bleThread.start();
+//
+//
+//
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
+//
+//        requestQueue.add(stringRequest);
 
 //--------------------------------------------------------------------------------------------------
 
@@ -251,38 +252,7 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
-
-
-        String url = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-
-
-        JsonArrayRequest request;
-
-        {
-            Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-
-
-                    JSONArray jsonArray = response;
-
-                    Log.d("response", response.toString());
-
-                }
-            };
-
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("error", error.getMessage());
-                }
-            };
-
-            request = new JsonArrayRequest(Request.Method.GET, url, null, responseListener, errorListener);
-
-            requestQueue.add(request);
-        }
+        VolleyGET.getInfectedUsers(getApplicationContext());
 
 
 

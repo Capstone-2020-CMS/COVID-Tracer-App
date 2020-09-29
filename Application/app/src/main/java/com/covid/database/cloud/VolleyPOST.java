@@ -1,12 +1,8 @@
 package com.covid.database.cloud;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -25,7 +21,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-public class VolleyPost{
+public class VolleyPOST {
 
 
     public static void setInfectedUsers(Context context) {
