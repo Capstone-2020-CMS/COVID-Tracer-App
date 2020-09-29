@@ -65,7 +65,11 @@ public class VolleyGET {
                             // Using two booleans might help eliminate double-up notifications for the same encounter
                             boolean encounteredInfectedUser = myDB.CheckIsDataInDB(infectedUserID);
                             long date = (long) userData.get("date");
-                            int j = 7;
+                            myDB.insertInfectedEncounterData(infectedUserID);
+                            int numberOfInfectedEncounters = myDB.getNumOfInfectedEncounters();
+                            Log.v("number", String.valueOf(numberOfInfectedEncounters));
+                            int j = 7; //line for breakpoint - does nothing
+
 
                             // If the boolean == true, call notification
                             // This code can be left largely untouched - Martin will try to figure out how to implement the notification

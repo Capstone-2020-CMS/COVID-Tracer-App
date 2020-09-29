@@ -152,6 +152,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public int getNumOfInfectedEncounters() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String query = "SELECT count(*) FROM INFECTED_ENCOUNTERS_TABLE WHERE ENCOUNTER_DATE < date('now','-" + days + " week')";
+        String query = "SELECT * FROM INFECTED_ENCOUNTERS_TABLE";
+        Cursor cursor = db.rawQuery(query, null);
+        int result = cursor.getCount();
+        return result;
+    }
+
     public boolean CheckIsDataInDB(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
