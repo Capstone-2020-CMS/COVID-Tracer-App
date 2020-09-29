@@ -112,11 +112,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannels(getApplicationContext());
         noteManagerCompat = NotificationManagerCompat.from(this);
 
-
-
-
-
-
+        
 
         // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -129,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
-
 
 
     }
@@ -174,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
 
@@ -262,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
 
             activeExpo = false;
 
-
             editor.commit();
         }
     }
@@ -324,10 +317,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         noteManagerCompat.notify(2, notification);
-
-
    }
-
-
 
 }
