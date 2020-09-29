@@ -58,6 +58,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+
+
+
     public boolean insertEncounterData(String ID, String EncounterDate, String EncounterTime) {
             SQLiteDatabase db = getWritableDatabase();
             ContentValues newValues = new ContentValues();
@@ -128,5 +131,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         int result = cursor.getCount();
         return result;
+    }
+
+    public boolean CheckIsDataInDB(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
+        String[] columns = {"PERSONAL_ID"};
+        String selection = "PERSONAL_ID" + " =?";
+        String[] selectionArgs = {id};
+        String limit = "1";
+
+        Cursor cursor = db.query("Personal_Info_Table", columns, selection, selectionArgs, null, null, null, limit);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
     }
 }
