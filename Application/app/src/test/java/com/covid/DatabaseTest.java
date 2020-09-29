@@ -244,5 +244,11 @@ public class DatabaseTest {
         assertEquals(expectedData, actualData);
     }
 
-
+    // Get number of entries from database
+    @Test
+    public void numOfEntries_isOne() {
+        String encounterTime = Time();
+        myDB.insertEncounterData("IDtestUniqueID", "2020-09-01", encounterTime);
+        assertEquals(1, myDB.getNumOfEncounters());
+    }
 }

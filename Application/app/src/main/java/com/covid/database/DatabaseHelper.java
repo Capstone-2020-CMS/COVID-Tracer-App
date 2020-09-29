@@ -121,4 +121,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public int getNumOfEncounters() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String query = "SELECT count(*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_DATE < date('now','-" + days + " week')";
+        String query = "SELECT * FROM ENCOUNTERS_TABLE";
+        Cursor cursor = db.rawQuery(query, null);
+        int result = cursor.getCount();
+        return result;
+    }
 }
