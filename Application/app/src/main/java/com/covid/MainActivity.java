@@ -40,10 +40,6 @@ import com.covid.bluetooth.BLEReceiver;
 import com.covid.database.CloudInfectedUsers;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
-import com.covid.database.api.ApiClient;
-import com.covid.database.api.InfectedUserRequest;
-import com.covid.database.api.InfectedUserResponse;
-import com.covid.database.api.PostmanCall;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -79,7 +75,6 @@ import java.util.UUID;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-import static com.covid.database.CloudInfectedUsers.createRequest;
 import static com.covid.utils.CodeManager.longToByteArray;
 import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
@@ -102,59 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         myDB = new DatabaseHelper(this);
 
-
-//        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
-//
-//
-//        String url2 = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-//        JsonArrayRequest request2;
-//        JSONObject jsonObject = new JSONObject();
-//        try {
-//            jsonObject.put("InfectedUserID","john4449ffff68");
-//        } catch (JSONException e){}
-//        JSONArray jsonRequest = new JSONArray();
-//        jsonRequest.put(jsonObject);
-//
-//        {
-//            Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-//                @Override
-//                public void onResponse(JSONArray response) {
-//
-//
-//                    JSONArray jsonArray = response;
-//
-//                    Log.d("response", response.toString());
-//
-//                }
-//            };
-//
-//            Response.ErrorListener errorListener = new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                    Log.e("error", error.getMessage());
-//                }
-//            };
-//
-//
-//
-//            request2 = new JsonArrayRequest(Request.Method.POST, url2, jsonRequest, responseListener, errorListener);
-//            requestQueue.add(request2);
-//
-//        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
 
@@ -175,50 +117,8 @@ public class MainActivity extends AppCompatActivity {
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
 
-         ///////////////////////////////////////////////////////////////
-
-
-
-        //CloudInfectedUsers.saveInfectedUser(createRequest());
-
-
-
-//    Button addInfectedUsers;
-//
-//
-//        addInfectedUsers = findViewById(R.id.addUserToDB);
-
-//        addInfectedUsers.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                CloudInfectedUsers cloudInfectedUsers = new CloudInfectedUsers(this)
-//                CloudInfectedUsers.saveInfectedUser(createRequest());
-//                Log.v("DbButton", "Successfully setOnClickListener");
-//            }
-//        });
-
-
-    ////////////////////////////////////////////////////////////////
-
     }
 
-  /*  ///////////////////////////////////////////////////////////////
-
-    Button addInfectedUsers;
-
-
-        addInfectedUsers = findViewById(R.id.addUserToDB);
-
-        addInfectedUsers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CloudInfectedUsers.saveInfectedUser(createRequest());
-                Log.v("DbButton", "Successfully setOnClickListener");
-            }
-        });
-
-
-    ////////////////////////////////////////////////////////////////*/
 
     private void start() {
         firstTimeSetup();
@@ -234,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
         };
 
         bleThread.start();
+
+
+
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         try {
@@ -289,6 +193,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 
     }
 
@@ -358,48 +266,6 @@ public class MainActivity extends AppCompatActivity {
 
             requestQueue.add(request);
         }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        String url2 = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-        JsonArrayRequest request2;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("InfectedUserID","john4449ffff68");
-        } catch (JSONException e){}
-        JSONArray jsonRequest = new JSONArray();
-        jsonRequest.put(jsonObject);
-
-        {
-            Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-
-
-                    JSONArray jsonArray = response;
-
-                    Log.d("response", response.toString());
-
-                }
-            };
-
-            Response.ErrorListener errorListener = new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("error", error.getMessage());
-                }
-            };
-
-
-
-            request2 = new JsonArrayRequest(Request.Method.POST, url2, jsonRequest, responseListener, errorListener);
-            requestQueue.add(request2);
-
-        }
-
-
-
-        //CloudInfectedUsers cloudInfectedUsers = new CloudInfectedUsers();
-
 
 
 
@@ -407,8 +273,6 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //CloudInfectedUsers.setInfectedUsers();
     }
 
     @Override

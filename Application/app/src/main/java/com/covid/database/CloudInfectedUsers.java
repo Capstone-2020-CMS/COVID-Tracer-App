@@ -21,9 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.covid.MainActivity;
 import com.covid.R;
-import com.covid.database.api.ApiClient;
-import com.covid.database.api.InfectedUserRequest;
-import com.covid.database.api.InfectedUserResponse;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -160,12 +158,6 @@ public class CloudInfectedUsers extends MainActivity {
             e.printStackTrace();
         }
 
-
-
-
-
-
-
     }
 
 
@@ -174,39 +166,6 @@ public class CloudInfectedUsers extends MainActivity {
 //    }
 
 
-    public static InfectedUserRequest createRequest(){
-        //String personalID = MainActivity.myDB.getPersonalInfoData();
-        String personalID = "testNumberAndroid";
-        InfectedUserRequest infectedUserRequest = new InfectedUserRequest();
-        infectedUserRequest.setPersonalUserID(personalID.toString());
-
-        return infectedUserRequest;
-    }
-
-    public static void saveInfectedUser(InfectedUserRequest infectedUserRequest){
-
-        Call<InfectedUserResponse> userResponseCall = ApiClient.getInfectedUserService().saveInfectedUser(infectedUserRequest);
-        userResponseCall.enqueue(new Callback<InfectedUserResponse>() {
-            @Override
-            public void onResponse(Call<InfectedUserResponse> call, retrofit2.Response<InfectedUserResponse> response) {
-
-                if (response.isSuccessful()){
-                    //Toast.makeText(context.getApplicationContext(), "Saved successfully", Toast.LENGTH_LONG).show();
-                    Log.v("postResponseSuccess", "Saved successfully");
-                }
-                else{
-                    //Toast.makeText(context.getApplicationContext(), "Request failed", Toast.LENGTH_LONG).show();
-                    Log.v("postResponseFail", "Request failed");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<InfectedUserResponse> call, Throwable t) {
-                //Toast.makeText(context.getApplicationContext(), "Request failed" + t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                Log.v("postResponseFail", "Request failed");
-            }
-        });
-    }
 
 
 }
