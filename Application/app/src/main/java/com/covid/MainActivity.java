@@ -284,7 +284,8 @@ public class MainActivity extends AppCompatActivity {
         );
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_emptybubble)
+                //.setSmallIcon(R.drawable.ic_emptybubble)
+                .setSmallIcon(R.drawable.ic_icon_small_01)
                 .setContentTitle("ALART!")
                 .setContentText("Big Alart Please CODE: Expono")
                 // Set priority is used for API lower than 26/Oreo works like Channel system
