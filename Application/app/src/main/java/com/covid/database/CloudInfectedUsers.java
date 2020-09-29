@@ -16,32 +16,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.covid.MainActivity;
-import com.covid.R;
+
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class CloudInfectedUsers extends MainActivity {
     private Context context;
-    Button addInfectedUsers;
 
 
 
@@ -54,24 +43,12 @@ public class CloudInfectedUsers extends MainActivity {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        addInfectedUsers = findViewById(R.id.addUserToDB);
-
-        addInfectedUsers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveInfectedUser(createRequest());
-                Log.v("DbButton", "Successfully setOnClickListener");
-            }
-        });
-
-    }*/
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+    public void sendIdToDB(View addUserToDB) {
+        // Do something in response to button click
+        Log.v("btnMsg", "IT WORKS!");
+    }
 
     RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -108,23 +85,26 @@ public class CloudInfectedUsers extends MainActivity {
         }
     }
 
-    public void setInfectedUsers() {
 
+    public void setInfectedUsers() {
 
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            String url = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-            final String requestBody = "{\"personalUserID\": \"john\"}";
+            String dbValue = myDB.getPersonalInfoData();
+            String URL = "https://yirlg8c7kc.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("InfectedUserID", dbValue);
+            final String mRequestBody = jsonBody.toString();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
+                    Log.i("LOG_VOLLEY", response);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
+                    Log.e("LOG_VOLLEY", error.toString());
                 }
             }) {
                 @Override
@@ -135,9 +115,9 @@ public class CloudInfectedUsers extends MainActivity {
                 @Override
                 public byte[] getBody() throws AuthFailureError {
                     try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
                     } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
                         return null;
                     }
                 }
@@ -146,26 +126,18 @@ public class CloudInfectedUsers extends MainActivity {
                 protected Response<String> parseNetworkResponse(NetworkResponse response) {
                     String responseString = "";
                     if (response != null) {
+
                         responseString = String.valueOf(response.statusCode);
-                        // can get more details such as response.headers
+
                     }
                     return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
                 }
             };
 
             requestQueue.add(stringRequest);
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
-
-
-//    public void setInfectedUsers() {
-//        saveInfectedUser(createRequest());
-//    }
-
-
-
 
 }
