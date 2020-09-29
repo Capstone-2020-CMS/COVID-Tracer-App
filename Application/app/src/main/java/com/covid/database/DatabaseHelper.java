@@ -136,12 +136,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean CheckIsDataInDB(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
-        String[] columns = {"PERSONAL_ID"};
-        String selection = "PERSONAL_ID" + " =?";
+        String[] columns = {"ID"};
+        String selection = "ID" + " =?";
         String[] selectionArgs = {id};
         String limit = "1";
 
-        Cursor cursor = db.query("Personal_Info_Table", columns, selection, selectionArgs, null, null, null, limit);
+        Cursor cursor = db.query("Encounters_Table", columns, selection, selectionArgs, null, null, null, limit);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
