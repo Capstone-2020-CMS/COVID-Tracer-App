@@ -100,9 +100,14 @@ import static com.covid.utils.utilNotification.createNotificationChannel;
 import static com.covid.utils.NoteManager.createNotificationChannels;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    // Constants
     private static final int REQUEST_ENABLE_BT = 1;
     public static final String NOTIFICATION_CHANNEL = "0";
 
+
+    // Class vars
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
@@ -110,11 +115,12 @@ public class MainActivity extends AppCompatActivity {
     public static String myID;
 
     public static boolean activeExpo;
+    public static boolean hasExpo;
 
     private String responseJSON;
 
     // Notification Manager (use compat as it supports backwards compatibility with earlier notifications)
-    private NotificationManagerCompat noteManagerCompat;
+    private static NotificationManagerCompat noteManagerCompat;
 
 
 
@@ -180,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         bubbleSize = myDB.getNumOfEncounters();
         myID =  myDB.getPersonalInfoData();
 
-        sendHighPriorityNote("Hello");
+        //sendHighPriorityNote("Hello");
 
 
 //--------------------------------------------------------------------------------------------------
@@ -251,7 +257,9 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        VolleyGET.getInfectedUsers(getApplicationContext());
+        //VolleyGET.getInfectedUsers(getApplicationContext());
+
+        VolleyGET.checkExposure(getApplicationContext());
 
 
 
@@ -374,8 +382,43 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         noteManagerCompat.notify(2, notification);
+   }
 
 
+
+
+    public static void sendHighPriorityNoteAlpha(String contents, Context context){
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                0
+        );
+
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_emptybubble)
+                .setContentTitle("ALART!")
+                .setContentText("Big Alart Please CODE: Expono")
+                // Set priority is used for API lower than 26/Oreo works like Channel system
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                // Set the intent to be called when the notification is tapped
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .build();
+
+        noteManagerCompat.notify(1, notification);
+    }
+
+
+
+
+
+   public static void setHasExpo(boolean value){
+        hasExpo = value;
    }
 
 }
