@@ -15,7 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static com.covid.MainActivity.myDB;
 
@@ -54,19 +56,26 @@ public class VolleyGET {
                         try {
                             userData = (JSONObject) response.get(i);
                             String infectedUserID = (String) userData.get("InfectedUserID");
-
+                            boolean encounteredInfectedUser = myDB.CheckIsDataInDB(infectedUserID); //Not used yet!
+                            long epochDate = (long) userData.get("date");
+                            String dateReported = convertEpochDate(epochDate);
                             // Add code to build the infectedUsersTable from the JSON array
                             // by just cleaning the table and then reinserting all the new values
+                            myDB.insertInfectedEncounterData(infectedUserID, dateReported, "false");
+
+
 
 
                             // Refactor this boolean to be a variable of the Main Activity class and import it into this class
                             // Set boolean if any ID in the infectedUsersTable matches an ID in the encountersTable
                             // Maybe we could use two booleans and check if BOTH are true, to run the IF statement below
                             // Using two booleans might help eliminate double-up notifications for the same encounter
-                            boolean encounteredInfectedUser = myDB.CheckIsDataInDB(infectedUserID);
-                            long date = (long) userData.get("date");
-                            myDB.insertInfectedEncounterData(infectedUserID);
-                            int numberOfInfectedEncounters = myDB.getNumOfInfectedEncounters();
+
+
+
+
+
+                            int numberOfInfectedEncounters = myDB.getNumOfInfectedEncounters(); //Check database is working
                             Log.v("number", String.valueOf(numberOfInfectedEncounters));
                             int j = 7; //line for breakpoint - does nothing
 
@@ -76,7 +85,7 @@ public class VolleyGET {
                             // from this point onwards
                             if(encounteredInfectedUser == true) {
                                 // This line "insertInfectedEncounterData to be refactored into the TRY clause above ^^^
-                                myDB.insertInfectedEncounterData(infectedUserID);
+                                //myDB.insertInfectedEncounterData(infectedUserID);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -101,6 +110,16 @@ public class VolleyGET {
 
         }
 
+
    }
+
+    public static String convertEpochDate(long epochDate) {
+        Date date = new Date(epochDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        //Long dateLong = Long.parseLong(sdf.format(epochDate));
+        //String date = dateLong.toString();
+        String infectedDate = sdf.format(date);
+        return infectedDate;
+    }
 
 }
