@@ -9,27 +9,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 
-import com.covid.MainActivity;
 import com.covid.R;
-import com.covid.utils.TableData;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.Executor;
-
+import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.getDataWorkRequest;
 import static com.covid.MainActivity.tableDataArrayList;
 import static com.covid.MainActivity.workManager;
@@ -39,6 +26,7 @@ public class DashboardFragment extends Fragment {
     private TextView txtConfirmed;
     private TextView txtDeaths;
     private TextView txtRecovered;
+    private TextView txtDateUpdated;
     private ImageView imgRefresh;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,6 +36,7 @@ public class DashboardFragment extends Fragment {
         txtConfirmed = root.findViewById(R.id.txtConfirmed);
         txtDeaths = root.findViewById(R.id.txtDeaths);
         txtRecovered = root.findViewById(R.id.txtRecovered);
+        txtDateUpdated = root.findViewById(R.id.txtDateUpdated);
         imgRefresh = root.findViewById(R.id.imgRefresh);
 
         updateTableData();
@@ -80,6 +69,7 @@ public class DashboardFragment extends Fragment {
             txtConfirmed.setText(tableDataArrayList.get(0).getTotal());
             txtDeaths.setText(tableDataArrayList.get(1).getTotal());
             txtRecovered.setText(tableDataArrayList.get(2).getTotal());
+            txtDateUpdated.setText(dateUpdated);
         }
     }
 }

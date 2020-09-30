@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     public static WorkManager workManager;
 
     public static ArrayList<TableData> tableDataArrayList = new ArrayList<>();
+    public static String dateUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

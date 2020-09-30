@@ -14,6 +14,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.tableDataArrayList;
 
 public class GetDataWorker extends Worker {
@@ -34,6 +35,8 @@ public class GetDataWorker extends Worker {
             return Result.failure();
         }
         Elements newsHeadlines = doc.select(".table-style-two");
+
+        dateUpdated = newsHeadlines.get(0).children().get(0).text();
 
         Element table = newsHeadlines.get(0).children().get(2);
 
