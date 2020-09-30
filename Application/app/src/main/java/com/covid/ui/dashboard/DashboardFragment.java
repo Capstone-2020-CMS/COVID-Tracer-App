@@ -1,5 +1,7 @@
 package com.covid.ui.dashboard;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.lifecycle.Observer;
 import androidx.work.WorkInfo;
 
 import com.covid.R;
+import com.google.android.material.card.MaterialCardView;
 
 import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.getDataWorkRequest;
@@ -28,6 +31,7 @@ public class DashboardFragment extends Fragment {
     private TextView txtRecovered;
     private TextView txtDateUpdated;
     private ImageView imgRefresh;
+    private MaterialCardView cardButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +42,7 @@ public class DashboardFragment extends Fragment {
         txtRecovered = root.findViewById(R.id.txtRecovered);
         txtDateUpdated = root.findViewById(R.id.txtDateUpdated);
         imgRefresh = root.findViewById(R.id.imgRefresh);
+        cardButton = root.findViewById(R.id.cardButton);
 
         updateTableData();
 
@@ -58,6 +63,16 @@ public class DashboardFragment extends Fragment {
                 workManager.enqueue(getDataWorkRequest);
                 LiveData<WorkInfo> status = workManager.getWorkInfoByIdLiveData(getDataWorkRequest.getId());
                 status.observe(getViewLifecycleOwner(), workInfoObserver);
+            }
+        });
+
+        cardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus";
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+
+                getContext().startActivity(browserIntent);
             }
         });
 
