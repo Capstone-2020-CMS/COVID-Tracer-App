@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -15,10 +16,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
     public static final String PERSONAL_INFO_TABLE = "Personal_Info_Table";
     public static final String GPS_TABLE = "GPS_Table";
+    public static final String INFECTED_ENCOUNTERS_TABLE = "Infected_Encounters_Table";
+
     public static final String ENCOUNTERS_COL1 = "ID";
     public static final String ENCOUNTERS_COL2 = "ENCOUNTER_DATE";
     public static final String ENCOUNTERS_COL3 = "ENCOUNTER_TIME";
     public static final String PERSONAL_INFO_COL1 = "PERSONAL_ID";
+    public static final String INFECTED_ENCOUNTERS_COL1 = "INFECTED_USER_ID";
 
 
 
@@ -49,12 +53,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT)");
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
+
         db.execSQL(" create table " + GPS_TABLE + "(" +
                 "LATITUDE INTEGER," +
                 "LONGITUDE INTEGER," +
                 "DATE TEXT," +
                 "TIME TEXT" +
                 ")");
+
+
+        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY)");
     }
 
     @Override
@@ -62,8 +70,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ENCOUNTERS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + PERSONAL_INFO_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + GPS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + INFECTED_ENCOUNTERS_TABLE);
         onCreate(db);
     }
+
+
+
 
     public boolean insertEncounterData(String ID, String EncounterDate, String EncounterTime) {
         SQLiteDatabase db = getWritableDatabase();
@@ -101,6 +113,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues newValues = new ContentValues();
         newValues.put("PERSONAL_ID", PERSONAL_ID);
         long result = db.insert(PERSONAL_INFO_TABLE, null, newValues);
+        if (result == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean insertInfectedEncounterData(String INFECTED_USER_ID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("INFECTED_USER_ID", INFECTED_USER_ID);
+        long result = db.replace(INFECTED_ENCOUNTERS_TABLE, null, newValues);
         if (result == -1) {
             return false;
         }
@@ -159,11 +184,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+
     public int getNumOfGPSData() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM GPS_TABLE";
         Cursor cursor = db.rawQuery(query, null);
         int result = cursor.getCount();
         return result;
+    }
+
+    public int getNumOfInfectedEncounters() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String query = "SELECT count(*) FROM INFECTED_ENCOUNTERS_TABLE WHERE ENCOUNTER_DATE < date('now','-" + days + " week')";
+        String query = "SELECT * FROM INFECTED_ENCOUNTERS_TABLE";
+        Cursor cursor = db.rawQuery(query, null);
+        int result = cursor.getCount();
+        return result;
+    }
+
+    public boolean CheckIsDataInDB(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
+        String[] columns = {"ID"};
+        String selection = "ID" + " =?";
+        String[] selectionArgs = {id};
+        String limit = "1";
+
+        Cursor cursor = db.query("Encounters_Table", columns, selection, selectionArgs, null, null, null, limit);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
     }
 }

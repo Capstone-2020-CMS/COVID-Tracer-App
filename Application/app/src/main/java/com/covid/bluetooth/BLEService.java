@@ -20,6 +20,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.covid.R;
 import com.covid.database.DatabaseHelper;
@@ -49,6 +50,9 @@ public class BLEService extends Service {
     public String bleEncounterTime;
     public String bleEncounterID;
     private String logTag = "COVID";
+
+
+
 
     @Override
     public void onCreate() {

@@ -4,4 +4,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_gps">GPS</string>
+    <string name="confirm_expo">Confirm Exposure</string>
+    <string name="revert_expo">Revert Exposure</string>
 </resources>
