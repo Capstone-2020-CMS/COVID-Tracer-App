@@ -19,6 +19,8 @@ import androidx.work.WorkInfo;
 import com.covid.R;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.Objects;
+
 import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.getDataWorkRequest;
 import static com.covid.MainActivity.tableDataArrayList;
@@ -72,7 +74,7 @@ public class DashboardFragment extends Fragment {
                 String url = "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus";
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 
-                getContext().startActivity(browserIntent);
+                requireContext().startActivity(browserIntent);
             }
         });
 
