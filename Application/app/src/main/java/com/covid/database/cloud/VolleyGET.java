@@ -49,7 +49,7 @@ public class VolleyGET {
                     Log.d("response", response.toString());
                     Log.d("userID", userID);
                     
-
+                    myDB.deleteAllInfectedData();
 
                     for(int i = 0; i < response.length(); i++) {
                         JSONObject userData;

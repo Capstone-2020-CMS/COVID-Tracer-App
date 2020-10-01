@@ -61,4 +61,15 @@ public class InfectedDBStuff {
 
         int test = 1+1;
     }
+
+    @Test
+    public void deleteInfectedData_IsWorking() {
+        SQLiteDatabase db = myDB.getWritableDatabase();
+
+        myDB.deleteAllInfectedData();
+
+        ArrayList<String> infectedEncounterData = myDB.getListOfInfectedIDs();
+
+        assert (infectedEncounterData.size() == 0);
+    }
 }

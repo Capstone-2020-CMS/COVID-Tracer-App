@@ -215,4 +215,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return exists;
     }
+
+    public void deleteAllInfectedData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "DELETE FROM " + INFECTED_ENCOUNTERS_TABLE;
+        db.execSQL(sql);
+    }
 }
