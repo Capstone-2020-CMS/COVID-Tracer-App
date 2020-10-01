@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
         // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
@@ -156,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
+
+        //Updates cloud infectedUsers status - TESTING
+        CloudInfectedUsers.updateEncounterStatus();
 
 
 
@@ -252,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         VolleyGET.getInfectedUsers(getApplicationContext());
+
 
 
 
