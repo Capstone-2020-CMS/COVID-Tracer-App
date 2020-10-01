@@ -61,8 +61,7 @@ public class VolleyGET {
                             String dateReported = convertEpochDate(epochDate);
                             // Add code to build the infectedUsersTable from the JSON array
                             // by just cleaning the table and then reinserting all the new values
-                            myDB.insertInfectedEncounterData(infectedUserID, dateReported, "false");
-
+                            myDB.insertInfectedEncounterData(infectedUserID, dateReported, "false", "false");
 
 
 
@@ -70,7 +69,6 @@ public class VolleyGET {
                             // Set boolean if any ID in the infectedUsersTable matches an ID in the encountersTable
                             // Maybe we could use two booleans and check if BOTH are true, to run the IF statement below
                             // Using two booleans might help eliminate double-up notifications for the same encounter
-
 
 
 

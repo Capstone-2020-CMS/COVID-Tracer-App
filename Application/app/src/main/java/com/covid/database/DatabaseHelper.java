@@ -24,6 +24,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String INFECTED_ENCOUNTERS_COL2 = "DATE_REPORTED";
     public static final String INFECTED_ENCOUNTERS_COL3 = "ENCOUNTERED_STATUS";
     public static final String INFECTED_ENCOUNTERS_COL4 = "DATE_ENCOUNTERED";
+    public static final String INFECTED_ENCOUNTERS_COL5 = "NOTIFICATION_SENT";
+
 
 
 
@@ -56,7 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
 
-        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY, DATE_REPORTED, ENCOUNTERED_STATUS, DATE_ENCOUNTERED)");
+        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY, DATE_REPORTED, ENCOUNTERED_STATUS, DATE_ENCOUNTERED, NOTIFICATION_SENT)");
 
     }
 
@@ -99,12 +101,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean insertInfectedEncounterData(String InfectedUserID, String dateReported, String encounterStatus) {
+    public boolean insertInfectedEncounterData(String InfectedUserID, String dateReported, String encounterStatus, String notificationSent) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues newValues = new ContentValues();
         newValues.put("INFECTED_USER_ID", InfectedUserID);
         newValues.put("DATE_REPORTED", dateReported);
         newValues.put("ENCOUNTERED_STATUS",encounterStatus);
+        newValues.put("NOTIFICATION_SENT",notificationSent);
         long result = db.replace(INFECTED_ENCOUNTERS_TABLE, null, newValues);
         if (result == -1) {
             return false;
