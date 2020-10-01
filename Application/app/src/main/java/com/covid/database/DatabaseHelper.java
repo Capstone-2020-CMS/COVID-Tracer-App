@@ -11,6 +11,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
@@ -58,7 +60,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
 
-        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY, DATE_REPORTED, ENCOUNTERED_STATUS DEFAULT 'false', DATE_ENCOUNTERED, NOTIFICATION_SENT DEFAULT 'false')");
+        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(" +
+                "INFECTED_USER_ID TEXT PRIMARY KEY, " +
+                "DATE_REPORTED, " +
+                "ENCOUNTERED_STATUS DEFAULT 'false', " +
+                "DATE_ENCOUNTERED, " +
+                "NOTIFICATION_SENT DEFAULT 'false')");
 
     }
 
@@ -125,6 +132,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL2)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL3));
         }
         return result;
+    }
+
+    public String getInfectedData(String ID) {
+        String result = "Data Not Found";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = "INFECTED_USER_ID=?";
+        String[] whereArgs = new String[]{String.valueOf(ID)};
+        Cursor csr = db.query(INFECTED_ENCOUNTERS_TABLE, null, whereClause, whereArgs, null, null, null);
+        if (csr.moveToFirst()) {
+            result = csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL3));
+        }
+        return result;
+    }
+
+    public ArrayList<String> getListOfInfectedIDs() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> listOfInfectedIDs = new ArrayList<>();
+
+        String sql = "SELECT " + INFECTED_ENCOUNTERS_COL1 + " FROM " + INFECTED_ENCOUNTERS_TABLE;
+
+        try (Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                listOfInfectedIDs.add(cursor.getString(0));
+            }
+        }
+
+        return listOfInfectedIDs;
     }
 
     public void deletedAgedEncounterData() {
