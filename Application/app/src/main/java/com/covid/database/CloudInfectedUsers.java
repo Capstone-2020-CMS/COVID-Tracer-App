@@ -5,32 +5,9 @@ import com.covid.MainActivity;
 
 public class CloudInfectedUsers {
 
-    String InfectedUserID;
-    String date;
+    //Check if id in INFECTED_ENCOUNTERS_TABLE exists in ENCOUNTERS_TABLE
 
-    //getter and setter methods
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    private Context context;
-
-
-
-//    //Default constructor
-//    public CloudInfectedUsers(){
-//        this.context = context;
-//
-//    }
+    //if id exists set ENCOUNTERED_STATUS to true
 
 
 }

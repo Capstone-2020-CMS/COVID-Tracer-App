@@ -61,8 +61,7 @@ public class VolleyGET {
                             String dateReported = convertEpochDate(epochDate);
                             // Add code to build the infectedUsersTable from the JSON array
                             // by just cleaning the table and then reinserting all the new values
-                            myDB.insertInfectedEncounterData(infectedUserID, dateReported, "false", "false");
-
+                            myDB.insertInfectedEncounterData(infectedUserID, dateReported);
 
 
                             // Refactor this boolean to be a variable of the Main Activity class and import it into this class
