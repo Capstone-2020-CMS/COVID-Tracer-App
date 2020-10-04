@@ -24,16 +24,9 @@ public class NotificationsFragment extends Fragment {
 
     private static MaterialCardView cardExposure;
     private static int motorwayGreen;
-    private static int babyBlue;
+    private static int red;
     private static LinearLayout layout;
-
     private TextView txtIDValue;
-
-
-
-
-
-
     private NotificationsViewModel notificationsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -43,9 +36,7 @@ public class NotificationsFragment extends Fragment {
 
 
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
-        babyBlue = getResources().getColor(R.color.primaryLightColor);
-
-
+        red = getResources().getColor(R.color.red);
 
 
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
@@ -57,12 +48,6 @@ public class NotificationsFragment extends Fragment {
 
         txtIDValue = root.findViewById(R.id.txtIDValue);
         txtIDValue.setText(myID);
-
-
-
-
-
-
 
         txtExposure.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,9 +61,6 @@ public class NotificationsFragment extends Fragment {
         return root;
     }
 
-
-
-
     public void expoHandler(){
         if (activeExpo == false){
             activeExpo = true;
@@ -87,11 +69,7 @@ public class NotificationsFragment extends Fragment {
         }
         else{
             activeExpo = false;
-            cardExposure.setCardBackgroundColor(babyBlue);
+            cardExposure.setCardBackgroundColor(red);
         }
     }
-
-
-
-
 }

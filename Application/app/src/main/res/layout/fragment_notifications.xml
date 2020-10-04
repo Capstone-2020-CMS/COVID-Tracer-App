@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryTextColor"
     tools:context=".ui.notifications.NotificationsFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardExposure"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        app:cardBackgroundColor="@color/primaryLightColor"
+        app:cardBackgroundColor="@color/red"
         app:cardElevation="@dimen/elevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,13 +34,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="8dp"
-                android:paddingEnd="8dp"
                 android:paddingBottom="8dp">
 
                 <!-- Title, secondary and supporting text -->
                 <TextView
                     android:id="@+id/txtExposure"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/confirm_expo"
                     android:textAlignment="center"
@@ -56,10 +54,10 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardIDValue"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
-        app:cardBackgroundColor="@color/primaryLightColor"
+        app:cardBackgroundColor="@color/primaryColor"
         app:cardElevation="@dimen/elevation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,18 +80,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="8dp"
-                android:paddingEnd="8dp"
                 android:paddingBottom="8dp">
 
                 <!-- Title, secondary and supporting text -->
                 <TextView
                     android:id="@+id/txtIDValue"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/confirm_expo"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    tools:text="@tools:sample/us_phones" />
 
             </LinearLayout>
 
