@@ -171,9 +171,6 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannels(getApplicationContext());
         noteManagerCompat = NotificationManagerCompat.from(this);
 
-
-
-
         // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
@@ -223,8 +220,31 @@ public class MainActivity extends AppCompatActivity {
 
         bubbleSize = myDB.getNumOfEncounters();
 
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                responseJSON = response;
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                responseJSON = "ERROR";
+
+            }
+        };
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
+
+        requestQueue.add(stringRequest);
+
+//--------------------------------------------------------------------------------------------------
+
         // TODO evaluate position of this call
         myDB.deleteAgedGPSData();
+
 
         myID =  myDB.getPersonalInfoData();
     }
@@ -317,7 +337,6 @@ public class MainActivity extends AppCompatActivity {
 
             activeExpo = false;
 
-
             editor.commit();
         }
     }
@@ -349,7 +368,8 @@ public class MainActivity extends AppCompatActivity {
         );
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_emptybubble)
+                //.setSmallIcon(R.drawable.ic_emptybubble)
+                .setSmallIcon(R.drawable.ic_icon_small_01)
                 .setContentTitle("ALART!")
                 .setContentText("Big Alart Please CODE: Expono")
                 // Set priority is used for API lower than 26/Oreo works like Channel system
@@ -389,9 +409,6 @@ public class MainActivity extends AppCompatActivity {
 
         noteManagerCompat.notify(2, notification);
    }
-
-
-
 
     public static void sendHighPriorityNoteAlpha(String contents, Context context){
 
