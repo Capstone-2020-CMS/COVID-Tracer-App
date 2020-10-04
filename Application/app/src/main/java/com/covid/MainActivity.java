@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Note Manager
-
         createNotificationChannels(getApplicationContext());
         noteManagerCompat = NotificationManagerCompat.from(this);
 
@@ -319,8 +318,8 @@ public class MainActivity extends AppCompatActivity {
                 .setAutoCancel(true)
                 .build();
 
-        noteManagerCompat.notify(1, notification);
-
+        // TODO figure out how not to conflict with main scanning notification
+        //noteManagerCompat.notify(1, notification);
     }
     public void sendLowPriorityNote(String contents){
 
@@ -345,7 +344,8 @@ public class MainActivity extends AppCompatActivity {
                 .setAutoCancel(true)
                 .build();
 
-        noteManagerCompat.notify(2, notification);
+        // TODO figure out how not to conflict with main scanning notification
+        //noteManagerCompat.notify(2, notification);
    }
 
     public static void sendHighPriorityNoteAlpha(String contents, Context context){
@@ -370,8 +370,9 @@ public class MainActivity extends AppCompatActivity {
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true)
                 .build();
-
-        noteManagerCompat.notify(1, notification);
+        
+        // TODO figure out how not to conflict with main scanning notification
+        //noteManagerCompat.notify(1, notification);
     }
 
    public static void setHasExpo(boolean value){
