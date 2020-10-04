@@ -11,6 +11,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
@@ -23,11 +25,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ENCOUNTERS_COL3 = "ENCOUNTER_TIME";
     public static final String PERSONAL_INFO_COL1 = "PERSONAL_ID";
     public static final String INFECTED_ENCOUNTERS_COL1 = "INFECTED_USER_ID";
+    public static final String INFECTED_ENCOUNTERS_COL2 = "DATE_REPORTED";
+    public static final String INFECTED_ENCOUNTERS_COL3 = "ENCOUNTERED_STATUS";
+    public static final String INFECTED_ENCOUNTERS_COL4 = "DATE_ENCOUNTERED";
+    public static final String INFECTED_ENCOUNTERS_COL5 = "NOTIFICATION_SENT";
+
+
 
 
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, 1);
     }
 
     public static boolean checkDataBaseExists(String DB_FULL_PATH) {
@@ -61,6 +69,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "TIME TEXT" +
                 ")");
 
+
+        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(" +
+                "INFECTED_USER_ID TEXT PRIMARY KEY, " +
+                "DATE_REPORTED, " +
+                "ENCOUNTERED_STATUS DEFAULT 'false', " +
+                "DATE_ENCOUNTERED, " +
+                "NOTIFICATION_SENT DEFAULT 'false')");
 
         db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY)");
     }
@@ -121,10 +136,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean insertInfectedEncounterData(String INFECTED_USER_ID) {
+    public boolean insertInfectedEncounterData(String InfectedUserID, String dateReported) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues newValues = new ContentValues();
-        newValues.put("INFECTED_USER_ID", INFECTED_USER_ID);
+        newValues.put("INFECTED_USER_ID", InfectedUserID);
+        newValues.put("DATE_REPORTED", dateReported);
         long result = db.replace(INFECTED_ENCOUNTERS_TABLE, null, newValues);
         if (result == -1) {
             return false;
@@ -144,6 +160,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             result = csr.getString(csr.getColumnIndex(ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL2)) + ", " + csr.getString(csr.getColumnIndex(ENCOUNTERS_COL3));
         }
         return result;
+    }
+
+    public String getInfectedData(String ID) {
+        String result = "Data Not Found";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = "INFECTED_USER_ID=?";
+        String[] whereArgs = new String[]{String.valueOf(ID)};
+        Cursor csr = db.query(INFECTED_ENCOUNTERS_TABLE, null, whereClause, whereArgs, null, null, null);
+        if (csr.moveToFirst()) {
+            result = csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL3));
+        }
+        return result;
+    }
+
+    public ArrayList<String> getListOfInfectedIDs() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> listOfInfectedIDs = new ArrayList<>();
+
+        String sql = "SELECT " + INFECTED_ENCOUNTERS_COL1 + " FROM " + INFECTED_ENCOUNTERS_TABLE;
+
+        try (Cursor cursor = db.rawQuery(sql, null)) {
+            while (cursor.moveToNext()) {
+                listOfInfectedIDs.add(cursor.getString(0));
+            }
+        }
+
+        return listOfInfectedIDs;
     }
 
     public void deletedAgedEncounterData() {
@@ -214,5 +257,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
+    }
+
+    public void deleteAllInfectedData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "DELETE FROM " + INFECTED_ENCOUNTERS_TABLE;
+        db.execSQL(sql);
     }
 }

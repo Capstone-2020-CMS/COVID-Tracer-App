@@ -28,7 +28,7 @@
     <!--android:icon="@mipmap/ic_launcher"-->
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/iconbubble"
         android:label="@string/app_name"
         android:roundIcon="@drawable/iconbubble"
