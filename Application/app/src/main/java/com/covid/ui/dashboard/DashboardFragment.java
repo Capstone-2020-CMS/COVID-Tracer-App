@@ -81,6 +81,12 @@ public class DashboardFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateTableData();
+    }
+
     private void updateTableData() {
         if (tableDataArrayList.size() == 3) {
             txtConfirmed.setText(tableDataArrayList.get(0).getTotal());
