@@ -22,4 +22,9 @@
         android:name="com.covid.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/navigation_gps"
+        android:name="com.covid.gps.MapsFragment"
+        android:label="@string/title_gps"
+        tools:layout="@layout/fragment_maps" />
 </navigation>

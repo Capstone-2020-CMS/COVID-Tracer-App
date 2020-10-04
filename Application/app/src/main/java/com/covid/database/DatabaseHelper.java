@@ -17,7 +17,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
     public static final String PERSONAL_INFO_TABLE = "Personal_Info_Table";
+    public static final String GPS_TABLE = "GPS_Table";
     public static final String INFECTED_ENCOUNTERS_TABLE = "Infected_Encounters_Table";
+
     public static final String ENCOUNTERS_COL1 = "ID";
     public static final String ENCOUNTERS_COL2 = "ENCOUNTER_DATE";
     public static final String ENCOUNTERS_COL3 = "ENCOUNTER_TIME";
@@ -60,6 +62,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
 
+        db.execSQL(" create table " + GPS_TABLE + "(" +
+                "LATITUDE INTEGER," +
+                "LONGITUDE INTEGER," +
+                "DATE TEXT," +
+                "TIME TEXT" +
+                ")");
+
+
         db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(" +
                 "INFECTED_USER_ID TEXT PRIMARY KEY, " +
                 "DATE_REPORTED, " +
@@ -67,12 +77,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "DATE_ENCOUNTERED, " +
                 "NOTIFICATION_SENT DEFAULT 'false')");
 
+        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS " + ENCOUNTERS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + PERSONAL_INFO_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + GPS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + INFECTED_ENCOUNTERS_TABLE);
         onCreate(db);
     }
@@ -81,18 +93,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public boolean insertEncounterData(String ID, String EncounterDate, String EncounterTime) {
-            SQLiteDatabase db = getWritableDatabase();
-            ContentValues newValues = new ContentValues();
-            newValues.put("ID", ID);
-            newValues.put("ENCOUNTER_DATE", EncounterDate);
-            newValues.put("ENCOUNTER_TIME", EncounterTime);
-            long result = db.replace(ENCOUNTERS_TABLE, null, newValues);
-            if (result == -1) {
-                return false;
-            }
-            else {
-                return true;
-            }
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("ID", ID);
+        newValues.put("ENCOUNTER_DATE", EncounterDate);
+        newValues.put("ENCOUNTER_TIME", EncounterTime);
+        long result = db.replace(ENCOUNTERS_TABLE, null, newValues);
+        if (result == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean insertGPSData(double lat, double lon, String date, String time) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("LATITUDE", lat);
+        newValues.put("LONGITUDE", lon);
+        newValues.put("DATE", date);
+        newValues.put("TIME", time);
+        long result = db.replace(GPS_TABLE, null, newValues);
+        if (result == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     public boolean insertPersonalData(String PERSONAL_ID) {
@@ -167,6 +195,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    public void deleteAgedGPSData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "DELETE FROM GPS_TABLE WHERE DATE < date('now','-21 day')";
+        db.execSQL(sql);
+    }
+
     String[] tableColumns = new String[] {
             "PERSONAL_ID",
             "(SELECT PERSONAL_ID FROM Personal_Info_Table)"
@@ -188,6 +222,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         //String query = "SELECT count(*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_DATE < date('now','-" + days + " week')";
         String query = "SELECT * FROM ENCOUNTERS_TABLE";
+        Cursor cursor = db.rawQuery(query, null);
+        int result = cursor.getCount();
+        return result;
+    }
+
+
+    public int getNumOfGPSData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM GPS_TABLE";
         Cursor cursor = db.rawQuery(query, null);
         int result = cursor.getCount();
         return result;
