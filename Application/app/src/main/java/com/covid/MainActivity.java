@@ -6,23 +6,25 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.AdvertiseData;
-import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.BluetoothLeAdvertiser;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanSettings;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.ParcelUuid;
 
+import android.location.Criteria;
+import android.location.LocationManager;
+import android.net.wifi.WifiManager;
+
+import android.os.Build;
+
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import android.widget.Toast;
+
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -54,6 +56,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,6 +70,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.covid.bluetooth.BLEService;
+
+import com.covid.database.DatabaseHelper;
+import com.covid.database.PersonalData;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
@@ -75,6 +85,10 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import java.util.List;
+
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -96,22 +110,28 @@ import static com.covid.utils.CodeManager.generateCode;
 import static com.covid.utils.CodeManager.getLongFromByteArray;
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
 import static com.covid.utils.NoteManager.CHANNEL_2_ID;
+
 import static com.covid.utils.utilNotification.createNotificationChannel;
 import static com.covid.utils.NoteManager.createNotificationChannels;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    // Constants
-    private static final int REQUEST_ENABLE_BT = 1;
+    private final int REQUEST_ENABLE_BT = 1;
     public static final String NOTIFICATION_CHANNEL = "0";
-
 
     // Class vars
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
+
+    public static BluetoothAdapter adapter;
+    public static LocationManager locationManager;
+    public static String providerName = "gps";
+    public static WifiManager wifiManager;
+    public static FusedLocationProviderClient mFusedLocationProviderClient;
+    public static boolean mainSetupDone = false;
+
     public static String myID;
 
     public static boolean activeExpo;
@@ -128,12 +148,15 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean readyToStart = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myDB = new DatabaseHelper(this);
+        if (myDB == null) {
+            myDB = new DatabaseHelper(this);
+        }
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
@@ -155,16 +178,31 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_gps, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
 
+        // Get the bluetooth adapter
+        adapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Get the location manager
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        //List<String> allProviders = locationManager.getAllProviders();
+        //providerName = locationManager.getBestProvider(new Criteria(), true);
+
+        // Get the WIFI manager
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+        // Get the fused location provider client
+        if (mFusedLocationProviderClient == null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        }
+
         // Check for permissions for android users of sdk 23 or higher
         checkPermissions();
 
-
-
+        mainSetupDone = true;
     }
 
     private void checkBluetoothService() {
@@ -184,45 +222,11 @@ public class MainActivity extends AppCompatActivity {
         checkBluetoothService();
 
         bubbleSize = myDB.getNumOfEncounters();
+
+        // TODO evaluate position of this call
+        myDB.deleteAgedGPSData();
+
         myID =  myDB.getPersonalInfoData();
-
-        //sendHighPriorityNote("Hello");
-
-
-//--------------------------------------------------------------------------------------------------
-
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
-//
-//        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-//
-//
-//        Response.Listener<String> responseListener = new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                responseJSON = response;
-//            }
-//        };
-//
-//        Response.ErrorListener errorListener = new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                responseJSON = "ERROR";
-//
-//            }
-//        };
-//
-//        //bleThread.start();
-//
-//
-//
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
-//
-//        requestQueue.add(stringRequest);
-
-//--------------------------------------------------------------------------------------------------
-
     }
 
     // Checks necessary permissions have been enabled
@@ -237,6 +241,10 @@ public class MainActivity extends AppCompatActivity {
         // External Storage
         if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") != PackageManager.PERMISSION_GRANTED) {
             arrayList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        // WIFI
+        if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_WIFI_STATE") != PackageManager.PERMISSION_GRANTED) {
+            arrayList.add(Manifest.permission.ACCESS_WIFI_STATE);
         }
 
         if (arrayList.size() != 0) {
@@ -326,8 +334,6 @@ public class MainActivity extends AppCompatActivity {
 
         bleThread.start();
     }
-
-
 
     //----------------------------------------------------------------------------------------------
     // Notifications in MAIN ACTIVITY
@@ -420,5 +426,4 @@ public class MainActivity extends AppCompatActivity {
    public static void setHasExpo(boolean value){
         hasExpo = value;
    }
-
 }
