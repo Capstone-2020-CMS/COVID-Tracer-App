@@ -134,7 +134,9 @@ public class VolleyGET {
                    try {
                        userData = (JSONObject) response.get(i);
                        String infectedUserID = (String) userData.get("InfectedUserID");
-                       myDB.insertInfectedEncounterData(infectedUserID);
+                       long epochDate = (long) userData.get("date");
+                       String dateReported = convertEpochDate(epochDate);
+                       myDB.insertInfectedEncounterData(infectedUserID, dateReported);
 
                        // Set class variable "hasExpo" to true if an exposure encounter has occurred
                        if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {

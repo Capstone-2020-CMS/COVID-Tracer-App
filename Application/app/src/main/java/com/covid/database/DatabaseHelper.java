@@ -76,8 +76,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "ENCOUNTERED_STATUS DEFAULT 'false', " +
                 "DATE_ENCOUNTERED, " +
                 "NOTIFICATION_SENT DEFAULT 'false')");
-
-        db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(INFECTED_USER_ID TEXT PRIMARY KEY)");
     }
 
     @Override
