@@ -142,7 +142,7 @@ public class BLEService extends Service {
                 .setContentText("BLE scanning is active")
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_DEFAULT)
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setSmallIcon(R.drawable.ic_icon_small_01)
                 .setContentIntent(pendingIntent)
                 .build();
 

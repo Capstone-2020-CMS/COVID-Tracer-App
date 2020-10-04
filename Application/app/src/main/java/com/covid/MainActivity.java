@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true)
                 .build();
-        
+
         // TODO figure out how not to conflict with main scanning notification
         //noteManagerCompat.notify(1, notification);
     }
