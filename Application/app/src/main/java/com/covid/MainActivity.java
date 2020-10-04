@@ -1,61 +1,18 @@
 package com.covid;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-
 import android.Manifest;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
-import android.location.Criteria;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
-
-import android.os.Build;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-
 import android.widget.Toast;
-
-
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.android.volley.toolbox.JsonRequest;
-import com.covid.bluetooth.BLEReceiver;
-import com.covid.database.CloudInfectedUsers;
-import com.covid.database.DatabaseHelper;
-import com.covid.database.PersonalData;
-import com.covid.database.cloud.VolleyGET;
-import com.covid.utils.NoteManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,49 +27,19 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.covid.bluetooth.BLEService;
-
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
+import com.covid.database.cloud.VolleyGET;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import com.google.gson.JsonArray;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import java.util.List;
-
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-
-import retrofit2.Call;
-import retrofit2.Callback;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import static com.covid.ui.home.HomeFragment.toggleCardColour;
-import static com.covid.utils.CodeManager.longToByteArray;
-import static com.covid.utils.CodeManager.generateCode;
-import static com.covid.utils.CodeManager.getLongFromByteArray;
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
 import static com.covid.utils.NoteManager.CHANNEL_2_ID;
-
-import static com.covid.utils.utilNotification.createNotificationChannel;
 import static com.covid.utils.NoteManager.createNotificationChannels;
+import static com.covid.utils.utilNotification.createNotificationChannel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -220,31 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
         bubbleSize = myDB.getNumOfEncounters();
 
-
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                responseJSON = response;
-            }
-        };
-
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                responseJSON = "ERROR";
-
-            }
-        };
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, requestURL, responseListener, errorListener);
-
-        requestQueue.add(stringRequest);
-
-//--------------------------------------------------------------------------------------------------
-
         // TODO evaluate position of this call
         myDB.deleteAgedGPSData();
-
 
         myID =  myDB.getPersonalInfoData();
     }
@@ -435,10 +339,6 @@ public class MainActivity extends AppCompatActivity {
 
         noteManagerCompat.notify(1, notification);
     }
-
-
-
-
 
    public static void setHasExpo(boolean value){
         hasExpo = value;
