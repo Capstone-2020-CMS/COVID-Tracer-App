@@ -2,6 +2,7 @@ package com.covid.bluetooth;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
@@ -20,8 +21,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
 import androidx.core.app.NotificationManagerCompat;
 
+import androidx.core.app.TaskStackBuilder;
+
+
+import com.covid.MainActivity;
 import com.covid.R;
 import com.covid.database.DatabaseHelper;
 import com.google.android.gms.location.LocationServices;
@@ -126,12 +132,18 @@ public class BLEService extends Service {
 
         String title = dateformat.format(date);
 
+        Intent goToMainActivityIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(goToMainActivityIntent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
                 .setContentTitle(title)
                 .setContentText("BLE scanning is active")
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentIntent(pendingIntent)
                 .build();
 
         return notification;
@@ -140,15 +152,13 @@ public class BLEService extends Service {
     private String getCurrentDate() {
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String currentDate = dateFormat.format(cal.getTime());
-        return currentDate;
+        return dateFormat.format(cal.getTime());
     }
 
     private String getCurrentTime() {
         Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("HH-mm");
-        String currentTime = dateFormat.format(cal.getTime());
-        return currentTime;
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        return dateFormat.format(cal.getTime());
     }
 
     private void createCallback() {

@@ -11,6 +11,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+
+
+import com.covid.gps.GPSRecord;
+
+
 import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -261,5 +266,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String sql = "DELETE FROM " + INFECTED_ENCOUNTERS_TABLE;
         db.execSQL(sql);
+    }
+
+    public ArrayList<GPSRecord> getAllGPSData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM GPS_TABLE ORDER BY date(DATE)";
+
+        ArrayList<GPSRecord> arrayList = new ArrayList<>();
+
+        Cursor cursor = db.rawQuery(query, null);
+        try {
+            while (cursor.moveToNext()) {
+                double lat = cursor.getDouble(0);
+                double lon = cursor.getDouble(1);
+                String date = cursor.getString(2);
+                String time = cursor.getString(3);
+
+                arrayList.add(new GPSRecord(lat, lon, date, time));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return arrayList;
+    }
+
+    public ArrayList<GPSRecord> getGPSDataForDay(String dateCondition) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM GPS_TABLE WHERE strftime('%Y-%m-%d', DATE) = '"+ dateCondition +"' ORDER BY time(TIME)";
+
+        ArrayList<GPSRecord> arrayList = new ArrayList<>();
+
+        Cursor cursor = db.rawQuery(query, null);
+        try {
+            while (cursor.moveToNext()) {
+                double lat = cursor.getDouble(0);
+                double lon = cursor.getDouble(1);
+                String date = cursor.getString(2);
+                String time = cursor.getString(3);
+
+                arrayList.add(new GPSRecord(lat, lon, date, time));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return arrayList;
+
     }
 }

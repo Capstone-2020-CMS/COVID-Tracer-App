@@ -25,16 +25,35 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.covid.bluetooth.BLEService;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
+
 import com.covid.database.cloud.VolleyGET;
+
+import com.covid.utils.GetDataWorker;
+import com.covid.utils.TableData;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+
+import java.util.Arrays;
+import java.util.Collection;
+
 
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
 import static com.covid.utils.NoteManager.CHANNEL_2_ID;
@@ -58,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
     public static WifiManager wifiManager;
     public static FusedLocationProviderClient mFusedLocationProviderClient;
     public static boolean mainSetupDone = false;
+    public static WorkRequest getDataWorkRequest;
+    public static WorkManager workManager;
+
+    public static ArrayList<TableData> tableDataArrayList = new ArrayList<>();
+    public static String dateUpdated;
 
     public static String myID;
 
@@ -127,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
 
         mainSetupDone = true;
+
+        // Retrieve data from ministry of health
+        getDataWorkRequest = new OneTimeWorkRequest.Builder(GetDataWorker.class).build();
+        workManager = WorkManager.getInstance(getApplicationContext());
+        workManager.enqueue(getDataWorkRequest);
     }
 
     private void checkBluetoothService() {
@@ -169,6 +198,10 @@ public class MainActivity extends AppCompatActivity {
         // WIFI
         if (ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_WIFI_STATE") != PackageManager.PERMISSION_GRANTED) {
             arrayList.add(Manifest.permission.ACCESS_WIFI_STATE);
+        }
+        // Internet
+        if (ContextCompat.checkSelfPermission(this, "android.permission.INTERNET") != PackageManager.PERMISSION_GRANTED) {
+            arrayList.add(Manifest.permission.INTERNET);
         }
 
         if (arrayList.size() != 0) {

@@ -20,6 +20,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 
+    <!-- Permission required for internet -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
