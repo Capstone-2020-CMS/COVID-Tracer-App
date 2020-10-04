@@ -21,7 +21,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import androidx.core.app.NotificationManagerCompat;
+
 import androidx.core.app.TaskStackBuilder;
+
 
 import com.covid.MainActivity;
 import com.covid.R;
@@ -52,6 +56,9 @@ public class BLEService extends Service {
     public String bleEncounterTime;
     public String bleEncounterID;
     private String logTag = "COVID";
+
+
+
 
     @Override
     public void onCreate() {

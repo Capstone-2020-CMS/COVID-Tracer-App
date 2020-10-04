@@ -4,6 +4,11 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_gps">GPS</string>
+
+    <string name="confirm_expo">Confirm Exposure</string>
+    <string name="revert_expo">Revert Exposure</string>
+    <string name="big_brain_aws">1sjvZQe8ls3K7bB0vooZI33xJdqjwQ195jC7apiv</string>
+
     <string name="symptoms">
         The symptoms of COVID-19 are similar to common illnesses such as a cold or influenza. You may have one or more of the following:\n
         \n- a new or worsening cough

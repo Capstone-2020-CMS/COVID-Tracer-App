@@ -1,7 +1,10 @@
 package com.covid;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
@@ -28,8 +32,12 @@ import androidx.work.WorkRequest;
 import com.covid.bluetooth.BLEService;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
+
+import com.covid.database.cloud.VolleyGET;
+
 import com.covid.utils.GetDataWorker;
 import com.covid.utils.TableData;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,19 +49,28 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+
 import java.util.Arrays;
 import java.util.Collection;
 
+
+import static com.covid.utils.NoteManager.CHANNEL_1_ID;
+import static com.covid.utils.NoteManager.CHANNEL_2_ID;
+import static com.covid.utils.NoteManager.createNotificationChannels;
 import static com.covid.utils.utilNotification.createNotificationChannel;
 
 public class MainActivity extends AppCompatActivity {
+
     private final int REQUEST_ENABLE_BT = 1;
     public static final String NOTIFICATION_CHANNEL = "0";
 
+    // Class vars
     public static String logPath;
     public static NotificationManagerCompat notificationManager;
     public static DatabaseHelper myDB;
     public static int bubbleSize = 0;
+
     public static BluetoothAdapter adapter;
     public static LocationManager locationManager;
     public static String providerName = "gps";
@@ -65,6 +82,23 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<TableData> tableDataArrayList = new ArrayList<>();
     public static String dateUpdated;
+
+    public static String myID;
+
+    public static boolean activeExpo;
+    public static boolean hasExpo;
+
+    private String responseJSON;
+
+    // Notification Manager (use compat as it supports backwards compatibility with earlier notifications)
+    private static NotificationManagerCompat noteManagerCompat;
+
+
+
+
+
+    private boolean readyToStart = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
         // Notification setup
         createNotificationChannel(getApplicationContext());
         notificationManager = NotificationManagerCompat.from(this);
+
+
+        // Note Manager
+
+        createNotificationChannels(getApplicationContext());
+        noteManagerCompat = NotificationManagerCompat.from(this);
 
         // Template code from the start of the project
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -129,13 +169,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void start() {
         firstTimeSetup();
         checkBluetoothService();
 
         bubbleSize = myDB.getNumOfEncounters();
+
         // TODO evaluate position of this call
         myDB.deleteAgedGPSData();
+
+        myID =  myDB.getPersonalInfoData();
     }
 
     // Checks necessary permissions have been enabled
@@ -171,6 +215,24 @@ public class MainActivity extends AppCompatActivity {
         } else {
             start();
         }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //VolleyGET.getInfectedUsers(getApplicationContext());
+
+        VolleyGET.checkExposure(getApplicationContext());
+
+
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     @Override
@@ -210,6 +272,9 @@ public class MainActivity extends AppCompatActivity {
             // marks the first time the code has run.
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("firstTime", true);
+
+            activeExpo = false;
+
             editor.commit();
         }
     }
@@ -226,4 +291,90 @@ public class MainActivity extends AppCompatActivity {
 
         bleThread.start();
     }
+
+    //----------------------------------------------------------------------------------------------
+    // Notifications in MAIN ACTIVITY
+    //----------------------------------------------------------------------------------------------
+    public void sendHighPriorityNote(String contents){
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                0
+        );
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                //.setSmallIcon(R.drawable.ic_emptybubble)
+                .setSmallIcon(R.drawable.ic_icon_small_01)
+                .setContentTitle("ALART!")
+                .setContentText("Big Alart Please CODE: Expono")
+                // Set priority is used for API lower than 26/Oreo works like Channel system
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                // Set the intent to be called when the notification is tapped
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .build();
+
+        noteManagerCompat.notify(1, notification);
+
+    }
+    public void sendLowPriorityNote(String contents){
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                0
+        );
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_emptybubble)
+                .setContentTitle("alart?!")
+                .setContentText("small alart Please CODE: No expono")
+                // Set priority is used for API lower than 26/Oreo works like Channel system
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
+                //.setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                // Set the intent to be called when the notification is tapped
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .build();
+
+        noteManagerCompat.notify(2, notification);
+   }
+
+    public static void sendHighPriorityNoteAlpha(String contents, Context context){
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                0
+        );
+
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_emptybubble)
+                .setContentTitle("ALART!")
+                .setContentText("Big Alart Please CODE: Expono")
+                // Set priority is used for API lower than 26/Oreo works like Channel system
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                // Set the intent to be called when the notification is tapped
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true)
+                .build();
+
+        noteManagerCompat.notify(1, notification);
+    }
+
+   public static void setHasExpo(boolean value){
+        hasExpo = value;
+   }
 }
