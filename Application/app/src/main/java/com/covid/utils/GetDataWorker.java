@@ -49,6 +49,7 @@ public class GetDataWorker extends Worker {
         temp = table.children().get(3).children();
         TableData numRecovered = new TableData(temp.get(0).text(), temp.get(1).text(), temp.get(2).text());
 
+        tableDataArrayList.clear();
         tableDataArrayList.addAll(Arrays.asList(numConfirmedCases, numDeaths, numRecovered));
 
         return Result.success();

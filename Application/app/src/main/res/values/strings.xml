@@ -10,17 +10,45 @@
     <string name="big_brain_aws">1sjvZQe8ls3K7bB0vooZI33xJdqjwQ195jC7apiv</string>
 
     <string name="symptoms">
-        The symptoms of COVID-19 are similar to common illnesses such as a cold or influenza. You may have one or more of the following:\n
+        The symptoms of COVID-19 are similar to common illnesses such as a cold or influenza. You may have one or more of the following:
+        \n
         \n- a new or worsening cough
         \n- fever (at least 38˚C)
         \n- shortness of breath
         \n- a sore throat
         \n- sneezing and runny nose
-        \n- temporary loss of smell\n
+        \n- temporary loss of smell
+        \n
         \nShortness of breath is a sign of possible pneumonia and requires immediate medical attention.\n
         \nSome people may present with less typical symptoms such as only: fever, diarrhoea, headache, myalgia (muscle pain), nausea/vomiting, or confusion/irritability.\n
         \nSymptoms can take up to 14 days to show after a person has been infected. The virus can be passed onto others before they know they have it – from up to two days before symptoms develop.\n
         \nIf you have these symptoms call Healthline (for free) on 0800 358 5453 or your doctor immediately.
+    </string>
+
+    <string name="howItWorks"><b>myBubble</b> uses a Bluetooth LE (low energy) and a unique ID system to build a table of all your close contacts whilst keeping everyone inside the system completely anonymous.
+        \n
+        \nWhen a user tests positive for COVID-19, they can use the app to instantly alert the <b>myBubble</b> Cloud server.
+        \n
+        \nThe Cloud server then relays the anonymous unique ID to every other <b>myBubble</b> app.
+        \n
+        \nEach app then checks the infected ID against its own table of contacts.
+        \n
+        \nIf a match is found, that user receives an alert recommending they undergo testing immediately.
+    </string>
+
+    <string name="servicesExpl"><b>myBubble</b> utilise three key components of your smartphone to conduct effective contact tracing.
+        \n
+        \n1: <b>Bluetooth</b> is used to record encounters with other smartphone devices with this app
+        installed <i>they <b>must</b> have the app running with <b>Bluetooth</b> enabled as well.</i>
+        Should one user not have <b>Bluetooth</b> enabled then the system breaks down.
+        \n
+        \n2: <b>Location Services</b> are used to keep a record of where you have been locally. Note
+        this data is only ever stored locally and is for your personal use so that you do not have to manually
+        log where you have been.
+        \n
+        \n3: <b>WIFI/Internet</b>, should you ever come into close contact with someone else using the app
+        that encounter is recorded. Should any of those encounters be confirmed as a COVID case then
+        you will need <b>Internet</b> access to receive a notification informing you.
     </string>
 
     <string name="tap_here_for_more_info"><u>Tap here to get more information</u></string>
