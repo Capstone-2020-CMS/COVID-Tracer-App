@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.covid.MainActivity;
 import com.covid.R;
+import com.covid.utils.TableData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -151,9 +152,21 @@ public class MapsFragment extends Fragment {
 
         PolylineOptions options = new PolylineOptions().clickable(true);
 
-        for (GPSRecord record : arrayList) {
+        for (int i=0; i<arrayList.size(); i++) {
+            GPSRecord record = arrayList.get(i);
             options.add(new LatLng(record.getLatitude(), record.getLongitude()));
-            nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
+
+            boolean addMarker = false;
+
+            if (i == 0) {
+                addMarker = true;
+            } else if (i % 360 == 0) {
+                addMarker = true;
+            }
+
+            if (addMarker) {
+                nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
+            }
         }
 
         Polyline polyline = nMap.addPolyline(options);

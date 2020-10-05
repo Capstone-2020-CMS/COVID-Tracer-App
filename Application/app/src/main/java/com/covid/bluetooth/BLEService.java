@@ -30,6 +30,9 @@ import androidx.core.app.TaskStackBuilder;
 import com.covid.MainActivity;
 import com.covid.R;
 import com.covid.database.DatabaseHelper;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,6 +53,7 @@ import static com.covid.utils.CodeManager.getLongFromByteArray;
 public class BLEService extends Service {
     private ScanCallback scanCallback;
     private AdvertiseCallback advertiseCallback;
+    private LocationCallback locationCallback;
     private BLEManager bleManager;
     private String NOTIFICATION_CHANNEL = "0";
     public String bleEncounterDate;
@@ -68,43 +72,16 @@ public class BLEService extends Service {
         recordGPSCoordinates();
     }
 
+    @SuppressLint("MissingPermission")
     private void recordGPSCoordinates() {
-        Handler handler = new Handler(Looper.getMainLooper());
+        if (mFusedLocationProviderClient == null) {
+            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(BLEService.this);
+        }
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                int delay = 10000;
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
 
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mFusedLocationProviderClient == null) {
-                            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(BLEService.this);
-                        }
-
-                        @SuppressLint("MissingPermission") Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
-
-                        locationResult.addOnCompleteListener(new OnCompleteListener<Location>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Location> task) {
-                                if (task.isSuccessful()) {
-                                    Location mLastKnownLocation = task.getResult();
-                                    if (mLastKnownLocation != null) {
-                                        myDB.insertGPSData(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), getCurrentDate(), getCurrentTime());
-                                        Log.i(logTag, String.format("%s,%s", String.valueOf(mLastKnownLocation.getLatitude()), mLastKnownLocation.getLongitude()));
-                                    }
-                                }
-                            }
-                        });
-
-                        handler.postDelayed(this, delay);
-                    }
-                }, delay);
-            }
-        };
-
-        thread.start();
+        mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
     @Override
@@ -215,6 +192,19 @@ public class BLEService extends Service {
             public void onStartFailure(int errorCode) {
                 super.onStartFailure(errorCode);
                 Log.e(logTag, getAdvertiseErrorDescription(errorCode));
+            }
+        };
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+
+                if (locationResult.getLastLocation() != null) {
+                    Location mLastKnownLocation = locationResult.getLastLocation();
+                    myDB.insertGPSData(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), getCurrentDate(), getCurrentTime());
+                    Log.i(logTag, String.format("%s,%s", String.valueOf(mLastKnownLocation.getLatitude()), mLastKnownLocation.getLongitude()));
+                }
             }
         };
     }
