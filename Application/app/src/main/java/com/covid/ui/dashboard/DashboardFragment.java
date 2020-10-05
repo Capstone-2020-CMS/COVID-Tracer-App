@@ -33,7 +33,7 @@ public class DashboardFragment extends Fragment {
     private TextView txtRecovered;
     private TextView txtDateUpdated;
     private ImageView imgRefresh;
-    private MaterialCardView cardButton;
+    private TextView txtLinkToResources;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class DashboardFragment extends Fragment {
         txtRecovered = root.findViewById(R.id.txtRecovered);
         txtDateUpdated = root.findViewById(R.id.txtDateUpdated);
         imgRefresh = root.findViewById(R.id.imgRefresh);
-        cardButton = root.findViewById(R.id.cardButton);
+        txtLinkToResources = root.findViewById(R.id.txtLinkToResources);
 
         updateTableData();
 
@@ -68,7 +68,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        cardButton.setOnClickListener(new View.OnClickListener() {
+        txtLinkToResources.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String url = "https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus";

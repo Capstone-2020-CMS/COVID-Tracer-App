@@ -230,57 +230,31 @@
                     android:text="@string/symptoms"
                     android:textAlignment="textStart"
                     android:textColor="@color/primaryTextColor" />
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardButton"
-            android:layout_width="300dp"
+        <TextView
+            android:id="@+id/txtLinkToResources"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardBackgroundColor="@color/motorwayGreen"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:text="@string/tap_here_for_more_info"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardSymptoms"
-            app:strokeColor="@color/primaryTextColor"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:layout_weight="1"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Tap to get more information"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-                    android:textColor="@color/primaryTextColor"
-                    android:textSize="14sp" />
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="0.1"
-                    app:srcCompat="@drawable/ic_link" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
+            app:layout_constraintTop_toBottomOf="@+id/cardSymptoms" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardButton" />
+            app:layout_constraintTop_toBottomOf="@+id/txtLinkToResources" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
