@@ -152,21 +152,29 @@ public class MapsFragment extends Fragment {
 
         PolylineOptions options = new PolylineOptions().clickable(true);
 
+        Location previousLocation = null;
+
         for (int i=0; i<arrayList.size(); i++) {
             GPSRecord record = arrayList.get(i);
             options.add(new LatLng(record.getLatitude(), record.getLongitude()));
 
+            Location location = new Location("COVID_Tracer_App");
+            location.setLatitude(record.getLatitude());
+            location.setLongitude(record.getLongitude());
+
             boolean addMarker = false;
 
-            if (i == 0) {
+            if (previousLocation == null) {
                 addMarker = true;
-            } else if (i % 360 == 0) {
+            } else if (location.distanceTo(previousLocation) > 500) {
                 addMarker = true;
             }
 
             if (addMarker) {
                 nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
             }
+
+            previousLocation = location;
         }
 
         Polyline polyline = nMap.addPolyline(options);
