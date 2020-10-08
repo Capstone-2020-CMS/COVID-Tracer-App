@@ -30,6 +30,7 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import com.covid.bluetooth.BLEService;
+import com.covid.database.CloudInfectedUsers;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
 
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         if (myDB == null) {
             myDB = new DatabaseHelper(this);
         }
+
+        CloudInfectedUsers.updateEncounterStatus();
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));

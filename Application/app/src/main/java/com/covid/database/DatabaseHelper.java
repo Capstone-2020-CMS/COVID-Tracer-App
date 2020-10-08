@@ -62,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(" create table " + ENCOUNTERS_TABLE + "(ID TEXT PRIMARY KEY CHECK(\n" +
                 "        typeof(\"ID\") = \"text\" AND\n" +
                 "        length(\"ID\") <= 20\n" +
-                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT, IS_INFECTED TEXT DEFAULT 'false', " +
+                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT, IS_INFECTED TEXT, " +
                 "NOTIFICATION_SENT DEFAULT 'false')");
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
