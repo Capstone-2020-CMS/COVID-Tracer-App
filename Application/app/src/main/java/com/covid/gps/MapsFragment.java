@@ -30,13 +30,18 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static com.covid.MainActivity.mFusedLocationProviderClient;
@@ -151,6 +156,7 @@ public class MapsFragment extends Fragment {
         nMap.clear();
 
         PolylineOptions options = new PolylineOptions().clickable(true);
+        ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);
 
         Location previousLocation = null;
 
@@ -184,6 +190,8 @@ public class MapsFragment extends Fragment {
             // If add marker boolean is true add a marker to the app
             if (addMarker) {
                 nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
+                TimeMarker marker = new TimeMarker(record.getLatitude(),record.getLongitude(), record.getTime());
+                clusterManager.addItem(marker);
             }
             // If add polyline point boolean is true add point to polyline options
             if (addPolyLinePoint) {
@@ -193,7 +201,8 @@ public class MapsFragment extends Fragment {
             // Set previous location to current location
             previousLocation = location;
         }
-
+        // Clusters the items added to the cluster manager
+        clusterManager.cluster();
         // Add the polyline to map
         Polyline polyline = nMap.addPolyline(options);
     }
