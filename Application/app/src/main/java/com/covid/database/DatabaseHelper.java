@@ -18,6 +18,8 @@ import com.covid.gps.GPSRecord;
 
 import java.util.ArrayList;
 
+import static com.covid.MainActivity.myDB;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
@@ -62,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(" create table " + ENCOUNTERS_TABLE + "(ID TEXT PRIMARY KEY CHECK(\n" +
                 "        typeof(\"ID\") = \"text\" AND\n" +
                 "        length(\"ID\") <= 20\n" +
-                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT, IS_INFECTED TEXT, " +
+                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT, IS_INFECTED DEFAULT 'false', " +
                 "NOTIFICATION_SENT DEFAULT 'false')");
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
@@ -92,13 +94,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insertEncounterData(String ID, String EncounterDate, String EncounterTime) {
+    public boolean insertEncounterData(String ID, String ENCOUNTER_DATE, String ENCOUNTER_TIME) {
         SQLiteDatabase db = getWritableDatabase();
-        ContentValues newValues = new ContentValues();
-        newValues.put("ID", ID);
-        newValues.put("ENCOUNTER_DATE", EncounterDate);
-        newValues.put("ENCOUNTER_TIME", EncounterTime);
-        long result = db.replace(ENCOUNTERS_TABLE, null, newValues);
+        long result;
+
+        if (!myDB.getEncounterData(ID).equals("Data Not Found")){
+            String sql = "UPDATE ENCOUNTERS_TABLE SET ENCOUNTER_DATE = ? , "
+                    + "ENCOUNTER_TIME = ? "
+                    + "WHERE ID = ?";
+            result = 1;
+        }
+        else {
+            ContentValues newValues = new ContentValues();
+            newValues.put("ID", ID);
+            newValues.put("ENCOUNTER_DATE", ENCOUNTER_DATE);
+            newValues.put("ENCOUNTER_TIME", ENCOUNTER_TIME);
+            result = db.insert(ENCOUNTERS_TABLE, null, newValues);
+        }
+
         if (result == -1) {
             return false;
         }

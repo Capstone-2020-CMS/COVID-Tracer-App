@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.covid.MainActivity;
 
@@ -26,6 +27,7 @@ public class CloudInfectedUsers {
             if (!myDB.getEncounterData(id).equals("Data Not Found")) {
                 String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + id + "'";
                 db.execSQL(sql);
+                Log.v("UPDATED INFECTION", "true");
             }
         }
     }
