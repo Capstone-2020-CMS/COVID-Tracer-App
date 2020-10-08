@@ -24,7 +24,7 @@ public class CloudInfectedUsers {
 
         for (String id : infectedEncounterData) {
             if (!myDB.getEncounterData(id).equals("Data Not Found")) {
-                String sql  = "UPDATE INFECTED_ENCOUNTERS_TABLE SET ENCOUNTERED_STATUS = 'true' WHERE INFECTED_USER_ID='" + id + "'";
+                String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + id + "'";
                 db.execSQL(sql);
             }
         }
