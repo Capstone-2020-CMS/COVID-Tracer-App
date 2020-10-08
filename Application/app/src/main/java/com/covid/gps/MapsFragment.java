@@ -155,28 +155,46 @@ public class MapsFragment extends Fragment {
         Location previousLocation = null;
 
         for (int i=0; i<arrayList.size(); i++) {
+            // Get GPS data from array
             GPSRecord record = arrayList.get(i);
-            options.add(new LatLng(record.getLatitude(), record.getLongitude()));
 
+            // Create location object for distance calculations
             Location location = new Location("COVID_Tracer_App");
             location.setLatitude(record.getLatitude());
             location.setLongitude(record.getLongitude());
 
+            // Initialise booleans for adding a marker and polyline point as false
             boolean addMarker = false;
+            boolean addPolyLinePoint = false;
 
+            // If it is the first location set booleans to true
             if (previousLocation == null) {
                 addMarker = true;
-            } else if (location.distanceTo(previousLocation) > 500) {
+                addPolyLinePoint = true;
+            }
+            // If the distance to the previous location is greater than 500 metres add a marker
+            else if (location.distanceTo(previousLocation) > 500) {
                 addMarker = true;
             }
+            // If the distance to the previous location is greater than 100 metres add a point for the line
+            else if (location.distanceTo(previousLocation) > 100) {
+                addPolyLinePoint = true;
+            }
 
+            // If add marker boolean is true add a marker to the app
             if (addMarker) {
                 nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
             }
+            // If add polyline point boolean is true add point to polyline options
+            if (addPolyLinePoint) {
+                options.add(new LatLng(record.getLatitude(), record.getLongitude()));
+            }
 
+            // Set previous location to current location
             previousLocation = location;
         }
 
+        // Add the polyline to map
         Polyline polyline = nMap.addPolyline(options);
     }
 
