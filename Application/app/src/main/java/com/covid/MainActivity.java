@@ -110,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
             myDB = new DatabaseHelper(this);
         }
 
+
+
+        //TODO - schedule updateEncounterStatus method
+        //currently begins before BLE advertising so nothing is updated
         CloudInfectedUsers.updateEncounterStatus();
 
         // Set the path to the logs folder
