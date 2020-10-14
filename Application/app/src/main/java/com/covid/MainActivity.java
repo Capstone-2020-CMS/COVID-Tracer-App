@@ -25,7 +25,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
@@ -36,6 +40,7 @@ import com.covid.database.PersonalData;
 
 import com.covid.database.cloud.VolleyGET;
 
+import com.covid.utils.DBUpdateWorker;
 import com.covid.utils.GetDataWorker;
 import com.covid.utils.TableData;
 
@@ -54,6 +59,7 @@ import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
@@ -162,6 +168,24 @@ public class MainActivity extends AppCompatActivity {
         getDataWorkRequest = new OneTimeWorkRequest.Builder(GetDataWorker.class).build();
         workManager = WorkManager.getInstance(getApplicationContext());
         workManager.enqueue(getDataWorkRequest);
+
+        // Schedule updates to the local DB from Cloud
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest updateDBRequest =
+                new PeriodicWorkRequest.Builder(DBUpdateWorker.class, 1, TimeUnit.HOURS)
+                        .setConstraints(constraints)
+                        .build();
+
+        // Enqueues a unique periodic request to prevent duplicate requests each time onCreate() runs
+        workManager.enqueueUniquePeriodicWork("UpdateDB", ExistingPeriodicWorkPolicy.KEEP, updateDBRequest);
+
+
+
+
+
     }
 
     private void checkBluetoothService() {
