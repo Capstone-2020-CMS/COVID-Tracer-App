@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import static com.covid.database.cloud.VolleyGET.checkExposure;
 import static com.covid.database.cloud.VolleyGET.getInfectedUsers;
 
 public class DBUpdateWorker extends Worker {
@@ -22,11 +23,10 @@ public class DBUpdateWorker extends Worker {
 
         Context context = getApplicationContext();
 
-        getInfectedUsers(context);
+        checkExposure(context);
 
-        // run UpdateDB();
 
-        Toast.makeText(getApplicationContext(), "Updating DB...", Toast.LENGTH_LONG).show();
+
 
         return Result.success();
 

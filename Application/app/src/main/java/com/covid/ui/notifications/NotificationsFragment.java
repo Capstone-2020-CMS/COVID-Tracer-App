@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,12 +23,17 @@ import static com.covid.MainActivity.myID;
 
 public class NotificationsFragment extends Fragment {
 
+    private static String idAdd = "Your ID was added to the active infections database.";
+    private static String idRemove = "Your ID was removed from the active infections database";
+
     private static MaterialCardView cardExposure;
     private static int motorwayGreen;
     private static int red;
     private static LinearLayout layout;
     private TextView txtIDValue;
     private NotificationsViewModel notificationsViewModel;
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -65,11 +71,13 @@ public class NotificationsFragment extends Fragment {
         if (activeExpo == false){
             activeExpo = true;
             cardExposure.setCardBackgroundColor(motorwayGreen);
+            Toast.makeText(getContext(), idAdd, Toast.LENGTH_SHORT).show();
 
         }
         else{
             activeExpo = false;
             cardExposure.setCardBackgroundColor(red);
+            Toast.makeText(getContext(), idRemove, Toast.LENGTH_SHORT).show();
         }
     }
 }

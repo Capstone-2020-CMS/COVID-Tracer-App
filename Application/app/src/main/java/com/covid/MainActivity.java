@@ -174,8 +174,13 @@ public class MainActivity extends AppCompatActivity {
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
 
-        PeriodicWorkRequest updateDBRequest =
+/*        PeriodicWorkRequest updateDBRequest =
                 new PeriodicWorkRequest.Builder(DBUpdateWorker.class, 1, TimeUnit.HOURS)
+                        .setConstraints(constraints)
+                        .build();*/
+
+        PeriodicWorkRequest updateDBRequest =
+                new PeriodicWorkRequest.Builder(DBUpdateWorker.class, 15, TimeUnit.MINUTES)
                         .setConstraints(constraints)
                         .build();
 
@@ -365,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_emptybubble)
                 .setContentTitle("alart?!")
-                .setContentText("small alart Please CODE: No expono")
+                .setContentText("Updated Database?")
                 // Set priority is used for API lower than 26/Oreo works like Channel system
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
