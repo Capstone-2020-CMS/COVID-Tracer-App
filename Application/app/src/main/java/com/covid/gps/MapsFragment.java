@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.work.WorkInfo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.covid.MainActivity;
 import com.covid.R;
@@ -61,8 +65,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import static com.covid.MainActivity.getZoneDataWorkRequest;
 import static com.covid.MainActivity.mFusedLocationProviderClient;
 import static com.covid.MainActivity.myDB;
+import static com.covid.MainActivity.workManager;
 
 public class MapsFragment extends Fragment {
 
@@ -218,7 +224,20 @@ public class MapsFragment extends Fragment {
     }
 
     private void getZoneData() {
-
+        final Observer<WorkInfo> workInfoObserver = new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(WorkInfo workInfo) {
+                if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                    Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show();
+                } else if (workInfo.getState() == WorkInfo.State.FAILED) {
+                    Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        workManager.pruneWork();
+        workManager.enqueue(getZoneDataWorkRequest);
+        LiveData<WorkInfo> status = workManager.getWorkInfoByIdLiveData(getZoneDataWorkRequest.getId());
+        status.observe(getViewLifecycleOwner(), workInfoObserver);
     }
 
     private void drawZones() {
@@ -242,6 +261,8 @@ public class MapsFragment extends Fragment {
         nMap.clear();
 
         drawZones();
+
+        getZoneData();
 
         PolylineOptions options = new PolylineOptions().clickable(true);
         ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);

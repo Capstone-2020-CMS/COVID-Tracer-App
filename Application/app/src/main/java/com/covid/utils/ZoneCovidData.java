@@ -2,13 +2,13 @@ package com.covid.utils;
 
 public class ZoneCovidData {
     private String DHB;
-    private int active;
-    private int recovered;
-    private int deceased;
-    private int total;
-    private int change24hr;
+    private String active;
+    private String recovered;
+    private String deceased;
+    private String total;
+    private String change24hr;
 
-    public ZoneCovidData(String DHB, int active, int recovered, int deceased, int total, int change24hr) {
+    public ZoneCovidData(String DHB, String active, String recovered, String deceased, String total, String change24hr) {
         this.DHB = DHB;
         this.active = active;
         this.recovered = recovered;
@@ -25,43 +25,43 @@ public class ZoneCovidData {
         this.DHB = DHB;
     }
 
-    public int getActive() {
+    public String getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(String active) {
         this.active = active;
     }
 
-    public int getRecovered() {
+    public String getRecovered() {
         return recovered;
     }
 
-    public void setRecovered(int recovered) {
+    public void setRecovered(String recovered) {
         this.recovered = recovered;
     }
 
-    public int getDeceased() {
+    public String getDeceased() {
         return deceased;
     }
 
-    public void setDeceased(int deceased) {
+    public void setDeceased(String deceased) {
         this.deceased = deceased;
     }
 
-    public int getTotal() {
+    public String getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(String total) {
         this.total = total;
     }
 
-    public int getChange24hr() {
+    public String getChange24hr() {
         return change24hr;
     }
 
-    public void setChange24hr(int change24hr) {
+    public void setChange24hr(String change24hr) {
         this.change24hr = change24hr;
     }
 }

@@ -36,8 +36,10 @@ import com.covid.database.PersonalData;
 import com.covid.database.cloud.VolleyGET;
 
 import com.covid.utils.GetSummaryDataWorker;
+import com.covid.utils.GetZoneDataWorker;
 import com.covid.utils.TableData;
 
+import com.covid.utils.ZoneCovidData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -68,9 +70,11 @@ public class MainActivity extends AppCompatActivity {
     public static FusedLocationProviderClient mFusedLocationProviderClient;
     public static boolean mainSetupDone = false;
     public static WorkRequest getSummaryDataWorkRequest;
+    public static WorkRequest getZoneDataWorkRequest;
     public static WorkManager workManager;
 
     public static ArrayList<TableData> tableDataArrayList = new ArrayList<>();
+    public static ArrayList<ZoneCovidData> zoneCovidDataArray = new ArrayList<>();
     public static String dateUpdated;
 
     public static String myID;
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean readyToStart = false;
+
 
 
     @Override
@@ -143,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Retrieve data from ministry of health
         getSummaryDataWorkRequest = new OneTimeWorkRequest.Builder(GetSummaryDataWorker.class).build();
+        getZoneDataWorkRequest = new OneTimeWorkRequest.Builder(GetZoneDataWorker.class).build();
         workManager = WorkManager.getInstance(getApplicationContext());
         workManager.enqueue(getSummaryDataWorkRequest);
     }
