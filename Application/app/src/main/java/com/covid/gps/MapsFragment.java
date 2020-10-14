@@ -167,14 +167,7 @@ public class MapsFragment extends Fragment {
         });
     }
 
-    // Draws line and markers for specified list
-    private void drawTimeline(ArrayList<GPSRecord> arrayList) {
-        nMap.clear();
-
-        PolylineOptions options = new PolylineOptions().clickable(true);
-        ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);
-
-        /// KML stuff
+    private void oneOffKmlStuff() {
         KmlLayer layer = null;
 
         try {
@@ -216,6 +209,14 @@ public class MapsFragment extends Fragment {
         }
 
         Collections.sort(dhbZonesArrayList);
+    }
+
+    // Draws line and markers for specified list
+    private void drawTimeline(ArrayList<GPSRecord> arrayList) {
+        nMap.clear();
+
+        PolylineOptions options = new PolylineOptions().clickable(true);
+        ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);
 
         Location previousLocation = null;
 
