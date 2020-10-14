@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -94,6 +97,7 @@ public class MapsFragment extends Fragment {
 
             // Draw the timeline for today
             ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(getCurrentDate());
+            oneOffKmlStuff();
             drawTimeline(arrayList);
         }
     };
@@ -209,11 +213,35 @@ public class MapsFragment extends Fragment {
         }
 
         Collections.sort(dhbZonesArrayList);
+
+        layer.removeLayerFromMap();
+    }
+
+    private void getZoneData() {
+
+    }
+
+    private void drawZones() {
+        int lowRate = Color.argb(100,51,204,51);
+        int lowMediumRate = Color.argb(100,255,255,0);;
+        int highMediumRate = Color.argb(100,255,165,0);
+        int highRate = Color.argb(100,255,51,0);
+
+        for (DHBZones zone : dhbZonesArrayList) {
+            for (PolygonOptions options : zone.getPolygons()) {
+                Polygon polyn = nMap.addPolygon(options);
+                int color = polyn.getFillColor();
+                polyn.setFillColor(highMediumRate);
+            }
+        }
     }
 
     // Draws line and markers for specified list
     private void drawTimeline(ArrayList<GPSRecord> arrayList) {
+
         nMap.clear();
+
+        drawZones();
 
         PolylineOptions options = new PolylineOptions().clickable(true);
         ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);

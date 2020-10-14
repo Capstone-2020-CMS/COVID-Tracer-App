@@ -35,24 +35,14 @@ import com.covid.database.PersonalData;
 
 import com.covid.database.cloud.VolleyGET;
 
-import com.covid.utils.GetDataWorker;
+import com.covid.utils.GetSummaryDataWorker;
 import com.covid.utils.TableData;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
-
-
-import java.util.Arrays;
-import java.util.Collection;
 
 
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
@@ -77,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     public static WifiManager wifiManager;
     public static FusedLocationProviderClient mFusedLocationProviderClient;
     public static boolean mainSetupDone = false;
-    public static WorkRequest getDataWorkRequest;
+    public static WorkRequest getSummaryDataWorkRequest;
     public static WorkManager workManager;
 
     public static ArrayList<TableData> tableDataArrayList = new ArrayList<>();
@@ -152,9 +142,9 @@ public class MainActivity extends AppCompatActivity {
         mainSetupDone = true;
 
         // Retrieve data from ministry of health
-        getDataWorkRequest = new OneTimeWorkRequest.Builder(GetDataWorker.class).build();
+        getSummaryDataWorkRequest = new OneTimeWorkRequest.Builder(GetSummaryDataWorker.class).build();
         workManager = WorkManager.getInstance(getApplicationContext());
-        workManager.enqueue(getDataWorkRequest);
+        workManager.enqueue(getSummaryDataWorkRequest);
     }
 
     private void checkBluetoothService() {

@@ -17,9 +17,9 @@ import java.util.Arrays;
 import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.tableDataArrayList;
 
-public class GetDataWorker extends Worker {
+public class GetSummaryDataWorker extends Worker {
 
-    public GetDataWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public GetSummaryDataWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 

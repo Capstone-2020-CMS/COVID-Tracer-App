@@ -17,12 +17,9 @@ import androidx.lifecycle.Observer;
 import androidx.work.WorkInfo;
 
 import com.covid.R;
-import com.google.android.material.card.MaterialCardView;
-
-import java.util.Objects;
 
 import static com.covid.MainActivity.dateUpdated;
-import static com.covid.MainActivity.getDataWorkRequest;
+import static com.covid.MainActivity.getSummaryDataWorkRequest;
 import static com.covid.MainActivity.tableDataArrayList;
 import static com.covid.MainActivity.workManager;
 
@@ -62,8 +59,8 @@ public class DashboardFragment extends Fragment {
                     }
                 };
                 workManager.pruneWork();
-                workManager.enqueue(getDataWorkRequest);
-                LiveData<WorkInfo> status = workManager.getWorkInfoByIdLiveData(getDataWorkRequest.getId());
+                workManager.enqueue(getSummaryDataWorkRequest);
+                LiveData<WorkInfo> status = workManager.getWorkInfoByIdLiveData(getSummaryDataWorkRequest.getId());
                 status.observe(getViewLifecycleOwner(), workInfoObserver);
             }
         });
