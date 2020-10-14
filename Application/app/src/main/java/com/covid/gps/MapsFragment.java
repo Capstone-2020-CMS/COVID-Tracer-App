@@ -26,6 +26,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,14 +35,26 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm;
+import com.google.maps.android.data.Geometry;
+import com.google.maps.android.data.kml.KmlContainer;
+import com.google.maps.android.data.kml.KmlLayer;
+import com.google.maps.android.data.kml.KmlMultiGeometry;
+import com.google.maps.android.data.kml.KmlPlacemark;
+import com.google.maps.android.data.kml.KmlPolygon;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
@@ -55,6 +69,8 @@ public class MapsFragment extends Fragment {
     private TextView txtDay;
     private Button btnPrevDay;
     private Button btnNextDay;
+
+    private ArrayList<DHBZones> dhbZonesArrayList = new ArrayList<DHBZones>();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -157,6 +173,49 @@ public class MapsFragment extends Fragment {
 
         PolylineOptions options = new PolylineOptions().clickable(true);
         ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);
+
+        /// KML stuff
+        KmlLayer layer = null;
+
+        try {
+            layer = new KmlLayer(nMap, R.raw.layer, requireContext());
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (layer != null) {
+            layer.addLayerToMap();
+        }
+
+        for (KmlContainer container : layer.getContainers()) {
+            container.hasContainers();
+            for (KmlPlacemark placemark : container.getPlacemarks()) {
+                placemark.getPolygonOptions();
+                String type = placemark.getGeometry().getGeometryType();
+                String dhbName = placemark.getProperty("name");
+                if (type.equals("Polygon")) {
+                    KmlPolygon polygon = (KmlPolygon) placemark.getGeometry();
+                    List<LatLng> list = polygon.getOuterBoundaryCoordinates();
+                    ArrayList<PolygonOptions> polygonOptionsArrayList = new ArrayList<PolygonOptions>();
+                    polygonOptionsArrayList.add(new PolygonOptions().addAll(list));
+                    dhbZonesArrayList.add(new DHBZones(dhbName, type, polygonOptionsArrayList));
+                } else {
+                    KmlMultiGeometry multiGeometry = (KmlMultiGeometry) placemark.getGeometry();
+                    ArrayList<PolygonOptions> polygonOptionsArrayList = new ArrayList<PolygonOptions>();
+
+                    for (Geometry geometry : multiGeometry.getGeometryObject()) {
+                        KmlPolygon polygon = (KmlPolygon) geometry;
+                        polygonOptionsArrayList.add(new PolygonOptions().addAll(polygon.getOuterBoundaryCoordinates()));
+                    }
+
+                    dhbZonesArrayList.add(new DHBZones(dhbName, type, polygonOptionsArrayList));
+                }
+            }
+        }
+
+        Collections.sort(dhbZonesArrayList);
 
         Location previousLocation = null;
 
