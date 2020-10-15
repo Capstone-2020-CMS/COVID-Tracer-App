@@ -1,5 +1,6 @@
 package com.covid.gps;
 
+import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -17,16 +18,21 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.covid.MainActivity;
 import com.covid.R;
 import com.covid.utils.TableData;
+import com.covid.utils.ZoneCovidData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -65,6 +71,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static com.covid.MainActivity.getZoneDataWorkRequest;
 import static com.covid.MainActivity.mFusedLocationProviderClient;
 import static com.covid.MainActivity.myDB;
@@ -268,9 +275,40 @@ public class MapsFragment extends Fragment {
             for (PolygonOptions options : zone.getPolygons()) {
                 Polygon polyn = nMap.addPolygon(options);
                 polyn.setFillColor(color);
+                polyn.setClickable(true);
+                polyn.setTag(zoneCovidDataArray.get(i));
             }
             i++;
         }
+
+        nMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
+            @Override
+            public void onPolygonClick(Polygon polygon) {
+                ZoneCovidData data = (ZoneCovidData) polygon.getTag();
+                //Toast.makeText(requireContext(), data.getDHB(), Toast.LENGTH_SHORT).show();
+
+                View view = getView();
+                LayoutInflater inflater = requireActivity().getLayoutInflater();
+                View popupView = inflater.inflate(R.layout.popup_zone_data_window, null);
+
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = true;
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+                TextView txtTitle = popupView.findViewById(R.id.txtDHBName);
+                TextView txtActive = popupView.findViewById(R.id.txtZoneActive);
+                TextView txtTotal = popupView.findViewById(R.id.txtZoneTotal);
+                TextView txtChange24hr = popupView.findViewById(R.id.txtZoneChange24hr);
+
+                txtTitle.setText(data.getDHB());
+                txtActive.setText(data.getActive());
+                txtTotal.setText(data.getTotal());
+                txtChange24hr.setText(data.getChange24hr());
+
+                popupWindow.showAtLocation(view, Gravity.CENTER,0,0);
+            }
+        });
     }
 
     // Draws line and markers for specified list
@@ -300,7 +338,7 @@ public class MapsFragment extends Fragment {
 
             // Initialise booleans for adding a marker and polyline point as false
             boolean addMarker = false;
-            boolean addPolyLinePoint = false;
+            boolean addPolyLinePoint = true;
 
             // If it is the first location set booleans to true
             if (previousLocation == null) {
@@ -312,9 +350,9 @@ public class MapsFragment extends Fragment {
                 addMarker = true;
             }
             // If the distance to the previous location is greater than 100 metres add a point for the line
-            else if (location.distanceTo(previousLocation) > 100) {
-                addPolyLinePoint = true;
-            }
+//            else if (location.distanceTo(previousLocation) > 100) {
+//                addPolyLinePoint = true;
+//            }
 
             // If add marker boolean is true add a marker to the app
             if (addMarker) {
