@@ -10,6 +10,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.covid.MainActivity;
+import com.covid.database.DatabaseHelper;
+import com.covid.utils.NoteManager;
+import com.covid.utils.utilNotification;
 
 
 import org.json.JSONArray;
@@ -143,12 +146,16 @@ public class VolleyGET {
                             setHasExpo(true);
                             //sendHighPriorityNoteAlpha("Hello",context);
                        }
-                       sendHighPriorityNoteAlpha("Hello",context);
+                       //sendHighPriorityNoteAlpha("Hello",context);
+
+                       utilNotification.displayNotification(context, "Do something", "SAM");
+
 
                    } catch (JSONException e) {
                        e.printStackTrace();
                    }
                }
+
            }
        };
 

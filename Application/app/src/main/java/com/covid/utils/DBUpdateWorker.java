@@ -21,16 +21,12 @@ public class DBUpdateWorker extends Worker {
     @Override
     public Result doWork() {
 
-        Context context = getApplicationContext();
+        // Does this even do anything?
+        Context context = super.getApplicationContext();
 
         checkExposure(context);
 
-
-
-
         return Result.success();
-
-
 
         // return null;
     }

@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.work.Constraints;
+import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
@@ -96,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
     public static boolean hasExpo;
 
     private String responseJSON;
+
+
+
 
     // Notification Manager (use compat as it supports backwards compatibility with earlier notifications)
     private static NotificationManagerCompat noteManagerCompat;
@@ -187,10 +192,6 @@ public class MainActivity extends AppCompatActivity {
         // Enqueues a unique periodic request to prevent duplicate requests each time onCreate() runs
         workManager.enqueueUniquePeriodicWork("UpdateDB", ExistingPeriodicWorkPolicy.KEEP, updateDBRequest);
 
-
-
-
-
     }
 
     private void checkBluetoothService() {
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
 
         //VolleyGET.getInfectedUsers(getApplicationContext());
 
-        VolleyGET.checkExposure(getApplicationContext());
+        //VolleyGET.checkExposure(getApplicationContext());
 
 
 
@@ -414,4 +415,6 @@ public class MainActivity extends AppCompatActivity {
    public static void setHasExpo(boolean value){
         hasExpo = value;
    }
+
+
 }

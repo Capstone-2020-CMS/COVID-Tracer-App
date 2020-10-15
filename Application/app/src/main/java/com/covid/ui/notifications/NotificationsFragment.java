@@ -18,6 +18,7 @@ import com.covid.database.cloud.VolleyPOST;
 import com.google.android.material.card.MaterialCardView;
 
 import static com.covid.MainActivity.activeExpo;
+import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.myID;
 
 
@@ -32,6 +33,8 @@ public class NotificationsFragment extends Fragment {
     private static LinearLayout layout;
     private TextView txtIDValue;
     private NotificationsViewModel notificationsViewModel;
+
+    TextView txtInfectedIDValue;
 
 
 
@@ -62,6 +65,14 @@ public class NotificationsFragment extends Fragment {
                 VolleyPOST.setInfectedUsers(getContext());
             }
         });
+
+        txtInfectedIDValue = root.findViewById(R.id.txtInfectedDBValue);
+
+        if(myDB.getNumOfInfectedEncounters() > -1){
+            int size = myDB.getNumOfInfectedEncounters();
+            String newString = "Infected count = " + String.valueOf(size);
+            txtInfectedIDValue.setText(newString);
+        }
 
 
         return root;
