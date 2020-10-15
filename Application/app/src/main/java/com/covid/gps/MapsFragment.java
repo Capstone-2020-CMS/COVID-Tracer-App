@@ -69,6 +69,7 @@ import static com.covid.MainActivity.getZoneDataWorkRequest;
 import static com.covid.MainActivity.mFusedLocationProviderClient;
 import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.workManager;
+import static com.covid.MainActivity.zoneCovidDataArray;
 
 public class MapsFragment extends Fragment {
 
@@ -228,9 +229,10 @@ public class MapsFragment extends Fragment {
             @Override
             public void onChanged(WorkInfo workInfo) {
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                    Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Successfully retrieved zone data.", Toast.LENGTH_SHORT).show();
+                    drawZones();
                 } else if (workInfo.getState() == WorkInfo.State.FAILED) {
-                    Toast.makeText(requireContext(), "Failure", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Failed to retrieve zone data, please check your internet and restart the app.", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -246,12 +248,28 @@ public class MapsFragment extends Fragment {
         int highMediumRate = Color.argb(100,255,165,0);
         int highRate = Color.argb(100,255,51,0);
 
+        int currentActive = Integer.parseInt(zoneCovidDataArray.get(21).getActive());
+
+        int i = 0;
         for (DHBZones zone : dhbZonesArrayList) {
+            double percentage = (Double.parseDouble(zoneCovidDataArray.get(i).getActive()) / currentActive) * 100;
+            int color;
+
+            if (percentage >= 50) {
+                color = highRate;
+            } else if (percentage >= 25) {
+                color = highMediumRate;
+            } else if (percentage >= 12.5) {
+                color = lowMediumRate;
+            } else {
+                color = lowRate;
+            }
+
             for (PolygonOptions options : zone.getPolygons()) {
                 Polygon polyn = nMap.addPolygon(options);
-                int color = polyn.getFillColor();
-                polyn.setFillColor(highMediumRate);
+                polyn.setFillColor(color);
             }
+            i++;
         }
     }
 
@@ -260,9 +278,11 @@ public class MapsFragment extends Fragment {
 
         nMap.clear();
 
-        drawZones();
-
-        getZoneData();
+        if (zoneCovidDataArray.size() > 0) {
+            drawZones();
+        } else {
+            getZoneData();
+        }
 
         PolylineOptions options = new PolylineOptions().clickable(true);
         ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);
