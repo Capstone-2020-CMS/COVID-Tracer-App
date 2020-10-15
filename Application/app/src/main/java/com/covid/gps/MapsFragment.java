@@ -1,19 +1,6 @@
 package com.covid.gps;
 
-import androidx.annotation.ContentView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.work.WorkInfo;
-
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -25,13 +12,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.covid.MainActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.work.WorkInfo;
+
 import com.covid.R;
-import com.covid.utils.TableData;
 import com.covid.utils.ZoneCovidData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,9 +37,9 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm;
+import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
+import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
 import com.google.maps.android.data.Geometry;
 import com.google.maps.android.data.kml.KmlContainer;
 import com.google.maps.android.data.kml.KmlLayer;
@@ -58,20 +50,16 @@ import com.google.maps.android.data.kml.KmlPolygon;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.Executor;
 
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static com.covid.MainActivity.getZoneDataWorkRequest;
 import static com.covid.MainActivity.mFusedLocationProviderClient;
 import static com.covid.MainActivity.myDB;
@@ -324,6 +312,7 @@ public class MapsFragment extends Fragment {
 
         PolylineOptions options = new PolylineOptions().clickable(true);
         ClusterManager<TimeMarker> clusterManager = new ClusterManager<TimeMarker>(requireContext(), nMap);
+        nMap.setOnCameraIdleListener(clusterManager);
 
         Location previousLocation = null;
 
@@ -356,7 +345,7 @@ public class MapsFragment extends Fragment {
 
             // If add marker boolean is true add a marker to the app
             if (addMarker) {
-                nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
+                //nMap.addMarker(new MarkerOptions().position(new LatLng(record.getLatitude(), record.getLongitude())).title(record.getTime()));
                 TimeMarker marker = new TimeMarker(record.getLatitude(),record.getLongitude(), record.getTime());
                 clusterManager.addItem(marker);
             }
@@ -371,6 +360,7 @@ public class MapsFragment extends Fragment {
         // Clusters the items added to the cluster manager
         clusterManager.cluster();
         // Add the polyline to map
+        options.color(R.color.primaryDarkColor);
         Polyline polyline = nMap.addPolyline(options);
     }
 
