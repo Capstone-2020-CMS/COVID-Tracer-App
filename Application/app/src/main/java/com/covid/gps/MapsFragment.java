@@ -226,6 +226,7 @@ public class MapsFragment extends Fragment {
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                     Toast.makeText(requireContext(), "Successfully retrieved zone data.", Toast.LENGTH_SHORT).show();
                     drawZones();
+                    Toast.makeText(requireContext(), "Tap on coloured zones to get more information about them", Toast.LENGTH_SHORT).show();
                 } else if (workInfo.getState() == WorkInfo.State.FAILED) {
                     Toast.makeText(requireContext(), "Failed to retrieve zone data, please check your internet and restart the app.", Toast.LENGTH_SHORT).show();
                 }
