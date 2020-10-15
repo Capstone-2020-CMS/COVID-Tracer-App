@@ -35,24 +35,16 @@ import com.covid.database.PersonalData;
 
 import com.covid.database.cloud.VolleyGET;
 
-import com.covid.utils.GetDataWorker;
+import com.covid.utils.GetSummaryDataWorker;
+import com.covid.utils.GetZoneDataWorker;
 import com.covid.utils.TableData;
 
+import com.covid.utils.ZoneCovidData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
-
-
-import java.util.Arrays;
-import java.util.Collection;
 
 
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
@@ -77,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
     public static WifiManager wifiManager;
     public static FusedLocationProviderClient mFusedLocationProviderClient;
     public static boolean mainSetupDone = false;
-    public static WorkRequest getDataWorkRequest;
+    public static WorkRequest getSummaryDataWorkRequest;
+    public static WorkRequest getZoneDataWorkRequest;
     public static WorkManager workManager;
 
     public static ArrayList<TableData> tableDataArrayList = new ArrayList<>();
+    public static ArrayList<ZoneCovidData> zoneCovidDataArray = new ArrayList<>();
     public static String dateUpdated;
 
     public static String myID;
@@ -98,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean readyToStart = false;
+
 
 
     @Override
@@ -152,9 +147,10 @@ public class MainActivity extends AppCompatActivity {
         mainSetupDone = true;
 
         // Retrieve data from ministry of health
-        getDataWorkRequest = new OneTimeWorkRequest.Builder(GetDataWorker.class).build();
+        getSummaryDataWorkRequest = new OneTimeWorkRequest.Builder(GetSummaryDataWorker.class).build();
+        getZoneDataWorkRequest = new OneTimeWorkRequest.Builder(GetZoneDataWorker.class).build();
         workManager = WorkManager.getInstance(getApplicationContext());
-        workManager.enqueue(getDataWorkRequest);
+        workManager.enqueue(getSummaryDataWorkRequest);
     }
 
     private void checkBluetoothService() {
