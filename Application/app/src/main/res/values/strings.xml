@@ -25,15 +25,11 @@
         \nIf you have these symptoms call Healthline (for free) on 0800 358 5453 or your doctor immediately.
     </string>
 
-    <string name="howItWorks"><b>myBubble</b> uses a Bluetooth LE (low energy) and a unique ID system to build a table of all your close contacts whilst keeping everyone inside the system completely anonymous.
+    <string name="howItWorks">The <b>myBubble</b> app generates a unique, anonymous ID number for every installation.
+        When communicating with <b>myBubble\'s</b> Cloud Service, only the ID number and a timestamp are transmitted.
         \n
-        \nWhen a user tests positive for COVID-19, they can use the app to instantly alert the <b>myBubble</b> Cloud server.
-        \n
-        \nThe Cloud server then relays the anonymous unique ID to every other <b>myBubble</b> app.
-        \n
-        \nEach app then checks the infected ID against its own table of contacts.
-        \n
-        \nIf a match is found, that user receives an alert recommending they undergo testing immediately.
+        \nThe <b>myBubble</b> app collects GPS location data solely for the purpose of generating your personal timeline.
+        No location data is transmitted to or stored by <b>myBubble\'s</b> Cloud Service.
     </string>
 
     <string name="servicesExpl"><b>myBubble</b> utilise three key components of your smartphone to conduct effective contact tracing.
