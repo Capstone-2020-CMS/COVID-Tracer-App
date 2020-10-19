@@ -150,12 +150,14 @@ public class VolleyGET {
                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
 
 
+                       String encounterData = myDB.getEncounterData(infectedUserID);
+                       String content = "You encountered: " + encounterData;
+
                        // Check if infectedUserID is in the contacts list
                        if (myDB.CheckIsDataInDB(infectedUserID)){
                            infectedAgentID = infectedUserID;
 
-                           String encounterData = myDB.getEncounterData(infectedUserID);
-                           String content = "You encountered: " + encounterData;
+
 
 
                            // if user has no previous exposure, set the boolean now
@@ -181,6 +183,8 @@ public class VolleyGET {
                        //sendHighPriorityNoteAlpha("Hello",context);
 
                        //utilNotification.displayNotification(context, "Do something", "SAM");
+
+                       utilNotification.displayEXPONO(context, content);
 
 
                    } catch (JSONException e) {

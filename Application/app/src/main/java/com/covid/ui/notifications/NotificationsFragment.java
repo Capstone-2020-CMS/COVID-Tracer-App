@@ -37,6 +37,8 @@ public class NotificationsFragment extends Fragment {
 
     TextView txtInfectedIDValue;
 
+    private int infectionNumber;
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
