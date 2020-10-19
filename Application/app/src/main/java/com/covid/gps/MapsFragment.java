@@ -124,6 +124,10 @@ public class MapsFragment extends Fragment {
         btnPrevDay = view.findViewById(R.id.btnPrevDay);
         btnNextDay = view.findViewById(R.id.btnNextDay);
 
+        // Date limitation variables
+        String curDate = formatDateForTitle(getCurrentDate());
+        String minDate = getDate(curDate, -21);
+
         // Set the title to the current day
         txtDay.setText(formatDateForTitle(getCurrentDate()));
 
@@ -140,20 +144,28 @@ public class MapsFragment extends Fragment {
         btnPrevDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtDay.setText(getDate((String) txtDay.getText(), -1));
-                String dateForDB = formatDateForDB((String) txtDay.getText());
-                ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
-                drawTimeline(arrayList);
+                if (!txtDay.getText().equals(minDate)) {
+                    txtDay.setText(getDate((String) txtDay.getText(), -1));
+                    String dateForDB = formatDateForDB((String) txtDay.getText());
+                    ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+                    drawTimeline(arrayList);
+                } else {
+                    Toast.makeText(requireContext(), "We do not store data past 21 days", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnNextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtDay.setText(getDate((String) txtDay.getText(), 1));
-                String dateForDB = formatDateForDB((String) txtDay.getText());
-                ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
-                drawTimeline(arrayList);
+                if (!txtDay.getText().equals(curDate)) {
+                    txtDay.setText(getDate((String) txtDay.getText(), 1));
+                    String dateForDB = formatDateForDB((String) txtDay.getText());
+                    ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+                    drawTimeline(arrayList);
+                } else {
+                    Toast.makeText(requireContext(), "You are at the current date", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
