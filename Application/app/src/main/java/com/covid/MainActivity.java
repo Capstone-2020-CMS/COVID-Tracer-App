@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.work.Constraints;
-import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
@@ -39,27 +37,17 @@ import com.covid.bluetooth.BLEService;
 import com.covid.database.CloudInfectedUsers;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
-
-import com.covid.database.cloud.VolleyGET;
-
+import com.covid.utils.DBUpdateWorker;
 import com.covid.utils.GetSummaryDataWorker;
 import com.covid.utils.GetZoneDataWorker;
-import com.covid.utils.DBUpdateWorker;
-import com.covid.utils.GetDataWorker;
 import com.covid.utils.TableData;
-
 import com.covid.utils.ZoneCovidData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-
-
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
-
 
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
 import static com.covid.utils.NoteManager.CHANNEL_2_ID;
@@ -174,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         getZoneDataWorkRequest = new OneTimeWorkRequest.Builder(GetZoneDataWorker.class).build();
         workManager = WorkManager.getInstance(getApplicationContext());
         workManager.enqueue(getSummaryDataWorkRequest);
-        workManager.enqueue(getDataWorkRequest);
 
         // Schedule updates to the local DB from Cloud
         Constraints constraints = new Constraints.Builder()
