@@ -51,6 +51,7 @@ public class utilNotification {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_emptybubble)
                 .setContentTitle("CONTACT EXPOSURE ALERT")
+                .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 

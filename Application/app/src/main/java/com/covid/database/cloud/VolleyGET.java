@@ -184,7 +184,7 @@ public class VolleyGET {
 
                        //utilNotification.displayNotification(context, "Do something", "SAM");
 
-                       utilNotification.displayEXPONO(context, content);
+                       //utilNotification.displayEXPONO(context, content);
 
 
                    } catch (JSONException e) {
