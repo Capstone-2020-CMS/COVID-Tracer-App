@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,11 +26,17 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import com.covid.bluetooth.BLEService;
+import com.covid.database.CloudInfectedUsers;
 import com.covid.database.DatabaseHelper;
 import com.covid.database.PersonalData;
 
@@ -37,6 +44,8 @@ import com.covid.database.cloud.VolleyGET;
 
 import com.covid.utils.GetSummaryDataWorker;
 import com.covid.utils.GetZoneDataWorker;
+import com.covid.utils.DBUpdateWorker;
+import com.covid.utils.GetDataWorker;
 import com.covid.utils.TableData;
 
 import com.covid.utils.ZoneCovidData;
@@ -45,6 +54,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 
 import static com.covid.utils.NoteManager.CHANNEL_1_ID;
@@ -79,10 +93,13 @@ public class MainActivity extends AppCompatActivity {
 
     public static String myID;
 
-    public static boolean activeExpo;
-    public static boolean hasExpo;
+    public static boolean activeExpo; // This stores whether the user has activated their exposure button
+    public static boolean hasExpo; // This stores whether the user has been exposed by a close contact
 
     private String responseJSON;
+
+
+
 
     // Notification Manager (use compat as it supports backwards compatibility with earlier notifications)
     private static NotificationManagerCompat noteManagerCompat;
@@ -103,6 +120,12 @@ public class MainActivity extends AppCompatActivity {
         if (myDB == null) {
             myDB = new DatabaseHelper(this);
         }
+
+
+
+        //TODO - schedule updateEncounterStatus method
+        //currently begins before BLE advertising so nothing is updated
+        CloudInfectedUsers.updateEncounterStatus();
 
         // Set the path to the logs folder
         logPath = String.valueOf(getExternalFilesDir("Logs"));
@@ -151,6 +174,26 @@ public class MainActivity extends AppCompatActivity {
         getZoneDataWorkRequest = new OneTimeWorkRequest.Builder(GetZoneDataWorker.class).build();
         workManager = WorkManager.getInstance(getApplicationContext());
         workManager.enqueue(getSummaryDataWorkRequest);
+        workManager.enqueue(getDataWorkRequest);
+
+        // Schedule updates to the local DB from Cloud
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+/*        PeriodicWorkRequest updateDBRequest =
+                new PeriodicWorkRequest.Builder(DBUpdateWorker.class, 1, TimeUnit.HOURS)
+                        .setConstraints(constraints)
+                        .build();*/
+
+        PeriodicWorkRequest updateDBRequest =
+                new PeriodicWorkRequest.Builder(DBUpdateWorker.class, 15, TimeUnit.MINUTES)
+                        .setConstraints(constraints)
+                        .build();
+
+        // Enqueues a unique periodic request to prevent duplicate requests each time onCreate() runs
+        workManager.enqueueUniquePeriodicWork("UpdateDB", ExistingPeriodicWorkPolicy.KEEP, updateDBRequest);
+
     }
 
     private void checkBluetoothService() {
@@ -219,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
 
         //VolleyGET.getInfectedUsers(getApplicationContext());
 
-        VolleyGET.checkExposure(getApplicationContext());
+        //VolleyGET.checkExposure(getApplicationContext());
 
 
 
@@ -330,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_emptybubble)
                 .setContentTitle("alart?!")
-                .setContentText("small alart Please CODE: No expono")
+                .setContentText("Updated Database?")
                 // Set priority is used for API lower than 26/Oreo works like Channel system
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 // Set category to be used to control behaviour https://developer.android.com/reference/android/app/Notification.html
@@ -374,4 +417,6 @@ public class MainActivity extends AppCompatActivity {
    public static void setHasExpo(boolean value){
         hasExpo = value;
    }
+
+
 }

@@ -18,6 +18,8 @@ import com.covid.gps.GPSRecord;
 
 import java.util.ArrayList;
 
+import static com.covid.MainActivity.myDB;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyBubble.db";
     public static final String ENCOUNTERS_TABLE = "Encounters_Table";
@@ -28,12 +30,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ENCOUNTERS_COL1 = "ID";
     public static final String ENCOUNTERS_COL2 = "ENCOUNTER_DATE";
     public static final String ENCOUNTERS_COL3 = "ENCOUNTER_TIME";
+    public static final String ENCOUNTERS_COL4 = "IS_INFECTED";
     public static final String PERSONAL_INFO_COL1 = "PERSONAL_ID";
     public static final String INFECTED_ENCOUNTERS_COL1 = "INFECTED_USER_ID";
     public static final String INFECTED_ENCOUNTERS_COL2 = "DATE_REPORTED";
-    public static final String INFECTED_ENCOUNTERS_COL3 = "ENCOUNTERED_STATUS";
-    public static final String INFECTED_ENCOUNTERS_COL4 = "DATE_ENCOUNTERED";
-    public static final String INFECTED_ENCOUNTERS_COL5 = "NOTIFICATION_SENT";
+
 
 
 
@@ -63,7 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(" create table " + ENCOUNTERS_TABLE + "(ID TEXT PRIMARY KEY CHECK(\n" +
                 "        typeof(\"ID\") = \"text\" AND\n" +
                 "        length(\"ID\") <= 20\n" +
-                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT)");
+                "    ), ENCOUNTER_DATE TEXT, ENCOUNTER_TIME TEXT, IS_INFECTED DEFAULT 'false', " +
+                "NOTIFICATION_SENT DEFAULT 'false')");
 
         db.execSQL(" create table " + PERSONAL_INFO_TABLE + "(PERSONAL_ID TEXT PRIMARY KEY)");
 
@@ -77,10 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(" create table " + INFECTED_ENCOUNTERS_TABLE + "(" +
                 "INFECTED_USER_ID TEXT PRIMARY KEY, " +
-                "DATE_REPORTED, " +
-                "ENCOUNTERED_STATUS DEFAULT 'false', " +
-                "DATE_ENCOUNTERED, " +
-                "NOTIFICATION_SENT DEFAULT 'false')");
+                "DATE_REPORTED TEXT)");
     }
 
     @Override
@@ -95,13 +94,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insertEncounterData(String ID, String EncounterDate, String EncounterTime) {
+    public boolean insertEncounterData(String ID, String ENCOUNTER_DATE, String ENCOUNTER_TIME) {
         SQLiteDatabase db = getWritableDatabase();
-        ContentValues newValues = new ContentValues();
-        newValues.put("ID", ID);
-        newValues.put("ENCOUNTER_DATE", EncounterDate);
-        newValues.put("ENCOUNTER_TIME", EncounterTime);
-        long result = db.replace(ENCOUNTERS_TABLE, null, newValues);
+        long result;
+
+        if (!myDB.getEncounterData(ID).equals("Data Not Found")){
+            String sql = "UPDATE ENCOUNTERS_TABLE SET ENCOUNTER_DATE = ? , "
+                    + "ENCOUNTER_TIME = ? "
+                    + "WHERE ID = ?";
+            result = 1;
+        }
+        else {
+            ContentValues newValues = new ContentValues();
+            newValues.put("ID", ID);
+            newValues.put("ENCOUNTER_DATE", ENCOUNTER_DATE);
+            newValues.put("ENCOUNTER_TIME", ENCOUNTER_TIME);
+            result = db.insert(ENCOUNTERS_TABLE, null, newValues);
+        }
+
         if (result == -1) {
             return false;
         }
@@ -172,7 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] whereArgs = new String[]{String.valueOf(ID)};
         Cursor csr = db.query(INFECTED_ENCOUNTERS_TABLE, null, whereClause, whereArgs, null, null, null);
         if (csr.moveToFirst()) {
-            result = csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL1)) + ", " + csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL3));
+            result = csr.getString(csr.getColumnIndex(INFECTED_ENCOUNTERS_COL1));
         }
         return result;
     }

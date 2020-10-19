@@ -40,4 +40,22 @@ public class utilNotification {
 
         notificationManager.notify(0, builder.build());
     }
+
+
+
+
+
+    // Template for EXPONO
+
+    public static void displayEXPONO(@NonNull Context context, @NonNull String content){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.ic_emptybubble)
+                .setContentTitle("CONTACT EXPOSURE ALERT")
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        notificationManager.notify(0, builder.build());
+    }
+
 }

@@ -10,6 +10,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.covid.MainActivity;
+import com.covid.database.DatabaseHelper;
+import com.covid.ui.notifications.NotificationsFragment;
+import com.covid.utils.NoteManager;
+import com.covid.utils.utilNotification;
 
 
 import org.json.JSONArray;
@@ -22,6 +26,7 @@ import java.util.Locale;
 
 import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.hasExpo;
+import static com.covid.MainActivity.myID;
 import static com.covid.MainActivity.sendHighPriorityNoteAlpha;
 import static com.covid.MainActivity.setHasExpo;
 
@@ -111,6 +116,9 @@ public class VolleyGET {
 
    }
 
+
+
+
    public static void checkExposure(Context context) {
 
        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
@@ -122,6 +130,9 @@ public class VolleyGET {
        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
            @Override
            public void onResponse(JSONArray response) {
+
+               String infectedAgentID = "";
+
                String userID = null;
                try {
                    userID = response.getString(1);
@@ -138,17 +149,49 @@ public class VolleyGET {
                        String dateReported = convertEpochDate(epochDate);
                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
 
-                       // Set class variable "hasExpo" to true if an exposure encounter has occurred
-                       if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
-                            setHasExpo(true);
-                            //sendHighPriorityNoteAlpha("Hello",context);
+
+                       String encounterData = myDB.getEncounterData(infectedUserID);
+                       String content = "You encountered: " + encounterData;
+
+                       // Check if infectedUserID is in the contacts list
+                       if (myDB.CheckIsDataInDB(infectedUserID)){
+                           infectedAgentID = infectedUserID;
+
+
+
+
+                           // if user has no previous exposure, set the boolean now
+                           if (hasExpo == false){
+                               setHasExpo(true);
+
+                               // Run the notification only once, even if there are multiple hits
+                               //utilNotification.displayEXPONO(context, content);
+                           }
+
+                           //Run the notification
+                           utilNotification.displayEXPONO(context, content);
+
+
+
                        }
-                       sendHighPriorityNoteAlpha("Hello",context);
+
+
+                       // Set class variable "hasExpo" to true if an exposure encounter has occurred
+/*                       if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
+                            setHasExpo(true);
+                       }*/
+                       //sendHighPriorityNoteAlpha("Hello",context);
+
+                       //utilNotification.displayNotification(context, "Do something", "SAM");
+
+                       //utilNotification.displayEXPONO(context, content);
+
 
                    } catch (JSONException e) {
                        e.printStackTrace();
                    }
                }
+
            }
        };
 
