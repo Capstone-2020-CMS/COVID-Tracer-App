@@ -171,9 +171,9 @@ public class VolleyGET {
 
 
                        // Set class variable "hasExpo" to true if an exposure encounter has occurred
-                       if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
+/*                       if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
                             setHasExpo(true);
-                       }
+                       }*/
                        //sendHighPriorityNoteAlpha("Hello",context);
 
                        //utilNotification.displayNotification(context, "Do something", "SAM");
