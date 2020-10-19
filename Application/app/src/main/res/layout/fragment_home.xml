@@ -259,6 +259,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
                 <TextView
@@ -271,14 +272,18 @@
                     android:textSize="30sp" />
 
                 <TextView
+                    android:id="@+id/txtWhyWhy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
+                    android:clickable="true"
                     android:ems="10"
-                    android:gravity="start|top"
+                    android:gravity="center_horizontal"
                     android:inputType="textMultiLine"
-                    android:text="@string/servicesExpl"
-                    android:textAlignment="textStart"
+                    android:tag="min"
+                    android:text="@string/tap_to_expand"
+                    android:textAlignment="gravity"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/primaryTextColor" />
 
             </LinearLayout>

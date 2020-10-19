@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,8 @@ public class HomeFragment extends Fragment {
     private MaterialCardView cardLocationStatus;
     private MaterialCardView cardInternetStatus;
 
+    private TextView txtWhyWhy;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -55,6 +58,8 @@ public class HomeFragment extends Fragment {
         cardLocationStatus = root.findViewById(R.id.cardLocationStatus);
         cardInternetStatus = root.findViewById(R.id.cardInternetStatus);
 
+        txtWhyWhy = root.findViewById(R.id.txtWhyWhy);
+
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         red = getResources().getColor(R.color.red);
 
@@ -62,6 +67,14 @@ public class HomeFragment extends Fragment {
         if (mainSetupDone) {
             checkStatus();
         }
+
+        // Expand text on click
+        txtWhyWhy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleTxtWhyWhy();
+            }
+        });
 
         // Bluetooth card on click
         cardBluetoothStatus.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +170,20 @@ public class HomeFragment extends Fragment {
             cardView.setCardBackgroundColor(motorwayGreen);
         } else {
             cardView.setCardBackgroundColor(red);
+        }
+    }
+
+    private void toggleTxtWhyWhy() {
+        String tagStatus = txtWhyWhy.getTag().toString();
+
+        if (tagStatus.equals("min")) {
+            txtWhyWhy.setText(R.string.servicesExpl);
+            txtWhyWhy.setGravity(Gravity.START);
+            txtWhyWhy.setTag("max");
+        } else {
+            txtWhyWhy.setText(R.string.tap_to_expand);
+            txtWhyWhy.setGravity(Gravity.CENTER_HORIZONTAL);
+            txtWhyWhy.setTag("min");
         }
     }
 }
