@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static String myID;
 
-    public static boolean activeExpo;
-    public static boolean hasExpo;
+    public static boolean activeExpo; // This stores whether the user has activated their exposure button
+    public static boolean hasExpo; // This stores whether the user has been exposed by a close contact
 
     private String responseJSON;
 

@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.hasExpo;
+import static com.covid.MainActivity.myID;
 import static com.covid.MainActivity.sendHighPriorityNoteAlpha;
 import static com.covid.MainActivity.setHasExpo;
 
@@ -125,6 +126,9 @@ public class VolleyGET {
        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
            @Override
            public void onResponse(JSONArray response) {
+
+               String infectedAgentID = "";
+
                String userID = null;
                try {
                    userID = response.getString(1);
@@ -141,14 +145,38 @@ public class VolleyGET {
                        String dateReported = convertEpochDate(epochDate);
                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
 
+
+                       // Check if infectedUserID is in the contacts list
+                       if (myDB.CheckIsDataInDB(infectedUserID)){
+                           infectedAgentID = infectedUserID;
+
+                           String encounterData = myDB.getEncounterData(infectedUserID);
+                           String content = "You encountered: " + encounterData;
+
+
+                           // if user has no previous exposure, set the boolean now
+                           if (hasExpo == false){
+                               setHasExpo(true);
+
+                               // Run the notification only once, even if there are multiple hits
+                               //utilNotification.displayEXPONO(context, content);
+                           }
+
+                           //Run the notification
+                           utilNotification.displayEXPONO(context, content);
+
+
+
+                       }
+
+
                        // Set class variable "hasExpo" to true if an exposure encounter has occurred
                        if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
                             setHasExpo(true);
-                            //sendHighPriorityNoteAlpha("Hello",context);
                        }
                        //sendHighPriorityNoteAlpha("Hello",context);
 
-                       utilNotification.displayNotification(context, "Do something", "SAM");
+                       //utilNotification.displayNotification(context, "Do something", "SAM");
 
 
                    } catch (JSONException e) {
