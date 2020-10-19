@@ -11,6 +11,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.covid.MainActivity;
 import com.covid.database.DatabaseHelper;
+import com.covid.ui.notifications.NotificationsFragment;
 import com.covid.utils.NoteManager;
 import com.covid.utils.utilNotification;
 
@@ -114,6 +115,9 @@ public class VolleyGET {
 
 
    }
+
+
+
 
    public static void checkExposure(Context context) {
 
