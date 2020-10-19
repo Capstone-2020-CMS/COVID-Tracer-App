@@ -124,6 +124,9 @@ public class MapsFragment extends Fragment {
         btnPrevDay = view.findViewById(R.id.btnPrevDay);
         btnNextDay = view.findViewById(R.id.btnNextDay);
 
+        // disable the next day button
+        btnNextDay.setEnabled(false);
+
         // Date limitation variables
         String curDate = formatDateForTitle(getCurrentDate());
         String minDate = getDate(curDate, -21);
@@ -145,9 +148,22 @@ public class MapsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!txtDay.getText().equals(minDate)) {
-                    txtDay.setText(getDate((String) txtDay.getText(), -1));
-                    String dateForDB = formatDateForDB((String) txtDay.getText());
+                    String prevDateString = getDate((String) txtDay.getText(), -1);
+                    txtDay.setText(prevDateString);
+                    String dateForDB = formatDateForDB(prevDateString);
                     ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+
+                    // disable the button if it matches the min date
+                    if (prevDateString.equals(minDate)) {
+                        btnPrevDay.setEnabled(false);
+                        btnPrevDay.setBackgroundColor(getResources().getColor(R.color.red));
+                    }
+                    // re-enable the next day button if it is no longer
+                    if (prevDateString.equals(getDate(curDate, -1))) {
+                        btnNextDay.setEnabled(true);
+                        btnNextDay.setBackgroundColor(getResources().getColor(R.color.motorwayGreen));
+                    }
+
                     drawTimeline(arrayList);
                 } else {
                     Toast.makeText(requireContext(), "We do not store data past 21 days", Toast.LENGTH_SHORT).show();
@@ -159,9 +175,22 @@ public class MapsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!txtDay.getText().equals(curDate)) {
-                    txtDay.setText(getDate((String) txtDay.getText(), 1));
-                    String dateForDB = formatDateForDB((String) txtDay.getText());
+                    String nextDateString = getDate((String) txtDay.getText(), 1);
+                    txtDay.setText(nextDateString);
+                    String dateForDB = formatDateForDB(nextDateString);
                     ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+
+                    // disable the button if it matches the current date
+                    if (nextDateString.equals(curDate)) {
+                        btnNextDay.setEnabled(false);
+                        btnNextDay.setBackgroundColor(getResources().getColor(R.color.red));
+                    }
+                    // re-enable the next day button if it is no longer
+                    if (nextDateString.equals(getDate(minDate, 1))) {
+                        btnPrevDay.setEnabled(true);
+                        btnPrevDay.setBackgroundColor(getResources().getColor(R.color.motorwayGreen));
+                    }
+
                     drawTimeline(arrayList);
                 } else {
                     Toast.makeText(requireContext(), "You are at the current date", Toast.LENGTH_SHORT).show();
