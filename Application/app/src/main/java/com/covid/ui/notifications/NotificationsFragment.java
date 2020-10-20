@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.covid.R;
+import com.covid.database.cloud.VolleyDELETE;
 import com.covid.database.cloud.VolleyGET;
 import com.covid.database.cloud.VolleyPOST;
 import com.google.android.material.card.MaterialCardView;
@@ -65,7 +66,8 @@ public class NotificationsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 expoHandler();
-                VolleyPOST.setInfectedUsers(getContext());
+                //VolleyPOST.setInfectedUsers(getContext());
+                VolleyDELETE.deleteInfectedUser(getContext());
             }
         });
 
