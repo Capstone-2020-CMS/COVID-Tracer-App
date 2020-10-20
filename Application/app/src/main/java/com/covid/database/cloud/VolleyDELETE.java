@@ -31,13 +31,13 @@ public class VolleyDELETE {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             String dbValue = MainActivity.myDB.getPersonalInfoData();
-            String URL = "https://a9f5t4iklf.execute-api.ap-southeast-2.amazonaws.com/prod/data?InfectedUserID=";
+            String URL = "https://a9f5t4iklf.execute-api.ap-southeast-2.amazonaws.com/prod/data";
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("InfectedUserID", dbValue);
             final String mRequestBody = jsonBody.toString();
-            String deleteUserURL = URL + dbValue;
+            //String deleteUserURL = URL + dbValue;
 
-            StringRequest stringRequest = new StringRequest(Request.Method.DELETE, deleteUserURL, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Log.i("LOG_VOLLEY", response);

@@ -67,7 +67,7 @@ public class NotificationsFragment extends Fragment {
             public void onClick(View v) {
                 expoHandler();
                 //VolleyPOST.setInfectedUsers(getContext());
-                VolleyDELETE.deleteInfectedUser(getContext());
+                //VolleyDELETE.deleteInfectedUser(getContext());
             }
         });
 
@@ -96,12 +96,14 @@ public class NotificationsFragment extends Fragment {
     public void expoHandler(){
         if (activeExpo == false){
             activeExpo = true;
+            VolleyPOST.setInfectedUsers(getContext());
             cardExposure.setCardBackgroundColor(motorwayGreen);
             Toast.makeText(getContext(), idAdd, Toast.LENGTH_SHORT).show();
 
         }
         else{
             activeExpo = false;
+            VolleyDELETE.deleteInfectedUser(getContext());
             cardExposure.setCardBackgroundColor(red);
             Toast.makeText(getContext(), idRemove, Toast.LENGTH_SHORT).show();
 
