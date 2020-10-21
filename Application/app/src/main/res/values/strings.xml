@@ -49,5 +49,13 @@
 
     <string name="tap_here_for_more_info"><u>Tap here to get more information</u></string>
 
+    <string name="notefragment_your_status">Your current status</string>
+    <string name="notefragment_your_bubble_id">Your bubble ID</string>
+    <string name="notefragment_status_healthy">Healthy</string>
+    <string name="notefragment_status_infectious">Infectious</string>
+    <string name="notefragment_status_healthy_detail">Please remember to wear a mask and practise social distancing to keep yourself and your bubble safe.</string>
+    <string name="notefragment_status_infectious_detail">If you are infectious, please stay isolated and quarantine yourself for at least two weeks to prevent the spread and protect those around you.</string>
+
+
     <string name="tap_to_expand">Tap here to expand</string>
 </resources>

@@ -13,4 +13,6 @@
     <color name="red">#f44336</color>
     <color name="covidYellow">#FFCC00</color>
     <color name="black">@android:color/black</color>
+    <color name="mart_green_light">#78ECBA</color>
+    <color name="mart_red_soft">#FF4081</color>
 </resources>

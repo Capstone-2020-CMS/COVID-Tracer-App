@@ -30,15 +30,23 @@ public class NotificationsFragment extends Fragment {
     private static String idRemove = "Your ID was removed from the active infections database";
 
     private static MaterialCardView cardExposure;
+    private static MaterialCardView cardStatus;
     private static int motorwayGreen;
     private static int red;
     private static LinearLayout layout;
-    private TextView txtIDValue;
     private NotificationsViewModel notificationsViewModel;
 
-    TextView txtInfectedIDValue;
+
 
     private int infectionNumber;
+
+
+    // New vars
+    TextView txtStatus;
+    TextView txtStatusDetails;
+
+    TextView txtInfectedIDValue;
+    TextView txtIDValue;
 
 
 
@@ -56,30 +64,36 @@ public class NotificationsFragment extends Fragment {
 
         final TextView txtExposure = root.findViewById(R.id.txtExposure);
 
+        txtStatus = root.findViewById(R.id.txtViewStatus);
+        txtStatusDetails = root.findViewById(R.id.txtViewStatusDetail);
+
+        txtInfectedIDValue = root.findViewById(R.id.txtInfectedDBValue);
+
+
         cardExposure = root.findViewById(R.id.cardExposure);
         layout = root.findViewById(R.id.linearlayoutH);
 
         txtIDValue = root.findViewById(R.id.txtIDValue);
         txtIDValue.setText(myID);
 
+        // Call method to set the initial card colours
+        deployCardColours();
+
+        // Call method to set the initial display of the infected DB size
+        updateNumber();
+
+
+        // Create onClick methods for the buttons
+
         txtExposure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                expoHandler();
+                volleyHandler();
+                //expoHandler();
                 //VolleyPOST.setInfectedUsers(getContext());
                 //VolleyDELETE.deleteInfectedUser(getContext());
             }
         });
-
-        txtInfectedIDValue = root.findViewById(R.id.txtInfectedDBValue);
-
-/*        if(myDB.getNumOfInfectedEncounters() > -1){
-            int size = myDB.getNumOfInfectedEncounters();
-            String newString = "Infected count = " + String.valueOf(size);
-            txtInfectedIDValue.setText(newString);
-        }*/
-
-        updateNumber();
 
         txtInfectedIDValue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,9 +103,39 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
-
         return root;
     }
+
+
+    // Method to set card colours
+    public void deployCardColours(){
+        if (activeExpo == false){
+            cardExposure.setCardBackgroundColor(getResources().getColor(R.color.red));
+            cardStatus.setCardBackgroundColor(getResources().getColor(R.color.motorwayGreen));
+        }
+        else{
+            cardExposure.setCardBackgroundColor(getResources().getColor(R.color.motorwayGreen));
+            cardStatus.setCardBackgroundColor(getResources().getColor(R.color.red));
+        }
+    }
+
+    // Method to handle Volleys
+    public void volleyHandler(){
+        if (activeExpo == false){
+            activeExpo = true;
+            VolleyPOST.setInfectedUsers(getContext());
+            Toast.makeText(getContext(), idAdd, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            activeExpo = false;
+            VolleyDELETE.deleteInfectedUser(getContext());
+            Toast.makeText(getContext(), idRemove, Toast.LENGTH_SHORT).show();
+        }
+        deployCardColours();
+    }
+
+
+
 
     public void expoHandler(){
         if (activeExpo == false){
