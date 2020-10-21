@@ -50,6 +50,7 @@ public class NotificationsFragment extends Fragment {
 
 
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         notificationsViewModel =
@@ -71,18 +72,22 @@ public class NotificationsFragment extends Fragment {
 
 
         cardExposure = root.findViewById(R.id.cardExposure);
+
+        cardStatus = root.findViewById(R.id.cardStatus);
+
+
         layout = root.findViewById(R.id.linearlayoutH);
 
         txtIDValue = root.findViewById(R.id.txtIDValue);
         txtIDValue.setText(myID);
 
-        // Call method to set the initial card colours
+
+        // Set the initial card colours
         deployCardColours();
 
         // Call method to set the initial display of the infected DB size
         updateNumber();
-
-
+        
         // Create onClick methods for the buttons
 
         txtExposure.setOnClickListener(new View.OnClickListener() {
@@ -110,12 +115,12 @@ public class NotificationsFragment extends Fragment {
     // Method to set card colours
     public void deployCardColours(){
         if (activeExpo == false){
-            cardExposure.setCardBackgroundColor(getResources().getColor(R.color.red));
-            cardStatus.setCardBackgroundColor(getResources().getColor(R.color.motorwayGreen));
+            cardExposure.setCardBackgroundColor(red);
+            cardStatus.setCardBackgroundColor(motorwayGreen);
         }
         else{
-            cardExposure.setCardBackgroundColor(getResources().getColor(R.color.motorwayGreen));
-            cardStatus.setCardBackgroundColor(getResources().getColor(R.color.red));
+            cardExposure.setCardBackgroundColor(motorwayGreen);
+            cardStatus.setCardBackgroundColor(red);
         }
     }
 

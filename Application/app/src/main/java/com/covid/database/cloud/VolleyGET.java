@@ -140,6 +140,10 @@ public class VolleyGET {
                    e.printStackTrace();
                }
 
+
+               // Clear the current infected DB
+               myDB.deleteAllInfectedData();
+
                for (int i = 0; i < response.length(); i++) {
                    JSONObject userData;
                    try {
@@ -171,21 +175,7 @@ public class VolleyGET {
                            //Run the notification
                            utilNotification.displayEXPONO(context, content);
 
-
-
                        }
-
-
-                       // Set class variable "hasExpo" to true if an exposure encounter has occurred
-/*                       if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
-                            setHasExpo(true);
-                       }*/
-                       //sendHighPriorityNoteAlpha("Hello",context);
-
-                       //utilNotification.displayNotification(context, "Do something", "SAM");
-
-                       //utilNotification.displayEXPONO(context, content);
-
 
                    } catch (JSONException e) {
                        e.printStackTrace();
