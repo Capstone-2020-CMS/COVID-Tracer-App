@@ -14,28 +14,27 @@
 
 
         <com.google.android.material.card.MaterialCardView
-        android:id="@id/cardStatus"
-        android:layout_width="324dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@color/motorwayGreen"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="@dimen/elevation"
-        app:contentPadding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7"
-        app:strokeColor="@color/primaryTextColor"
-        app:strokeWidth="1dp">
-
-        <TextView
-            android:id="@+id/txtViewStatus"
-            android:layout_width="match_parent"
+            android:id="@id/cardStatus"
+            android:layout_width="324dp"
             android:layout_height="wrap_content"
-            android:text="@string/notefragment_status_healthy"
-            android:textAlignment="center"
-            android:textSize="30sp" />
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/motorwayGreen"
+            app:cardElevation="@dimen/elevation"
+            app:contentPadding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7"
+            app:strokeColor="@color/primaryTextColor"
+            app:strokeWidth="1dp">
+
+            <TextView
+                android:id="@+id/txtViewStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notefragment_status_healthy"
+                android:textAlignment="center"
+                android:textSize="30sp" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
