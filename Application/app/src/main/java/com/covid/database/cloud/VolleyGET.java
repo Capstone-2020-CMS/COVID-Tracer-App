@@ -1,6 +1,7 @@
 package com.covid.database.cloud;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -8,11 +9,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.covid.MainActivity;
-import com.covid.database.DatabaseHelper;
 import com.covid.ui.notifications.NotificationsFragment;
-import com.covid.utils.NoteManager;
 import com.covid.utils.utilNotification;
 
 
@@ -26,11 +25,10 @@ import java.util.Locale;
 
 import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.hasExpo;
-import static com.covid.MainActivity.myID;
-import static com.covid.MainActivity.sendHighPriorityNoteAlpha;
 import static com.covid.MainActivity.setHasExpo;
 
 public class VolleyGET {
+
 
     public static void getInfectedUsers(Context context) {
 
@@ -65,7 +63,7 @@ public class VolleyGET {
                         try {
                             userData = (JSONObject) response.get(i);
                             String infectedUserID = (String) userData.get("InfectedUserID");
-                            boolean encounteredInfectedUser = myDB.CheckIsDataInDB(infectedUserID); //Not used yet!
+                            boolean encounteredInfectedUser = myDB.checkIsDataInDB(infectedUserID); //Not used yet!
                             long epochDate = (long) userData.get("date");
                             String dateReported = convertEpochDate(epochDate);
                             // Add code to build the infectedUsersTable from the JSON array
@@ -96,6 +94,7 @@ public class VolleyGET {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }
             };
@@ -113,12 +112,7 @@ public class VolleyGET {
 
         }
 
-
    }
-
-
-
-
    public static void checkExposure(Context context) {
 
        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
@@ -140,6 +134,9 @@ public class VolleyGET {
                    e.printStackTrace();
                }
 
+               // Clear the current infected DB
+               myDB.deleteAllInfectedData();
+
                for (int i = 0; i < response.length(); i++) {
                    JSONObject userData;
                    try {
@@ -153,12 +150,27 @@ public class VolleyGET {
                        String encounterData = myDB.getEncounterData(infectedUserID);
                        String content = "You encountered: " + encounterData;
 
+
+                       // NEW CODE------------------------------------------------------------------
+                       if(!myDB.getEncounterData(infectedUserID).equals("Data Not Found")) {
+
+                           if(hasExpo == false){
+                               setHasExpo(true);
+                           }
+
+                           if(!myDB.newCheckIsDataInDB(infectedUserID)){
+                               String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + infectedUserID + "'";
+                               SQLiteDatabase db = myDB.getWritableDatabase();
+                               db.execSQL(sql);
+
+                               utilNotification.displayEXPONO(context, content);
+                           }
+                       }
+
+
                        // Check if infectedUserID is in the contacts list
-                       if (myDB.CheckIsDataInDB(infectedUserID)){
+/*                       if (myDB.checkIsDataInDB(infectedUserID)){
                            infectedAgentID = infectedUserID;
-
-
-
 
                            // if user has no previous exposure, set the boolean now
                            if (hasExpo == false){
@@ -171,21 +183,7 @@ public class VolleyGET {
                            //Run the notification
                            utilNotification.displayEXPONO(context, content);
 
-
-
-                       }
-
-
-                       // Set class variable "hasExpo" to true if an exposure encounter has occurred
-/*                       if (hasExpo == false && myDB.CheckIsDataInDB(infectedUserID) == true) {
-                            setHasExpo(true);
                        }*/
-                       //sendHighPriorityNoteAlpha("Hello",context);
-
-                       //utilNotification.displayNotification(context, "Do something", "SAM");
-
-                       //utilNotification.displayEXPONO(context, content);
-
 
                    } catch (JSONException e) {
                        e.printStackTrace();
@@ -206,6 +204,110 @@ public class VolleyGET {
        rQueue.add(request);
 
    }
+
+   // ----------------------------------------------------------------------------------------------
+   // ----------------------------------------------------------------------------------------------
+   // NEW VOLLEY CODE
+   // ----------------------------------------------------------------------------------------------
+   // ----------------------------------------------------------------------------------------------
+    public interface VolleyCallBack{
+        void onSuccess();
+    }
+
+
+    public void callVolley(Context context){
+
+        volleyRequest(new VolleyCallBack(){
+            @Override
+            public void onSuccess() {
+                //do something
+
+            }
+        }, context);
+    }
+
+
+    public void volleyRequest(final VolleyCallBack callBack, Context context){
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
+
+
+        final JSONArray[] jsonArrays = new JSONArray[1];
+        JsonArrayRequest request;
+
+        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                String userID = null;
+                try {
+                    userID = response.getString(1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // Clear the current infected DB
+                myDB.deleteAllInfectedData();
+
+                for (int i = 0; i < response.length(); i++) {
+                    JSONObject userData;
+                    try {
+                        userData = (JSONObject) response.get(i);
+                        String infectedUserID = (String) userData.get("InfectedUserID");
+                        long epochDate = (long) userData.get("date");
+                        String dateReported = convertEpochDate(epochDate);
+                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
+
+                        String encounterData = myDB.getEncounterData(infectedUserID);
+                        String content = "You encountered: " + encounterData;
+
+
+                        // NEW CODE------------------------------------------------------------------
+                        if(!myDB.getEncounterData(infectedUserID).equals("Data Not Found")) {
+
+                            if(hasExpo == false){
+                                setHasExpo(true);
+                            }
+
+                            if(!myDB.newCheckIsDataInDB(infectedUserID)){
+                                String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + infectedUserID + "'";
+                                SQLiteDatabase db = myDB.getWritableDatabase();
+                                db.execSQL(sql);
+
+                                utilNotification.displayEXPONO(context, content);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                callBack.onSuccess();
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("error", error.getMessage());
+            }
+        };
+        request = new JsonArrayRequest(Request.Method.GET, requestURL, null, responseListener, errorListener);
+
+        queue.add(request);
+    }
+
+    // ----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
+    // END BLOCK
+    // ----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
+
+
+
+
+
 
     public static String convertEpochDate(long epochDate) {
         Date date = new Date(epochDate);
