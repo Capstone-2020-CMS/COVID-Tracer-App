@@ -1,6 +1,7 @@
 package com.covid.database.cloud;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -9,10 +10,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.covid.MainActivity;
-import com.covid.database.DatabaseHelper;
-import com.covid.ui.notifications.NotificationsFragment;
-import com.covid.utils.NoteManager;
 import com.covid.utils.utilNotification;
 
 
@@ -26,8 +23,6 @@ import java.util.Locale;
 
 import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.hasExpo;
-import static com.covid.MainActivity.myID;
-import static com.covid.MainActivity.sendHighPriorityNoteAlpha;
 import static com.covid.MainActivity.setHasExpo;
 
 public class VolleyGET {
@@ -65,7 +60,7 @@ public class VolleyGET {
                         try {
                             userData = (JSONObject) response.get(i);
                             String infectedUserID = (String) userData.get("InfectedUserID");
-                            boolean encounteredInfectedUser = myDB.CheckIsDataInDB(infectedUserID); //Not used yet!
+                            boolean encounteredInfectedUser = myDB.checkIsDataInDB(infectedUserID); //Not used yet!
                             long epochDate = (long) userData.get("date");
                             String dateReported = convertEpochDate(epochDate);
                             // Add code to build the infectedUsersTable from the JSON array
@@ -141,9 +136,11 @@ public class VolleyGET {
                    e.printStackTrace();
                }
 
-
                // Clear the current infected DB
                myDB.deleteAllInfectedData();
+
+
+
 
                for (int i = 0; i < response.length(); i++) {
                    JSONObject userData;
@@ -158,12 +155,27 @@ public class VolleyGET {
                        String encounterData = myDB.getEncounterData(infectedUserID);
                        String content = "You encountered: " + encounterData;
 
+
+                       // NEW CODE------------------------------------------------------------------
+                       if(!myDB.getEncounterData(infectedUserID).equals("Data Not Found")) {
+
+                           if(hasExpo == false){
+                               setHasExpo(true);
+                           }
+
+                           if(!myDB.newCheckIsDataInDB(infectedUserID)){
+                               String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + infectedUserID + "'";
+                               SQLiteDatabase db = myDB.getWritableDatabase();
+                               db.execSQL(sql);
+
+                               utilNotification.displayEXPONO(context, content);
+                           }
+                       }
+
+
                        // Check if infectedUserID is in the contacts list
-                       if (myDB.CheckIsDataInDB(infectedUserID)){
+/*                       if (myDB.checkIsDataInDB(infectedUserID)){
                            infectedAgentID = infectedUserID;
-
-
-
 
                            // if user has no previous exposure, set the boolean now
                            if (hasExpo == false){
@@ -176,7 +188,7 @@ public class VolleyGET {
                            //Run the notification
                            utilNotification.displayEXPONO(context, content);
 
-                       }
+                       }*/
 
                    } catch (JSONException e) {
                        e.printStackTrace();
@@ -196,6 +208,11 @@ public class VolleyGET {
 
        rQueue.add(request);
 
+   }
+
+
+   public void performNewCheck(String infectedID){
+        myDB.newCheckIsDataInDB(infectedID);
    }
 
     public static String convertEpochDate(long epochDate) {
