@@ -115,8 +115,8 @@ public class BLEService extends Service {
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
-                .setContentTitle(title)
-                .setContentText("BLE scanning is active")
+                .setContentTitle("Contact Scanning")
+                .setContentText("myBubble is scanning for close contacts using Bluetooth low energy.")
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setSmallIcon(R.drawable.ic_icon_small_01)
