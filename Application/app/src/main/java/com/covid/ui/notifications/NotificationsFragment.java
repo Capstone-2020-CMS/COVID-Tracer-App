@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -33,7 +34,7 @@ public class NotificationsFragment extends Fragment {
     private static MaterialCardView cardStatus;
     private static int motorwayGreen;
     private static int red;
-    private static LinearLayout layout;
+    //private static LinearLayout layout;
     private NotificationsViewModel notificationsViewModel;
 
 
@@ -47,6 +48,8 @@ public class NotificationsFragment extends Fragment {
 
     TextView txtInfectedIDValue;
     TextView txtIDValue;
+
+    TextView txtExposure;
 
 
 
@@ -63,20 +66,21 @@ public class NotificationsFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
 
-        final TextView txtExposure = root.findViewById(R.id.txtExposure);
 
+
+        // Initialise TextViews
         txtStatus = root.findViewById(R.id.txtViewStatus);
         txtStatusDetails = root.findViewById(R.id.txtViewStatusDetail);
-
+        txtExposure = root.findViewById(R.id.txtExposure);
         txtInfectedIDValue = root.findViewById(R.id.txtInfectedDBValue);
 
-
+        // Initialise MaterialCards
         cardExposure = root.findViewById(R.id.cardExposure);
 
         cardStatus = root.findViewById(R.id.cardStatus);
 
 
-        layout = root.findViewById(R.id.linearlayoutH);
+        //layout = root.findViewById(R.id.linearlayoutH);
 
         txtIDValue = root.findViewById(R.id.txtIDValue);
         txtIDValue.setText(myID);
@@ -87,7 +91,7 @@ public class NotificationsFragment extends Fragment {
 
         // Call method to set the initial display of the infected DB size
         updateNumber();
-        
+
         // Create onClick methods for the buttons
 
         txtExposure.setOnClickListener(new View.OnClickListener() {
@@ -117,10 +121,20 @@ public class NotificationsFragment extends Fragment {
         if (activeExpo == false){
             cardExposure.setCardBackgroundColor(red);
             cardStatus.setCardBackgroundColor(motorwayGreen);
+
+            txtStatus.setText(R.string.notefragment_status_healthy);
+            txtStatusDetails.setText(R.string.notefragment_status_healthy_detail);
+
+            txtExposure.setText(R.string.note_fragment_confirm_expo);
         }
         else{
             cardExposure.setCardBackgroundColor(motorwayGreen);
             cardStatus.setCardBackgroundColor(red);
+
+            txtStatus.setText(R.string.notefragment_status_infectious);
+            txtStatusDetails.setText(R.string.notefragment_status_infectious_detail);
+
+            txtExposure.setText(R.string.note_fragment_revert_expo);
         }
     }
 
