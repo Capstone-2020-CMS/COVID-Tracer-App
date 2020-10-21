@@ -273,7 +273,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    // Method to check if Data is in DB and has no boolean attached
+    // Method to check if Data is in DB and has boolean attached
     public boolean newCheckIsDataInDB(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
