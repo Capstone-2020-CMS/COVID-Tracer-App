@@ -30,27 +30,22 @@ public class NotificationsFragment extends Fragment {
     private static String idAdd = "Your ID was added to the active infections database.";
     private static String idRemove = "Your ID was removed from the active infections database";
 
-    private static MaterialCardView cardExposure;
-    private static MaterialCardView cardStatus;
-    private static int motorwayGreen;
-    private static int red;
-    //private static LinearLayout layout;
     private NotificationsViewModel notificationsViewModel;
 
-
-
-    private int infectionNumber;
-
-
-    // New vars
+    // TextView vars
     TextView txtStatus;
     TextView txtStatusDetails;
-
     TextView txtInfectedIDValue;
     TextView txtIDValue;
-
     TextView txtExposure;
 
+    // MaterialCard vars
+    private static MaterialCardView cardExposure;
+    private static MaterialCardView cardStatus;
+
+    // Colour vars
+    private static int motorwayGreen;
+    private static int red;
 
 
 
@@ -59,14 +54,13 @@ public class NotificationsFragment extends Fragment {
         notificationsViewModel =
                 ViewModelProviders.of(this).get(NotificationsViewModel.class);
 
-
-        motorwayGreen = getResources().getColor(R.color.motorwayGreen);
-        red = getResources().getColor(R.color.red);
-
-
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
 
 
+
+        // Initialise colours
+        motorwayGreen = getResources().getColor(R.color.motorwayGreen);
+        red = getResources().getColor(R.color.red);
 
         // Initialise TextViews
         txtStatus = root.findViewById(R.id.txtViewStatus);
@@ -74,17 +68,12 @@ public class NotificationsFragment extends Fragment {
         txtExposure = root.findViewById(R.id.txtExposure);
         txtInfectedIDValue = root.findViewById(R.id.txtInfectedDBValue);
 
-        // Initialise MaterialCards
-        cardExposure = root.findViewById(R.id.cardExposure);
-
-        cardStatus = root.findViewById(R.id.cardStatus);
-
-
-        //layout = root.findViewById(R.id.linearlayoutH);
-
         txtIDValue = root.findViewById(R.id.txtIDValue);
         txtIDValue.setText(myID);
 
+        // Initialise MaterialCards
+        cardExposure = root.findViewById(R.id.cardExposure);
+        cardStatus = root.findViewById(R.id.cardStatus);
 
         // Set the initial card colours
         deployCardColours();
@@ -92,8 +81,9 @@ public class NotificationsFragment extends Fragment {
         // Call method to set the initial display of the infected DB size
         updateNumber();
 
-        // Create onClick methods for the buttons
 
+
+        // Create onClick methods for the buttons
         txtExposure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +106,7 @@ public class NotificationsFragment extends Fragment {
     }
 
 
-    // Method to set card colours
+    // Method to set card colours and text contents
     public void deployCardColours(){
         if (activeExpo == false){
             cardExposure.setCardBackgroundColor(red);
