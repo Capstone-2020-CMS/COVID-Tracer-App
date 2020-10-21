@@ -72,6 +72,7 @@ public class MapsFragment extends Fragment {
     private static final int DEFAULT_ZOOM = 15;
 
     private TextView txtDay;
+    private LinearLayout dateLayout;
     private Button btnPrevDay;
     private Button btnNextDay;
 
@@ -121,6 +122,7 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
         txtDay = view.findViewById(R.id.txtDay);
+        dateLayout = view.findViewById(R.id.dateLayout);
         btnPrevDay = view.findViewById(R.id.btnPrevDay);
         btnNextDay = view.findViewById(R.id.btnNextDay);
 
@@ -134,12 +136,19 @@ public class MapsFragment extends Fragment {
         // Set the title to the current day
         txtDay.setText(formatDateForTitle(getCurrentDate()));
 
-        txtDay.setOnClickListener(new View.OnClickListener() {
+        dateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 txtDay.setText(formatDateForTitle(getCurrentDate()));
                 String dateForDB = formatDateForDB((String) txtDay.getText());
                 ArrayList<GPSRecord> arrayList = myDB.getGPSDataForDay(dateForDB);
+
+                // Reset the buttons
+                btnNextDay.setEnabled(false);
+                btnNextDay.setBackgroundColor(getResources().getColor(R.color.red));
+                btnPrevDay.setEnabled(true);
+                btnPrevDay.setBackgroundColor(getResources().getColor(R.color.motorwayGreen));
+
                 drawTimeline(arrayList);
             }
         });

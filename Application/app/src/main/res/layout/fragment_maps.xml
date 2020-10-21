@@ -7,6 +7,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/dateLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtDay"
+            style="@style/Widget.MaterialComponents.TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primaryColor"
+            android:clickable="false"
+            android:elevation="@dimen/elevation"
+            android:fontFamily="sans-serif-medium"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:text="Saturday 18th September"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+            android:textSize="20sp" />
+
+        <TextView
+            style="@style/Widget.MaterialComponents.TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primaryColor"
+            android:clickable="false"
+            android:elevation="@dimen/elevation"
+            android:fontFamily="sans-serif-medium"
+            android:paddingBottom="4dp"
+            android:text="Tap to return to current date"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+            android:textSize="12sp" />
+    </LinearLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -15,30 +54,10 @@
         app:layout_constraintBottom_toTopOf="@+id/btnPrevDay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDay"
+        app:layout_constraintTop_toBottomOf="@+id/dateLayout"
         tools:context=".gps.MapsFragment">
 
     </androidx.fragment.app.FragmentContainerView>
-
-    <TextView
-        android:id="@+id/txtDay"
-        style="@style/Widget.MaterialComponents.TextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/primaryColor"
-        android:clickable="true"
-        android:elevation="@dimen/elevation"
-        android:fontFamily="sans-serif-medium"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:text="Saturday 18th September"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnPrevDay"
