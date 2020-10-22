@@ -1,19 +1,16 @@
 package com.covid.ui.notifications;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -76,8 +73,6 @@ public class NotificationsFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
 
-
-
         // Initialise colours
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         red = getResources().getColor(R.color.red);
@@ -86,7 +81,6 @@ public class NotificationsFragment extends Fragment {
         txtStatus = root.findViewById(R.id.txtViewStatus);
         txtStatusDetails = root.findViewById(R.id.txtViewStatusDetail);
         txtExposure = root.findViewById(R.id.txtExposure);
-        txtInfectedIDValue = root.findViewById(R.id.txtInfectedDBValue);
 
         txtIDValue = root.findViewById(R.id.txtIDValue);
         txtIDValue.setText(myID);
@@ -98,28 +92,11 @@ public class NotificationsFragment extends Fragment {
         // Set the initial card colours
         deployCardColours();
 
-        // Call method to set the initial display of the infected DB size
-        updateNumber();
-
-
-
         // Create onClick methods for the buttons
         txtExposure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 volleyHandler();
-                //expoHandler();
-                //VolleyPOST.setInfectedUsers(getContext());
-                //VolleyDELETE.deleteInfectedUser(getContext());
-            }
-        });
-
-        txtInfectedIDValue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txtInfectedIDValue.setText("Updating Database");
-                //VolleyGET.checkExposure(getContext());
-                callVolley(getContext());
             }
         });
 
@@ -128,17 +105,12 @@ public class NotificationsFragment extends Fragment {
 
 
     // Method to set card colours and text contents
-    public void deployCardColours(){
-        if (activeExpo == false){
-            cardExposure.setCardBackgroundColor(red);
-            cardStatus.setCardBackgroundColor(motorwayGreen);
+    public void deployCardColours() {
 
-            txtStatus.setText(R.string.notefragment_status_healthy);
-            txtStatusDetails.setText(R.string.notefragment_status_healthy_detail);
+        // Check if personal id is in infected id table
+        if (!myDB.getInfectedData(myDB.getPersonalInfoData()).equals("Data Not Found")) {
+            activeExpo = true;
 
-            txtExposure.setText(R.string.note_fragment_confirm_expo);
-        }
-        else{
             cardExposure.setCardBackgroundColor(motorwayGreen);
             cardStatus.setCardBackgroundColor(red);
 
@@ -146,6 +118,17 @@ public class NotificationsFragment extends Fragment {
             txtStatusDetails.setText(R.string.notefragment_status_infectious_detail);
 
             txtExposure.setText(R.string.note_fragment_revert_expo);
+        }
+        else {
+            activeExpo = false;
+
+            cardExposure.setCardBackgroundColor(red);
+            cardStatus.setCardBackgroundColor(motorwayGreen);
+
+            txtStatus.setText(R.string.notefragment_status_healthy);
+            txtStatusDetails.setText(R.string.notefragment_status_healthy_detail);
+
+            txtExposure.setText(R.string.note_fragment_confirm_expo);
         }
     }
 
@@ -164,9 +147,6 @@ public class NotificationsFragment extends Fragment {
         deployCardColours();
     }
 
-
-
-
     public void expoHandler(){
         if (activeExpo == false){
             activeExpo = true;
@@ -182,126 +162,5 @@ public class NotificationsFragment extends Fragment {
             Toast.makeText(getContext(), idRemove, Toast.LENGTH_SHORT).show();
         }
     }
-
-
-    public void updateNumber(){
-        if(myDB.getNumOfInfectedEncounters() > -1){
-            int size = myDB.getNumOfInfectedEncounters();
-            String newString = "Infected count = " + String.valueOf(size);
-            txtInfectedIDValue.setText(newString);
-        }
-    }
-
-
-
-
-    // ----------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------
-    // NEW VOLLEY CODE
-    // ----------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------
-    public interface VolleyCallBack{
-        void onSuccess();
-    }
-
-
-    public void callVolley(Context context){
-
-        volleyRequest(new VolleyGET.VolleyCallBack(){
-            @Override
-            public void onSuccess() {
-                updateNumber();
-
-            }
-        }, context);
-    }
-
-
-    public void volleyRequest(final VolleyGET.VolleyCallBack callBack, Context context){
-
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-
-
-        final JSONArray[] jsonArrays = new JSONArray[1];
-        JsonArrayRequest request;
-
-        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                String userID = null;
-                try {
-                    userID = response.getString(1);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                // Clear the current infected DB
-                myDB.deleteAllInfectedData();
-
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject userData;
-                    try {
-                        userData = (JSONObject) response.get(i);
-                        String infectedUserID = (String) userData.get("InfectedUserID");
-                        long epochDate = (long) userData.get("date");
-                        String dateReported = convertEpochDate(epochDate);
-                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
-
-                        String encounterData = myDB.getEncounterData(infectedUserID);
-                        String content = "You encountered: " + encounterData;
-
-
-                        // NEW CODE------------------------------------------------------------------
-                        if(!myDB.getEncounterData(infectedUserID).equals("Data Not Found")) {
-
-                            if(hasExpo == false){
-                                setHasExpo(true);
-                            }
-
-                            if(!myDB.newCheckIsDataInDB(infectedUserID)){
-                                String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + infectedUserID + "'";
-                                SQLiteDatabase db = myDB.getWritableDatabase();
-                                db.execSQL(sql);
-
-                                utilNotification.displayEXPONO(context, content);
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                callBack.onSuccess();
-            }
-        };
-
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("error", error.getMessage());
-            }
-        };
-        request = new JsonArrayRequest(Request.Method.GET, requestURL, null, responseListener, errorListener);
-
-        queue.add(request);
-    }
-
-
-    public static String convertEpochDate(long epochDate) {
-        Date date = new Date(epochDate);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        //Long dateLong = Long.parseLong(sdf.format(epochDate));
-        //String date = dateLong.toString();
-        String infectedDate = sdf.format(date);
-        return infectedDate;
-    }
-
-    // ----------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------
-    // END BLOCK
-    // ----------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------
 
 }

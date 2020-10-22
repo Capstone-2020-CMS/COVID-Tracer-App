@@ -247,7 +247,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public boolean checkIsDataInDB(String id) {
+    public boolean checkIDInEncntrTbl(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
         String[] columns = {"ID"};

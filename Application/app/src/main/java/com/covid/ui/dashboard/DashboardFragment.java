@@ -20,6 +20,7 @@ import com.covid.R;
 
 import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.getSummaryDataWorkRequest;
+import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.tableDataArrayList;
 import static com.covid.MainActivity.workManager;
 
@@ -31,6 +32,7 @@ public class DashboardFragment extends Fragment {
     private TextView txtDateUpdated;
     private ImageView imgRefresh;
     private TextView txtLinkToResources;
+    private TextView txtNumOfBubbleActiveCases;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,7 +44,9 @@ public class DashboardFragment extends Fragment {
         txtDateUpdated = root.findViewById(R.id.txtDateUpdated);
         imgRefresh = root.findViewById(R.id.imgRefresh);
         txtLinkToResources = root.findViewById(R.id.txtLinkToResources);
+        txtNumOfBubbleActiveCases = root.findViewById(R.id.txtNumOfBubbleActiveCases);
 
+        updateNumber();
         updateTableData();
 
         imgRefresh.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +80,14 @@ public class DashboardFragment extends Fragment {
         });
 
         return root;
+    }
+
+    public void updateNumber(){
+        if(myDB.getNumOfInfectedEncounters() > -1){
+            int size = myDB.getNumOfInfectedEncounters();
+            String newString = String.valueOf(size);
+            txtNumOfBubbleActiveCases.setText(newString);
+        }
     }
 
     @Override

@@ -9,9 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.covid.ui.notifications.NotificationsFragment;
 import com.covid.utils.utilNotification;
 
 
@@ -63,7 +61,7 @@ public class VolleyGET {
                         try {
                             userData = (JSONObject) response.get(i);
                             String infectedUserID = (String) userData.get("InfectedUserID");
-                            boolean encounteredInfectedUser = myDB.checkIsDataInDB(infectedUserID); //Not used yet!
+                            boolean encounteredInfectedUser = myDB.checkIDInEncntrTbl(infectedUserID); //Not used yet!
                             long epochDate = (long) userData.get("date");
                             String dateReported = convertEpochDate(epochDate);
                             // Add code to build the infectedUsersTable from the JSON array
