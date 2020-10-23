@@ -17,6 +17,8 @@ import androidx.lifecycle.Observer;
 import androidx.work.WorkInfo;
 
 import com.covid.R;
+import com.covid.database.cloud.VolleyGET;
+import com.google.android.material.card.MaterialCardView;
 
 import static com.covid.MainActivity.dateUpdated;
 import static com.covid.MainActivity.getSummaryDataWorkRequest;
@@ -34,6 +36,8 @@ public class DashboardFragment extends Fragment {
     private TextView txtLinkToResources;
     private TextView txtNumOfBubbleActiveCases;
 
+    private MaterialCardView cardInfectedDBSize;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
@@ -45,9 +49,17 @@ public class DashboardFragment extends Fragment {
         imgRefresh = root.findViewById(R.id.imgRefresh);
         txtLinkToResources = root.findViewById(R.id.txtLinkToResources);
         txtNumOfBubbleActiveCases = root.findViewById(R.id.txtNumOfBubbleActiveCases);
+        cardInfectedDBSize = root.findViewById(R.id.cardInfectedDBSize);
 
         updateNumber();
         updateTableData();
+
+        cardInfectedDBSize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VolleyGET.checkExposure(requireContext());
+            }
+        });
 
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             @Override

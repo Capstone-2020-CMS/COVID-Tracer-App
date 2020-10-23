@@ -123,14 +123,14 @@ public class VolleyGET {
            @Override
            public void onResponse(JSONArray response) {
 
-               String infectedAgentID = "";
-
-               String userID = null;
-               try {
-                   userID = response.getString(1);
-               } catch (JSONException e) {
-                   e.printStackTrace();
-               }
+//               String infectedAgentID = "";
+//
+//               String userID = null;
+//               try {
+//                   userID = response.getString(1);
+//               } catch (JSONException e) {
+//                   e.printStackTrace();
+//               }
 
                // Clear the current infected DB
                myDB.deleteAllInfectedData();

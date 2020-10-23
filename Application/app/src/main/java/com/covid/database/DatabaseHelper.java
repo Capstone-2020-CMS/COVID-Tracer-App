@@ -91,13 +91,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertEncounterData(String ID, String ENCOUNTER_DATE, String ENCOUNTER_TIME) {
+    public boolean oldinsertEncounterData(String ID, String ENCOUNTER_DATE, String ENCOUNTER_TIME) {
         SQLiteDatabase db = getWritableDatabase();
         long result;
-
-        // Delete existing encounter from db
-        String sql = "DELETE FROM ENCOUNTERS_TABLE WHERE ID = " + ID;
-        db.execSQL(sql);
 
         // Insert new encounter into db
         ContentValues newValues = new ContentValues();
@@ -105,6 +101,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         newValues.put("ENCOUNTER_DATE", ENCOUNTER_DATE);
         newValues.put("ENCOUNTER_TIME", ENCOUNTER_TIME);
         result = db.insert(ENCOUNTERS_TABLE, null, newValues);
+
+        return result != -1;
+    }
+
+    public boolean insertEncounterData(String ID, String ENCOUNTER_DATE, String ENCOUNTER_TIME) {
+        SQLiteDatabase db = getWritableDatabase();
+        long result;
+
+        if (!getEncounterData(ID).equals("Data Not Found")) {
+            String sql = "UPDATE ENCOUNTERS_TABLE SET ENCOUNTER_DATE = '" + ENCOUNTER_DATE +"', ENCOUNTER_TIME = '" + ENCOUNTER_TIME + "' WHERE ID='" + ID + "'";
+            db.execSQL(sql);
+            result = 1;
+        } else {
+            // Insert new encounter into db
+            ContentValues newValues = new ContentValues();
+            newValues.put("ID", ID);
+            newValues.put("ENCOUNTER_DATE", ENCOUNTER_DATE);
+            newValues.put("ENCOUNTER_TIME", ENCOUNTER_TIME);
+            result = db.insert(ENCOUNTERS_TABLE, null, newValues);
+        }
 
         return result != -1;
     }
