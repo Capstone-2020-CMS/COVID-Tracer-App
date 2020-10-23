@@ -14,4 +14,8 @@
         </item>
     </style>
 
+    <style name="AlertDialogCustom" parent="Widget.AppCompat.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

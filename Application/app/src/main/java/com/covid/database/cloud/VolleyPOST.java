@@ -23,8 +23,12 @@ import java.io.UnsupportedEncodingException;
 
 public class VolleyPOST {
 
+    public interface SetInfectedCallback {
+        void onSuccessResponse();
+        void onFailureResponse();
+    }
 
-    public static void setInfectedUsers(Context context) {
+    public static void setInfectedUsers(Context context, SetInfectedCallback setInfectedCallback) {
 
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -37,11 +41,13 @@ public class VolleyPOST {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    setInfectedCallback.onSuccessResponse();
                     Log.i("LOG_VOLLEY", response);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    setInfectedCallback.onFailureResponse();
                     Log.e("LOG_VOLLEY", error.toString());
                 }
             }) {

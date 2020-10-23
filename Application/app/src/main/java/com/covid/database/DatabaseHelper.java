@@ -295,6 +295,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
+    public void deleteSingleInfectedData(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "DELETE FROM " + INFECTED_ENCOUNTERS_TABLE + " WHERE INFECTED_USER_ID = " + id;
+        db.execSQL(sql);
+    }
+
     public ArrayList<GPSRecord> getAllGPSData() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM GPS_TABLE ORDER BY date(DATE)";

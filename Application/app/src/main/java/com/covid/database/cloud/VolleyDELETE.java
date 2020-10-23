@@ -26,7 +26,12 @@ import static com.covid.MainActivity.myDB;
 
 public class VolleyDELETE {
 
-    public static void deleteInfectedUser(Context context) {
+    public interface deleteInfectedUserCallback {
+        void onSuccessResponse();
+        void onFailureResponse();
+    }
+
+    public static void deleteInfectedUser(Context context, deleteInfectedUserCallback callback) {
 
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -40,11 +45,13 @@ public class VolleyDELETE {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    callback.onSuccessResponse();
                     Log.i("LOG_VOLLEY", response);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    callback.onFailureResponse();
                     Log.e("LOG_VOLLEY", error.toString());
                 }
             }) {
