@@ -30,6 +30,7 @@ import static com.covid.MainActivity.adapter;
 import static com.covid.MainActivity.bubbleSize;
 import static com.covid.MainActivity.locationManager;
 import static com.covid.MainActivity.mainSetupDone;
+import static com.covid.MainActivity.myDB;
 import static com.covid.MainActivity.providerName;
 import static com.covid.MainActivity.wifiManager;
 
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
     private MaterialCardView cardBluetoothStatus;
     private MaterialCardView cardLocationStatus;
     private MaterialCardView cardInternetStatus;
+    private MaterialCardView cardServicesExpl;
 
     private TextView txtWhyWhy;
 
@@ -51,12 +53,16 @@ public class HomeFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         // Get the text view for bubble size and set it
+
+        bubbleSize = myDB.getNumOfEncounters();
+
         TextView txtBubbleSize = root.findViewById(R.id.txtBubbleSize);
         txtBubbleSize.setText(Integer.toString(bubbleSize));
 
         cardBluetoothStatus = root.findViewById(R.id.cardBluetoothStatus);
         cardLocationStatus = root.findViewById(R.id.cardLocationStatus);
         cardInternetStatus = root.findViewById(R.id.cardInternetStatus);
+        cardServicesExpl = root.findViewById(R.id.cardServicesExpl);
 
         txtWhyWhy = root.findViewById(R.id.txtWhyWhy);
 
@@ -69,7 +75,7 @@ public class HomeFragment extends Fragment {
         }
 
         // Expand text on click
-        txtWhyWhy.setOnClickListener(new View.OnClickListener() {
+        cardServicesExpl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleTxtWhyWhy();

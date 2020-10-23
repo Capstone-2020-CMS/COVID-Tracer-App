@@ -7,7 +7,9 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,15 +32,10 @@ public class NotificationsFragment extends Fragment {
 
     private NotificationsViewModel notificationsViewModel;
 
-    // TextView vars
+    //Views
+    ImageView imgStatusBackground;
     TextView txtStatus;
-    TextView txtStatusDetails;
-    TextView txtIDValue;
-    TextView txtExposure;
-
-    // MaterialCard vars
-    private static MaterialCardView cardExposure;
-    private static MaterialCardView cardStatus;
+    Button btnExposure;
 
     // Colour vars
     private static int motorwayGreen;
@@ -52,23 +49,16 @@ public class NotificationsFragment extends Fragment {
         notificationsViewModel =
                 ViewModelProviders.of(this).get(NotificationsViewModel.class);
 
-        View root = inflater.inflate(R.layout.fragment_notifications, container, false);
+        View root = inflater.inflate(R.layout.fragment_notifications_v2, container, false);
 
         // Initialise colours
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         red = getResources().getColor(R.color.red);
 
         // Initialise TextViews
-        txtStatus = root.findViewById(R.id.txtViewStatus);
-        txtStatusDetails = root.findViewById(R.id.txtViewStatusDetail);
-        txtExposure = root.findViewById(R.id.txtExposure);
-
-        txtIDValue = root.findViewById(R.id.txtIDValue);
-        txtIDValue.setText(myID);
-
-        // Initialise MaterialCards
-        cardExposure = root.findViewById(R.id.cardExposure);
-        cardStatus = root.findViewById(R.id.cardStatus);
+        imgStatusBackground = root.findViewById(R.id.imgStatusBackground);
+        txtStatus = root.findViewById(R.id.txtStatus);
+        btnExposure = root.findViewById(R.id.btnExposure);
 
         // Create callback
         createCallbacks();
@@ -77,7 +67,7 @@ public class NotificationsFragment extends Fragment {
         deployCardColours();
 
         // Create onClick methods for the buttons
-        txtExposure.setOnClickListener(new View.OnClickListener() {
+        btnExposure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 formStuff();
@@ -185,25 +175,15 @@ public class NotificationsFragment extends Fragment {
         // Check if personal id is in infected id table
         if (!myDB.getInfectedData(myDB.getPersonalInfoData()).equals("Data Not Found")) {
             activeExpo = true;
-
-            cardExposure.setCardBackgroundColor(motorwayGreen);
-            cardStatus.setCardBackgroundColor(red);
-
-            txtStatus.setText(R.string.notefragment_status_infectious);
-            txtStatusDetails.setText(R.string.notefragment_status_infectious_detail);
-
-            txtExposure.setText(R.string.note_fragment_revert_expo);
+            txtStatus.setText("Status: Infected");
+            imgStatusBackground.setBackgroundColor(red);
+            btnExposure.setBackgroundColor(red);
         }
         else {
             activeExpo = false;
-
-            cardExposure.setCardBackgroundColor(red);
-            cardStatus.setCardBackgroundColor(motorwayGreen);
-
-            txtStatus.setText(R.string.notefragment_status_healthy);
-            txtStatusDetails.setText(R.string.notefragment_status_healthy_detail);
-
-            txtExposure.setText(R.string.note_fragment_confirm_expo);
+            txtStatus.setText("Status: Healthy");
+            imgStatusBackground.setBackgroundColor(motorwayGreen);
+            btnExposure.setBackgroundColor(motorwayGreen);
         }
     }
 }
