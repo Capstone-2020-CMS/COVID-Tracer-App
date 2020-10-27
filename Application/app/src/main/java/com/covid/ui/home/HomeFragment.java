@@ -184,10 +184,12 @@ public class HomeFragment extends Fragment {
 
         if (tagStatus.equals("min")) {
             txtWhyWhy.setText(R.string.servicesExpl);
+            txtWhyWhy.setTextSize(14);
             txtWhyWhy.setGravity(Gravity.START);
             txtWhyWhy.setTag("max");
         } else {
             txtWhyWhy.setText(R.string.tap_to_expand);
+            txtWhyWhy.setTextSize(18);
             txtWhyWhy.setGravity(Gravity.CENTER_HORIZONTAL);
             txtWhyWhy.setTag("min");
         }
