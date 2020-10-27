@@ -127,7 +127,7 @@ public class NotificationsFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(requireContext(), "Hello World!", Toast.LENGTH_SHORT).show();
+                showInfectedInfoDialog(data);
             }
         });
 
@@ -142,6 +142,14 @@ public class NotificationsFragment extends Fragment {
         };
 
         requireView().post(uiStuff);
+    }
+
+    private void showInfectedInfoDialog(InfectedUserData userData) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(requireContext(), R.style.AlertDialogCustom));
+        alertDialog.setTitle("ID: " + userData.getID());
+        alertDialog.setMessage("Date encountered: " + userData.getDateEncountered() + "\nDate reported: " + userData.getDateReported());
+        alertDialog.setNegativeButton("Back", null);
+        alertDialog.show();
     }
 
     private void createCallbacks() {
