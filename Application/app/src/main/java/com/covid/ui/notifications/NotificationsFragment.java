@@ -2,6 +2,8 @@ package com.covid.ui.notifications;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -15,13 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.covid.R;
 import com.covid.database.cloud.VolleyDELETE;
 import com.covid.database.cloud.VolleyPOST;
-import com.google.android.material.card.MaterialCardView;
+import com.covid.utils.InfectedUserData;
+
+import java.util.ArrayList;
 
 import static com.covid.MainActivity.activeExpo;
 import static com.covid.MainActivity.myDB;
@@ -36,6 +41,7 @@ public class NotificationsFragment extends Fragment {
     ImageView imgStatusBackground;
     TextView txtStatus;
     Button btnExposure;
+    LinearLayout linearLayoutInfected;
 
     // Colour vars
     private static int motorwayGreen;
@@ -55,10 +61,13 @@ public class NotificationsFragment extends Fragment {
         motorwayGreen = getResources().getColor(R.color.motorwayGreen);
         red = getResources().getColor(R.color.red);
 
-        // Initialise TextViews
+        // Initialise Views
         imgStatusBackground = root.findViewById(R.id.imgStatusBackground);
         txtStatus = root.findViewById(R.id.txtStatus);
         btnExposure = root.findViewById(R.id.btnExposure);
+
+        // Get linear Layout
+        linearLayoutInfected = root.findViewById(R.id.linearLayoutInfected);
 
         // Create callback
         createCallbacks();
@@ -74,7 +83,65 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
+        Thread setupTableThread = new Thread() {
+            @Override
+            public void run() {
+                // Get a list of infected data
+                SQLiteDatabase db = myDB.getWritableDatabase();
+                ArrayList<InfectedUserData> listOfInfectedUsers = new ArrayList<>();
+
+                String query = "SELECT * FROM INFECTED_ENCOUNTERS_TABLE ORDER BY date(DATE_REPORTED)";
+                try (Cursor cursor = db.rawQuery(query, null)) {
+                    while (cursor.moveToNext()) {
+                        String id = cursor.getString(0);
+                        String dateReported = cursor.getString(1);
+
+                        // Add data to list if ID is in encounter table
+                        if (!myDB.getEncounterData(id).equals("Data Not Found")) {
+
+                            String query2 = "SELECT ENCOUNTER_DATE FROM ENCOUNTERS_TABLE WHERE ID='" + id + "'";
+                            try (Cursor cursor2 = db.rawQuery(query2, null)) {
+                                if (cursor2.moveToFirst()) {
+                                    String dateEncountered = cursor2.getString(0);
+                                    listOfInfectedUsers.add(new InfectedUserData(id, dateEncountered, dateReported));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (InfectedUserData i : listOfInfectedUsers) {
+                    createButton(i);
+                }
+            }
+        };
+        setupTableThread.start();
+
         return root;
+    }
+
+    private void createButton(InfectedUserData data) {
+        Button button = new Button(new ContextThemeWrapper(requireContext(), R.style.ButtonMoreInfo));
+        button.setText(data.getID());
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireContext(), "Hello World!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Runnable uiStuff = new Runnable() {
+            @Override
+            public void run() {
+                int test = getResources().getDimensionPixelSize(R.dimen.margin);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(test,0,test,test);
+                linearLayoutInfected.addView(button, params);
+            }
+        };
+
+        requireView().post(uiStuff);
     }
 
     private void createCallbacks() {

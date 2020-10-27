@@ -109,6 +109,7 @@
                 app:strokeWidth="1dp">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutInfected"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -141,12 +142,10 @@
                         android:textStyle="italic" />
 
                     <ImageView
-                        android:id="@+id/imageView6"
+                        android:id="@+id/imgWhiteBar"
                         android:layout_width="match_parent"
                         android:layout_height="4dp"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="0dp"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
                         android:background="@color/primaryTextColor"
                         app:srcCompat="@drawable/rectangle" />
