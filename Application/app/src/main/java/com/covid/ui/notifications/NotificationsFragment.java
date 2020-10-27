@@ -147,7 +147,7 @@ public class NotificationsFragment extends Fragment {
     private void showInfectedInfoDialog(InfectedUserData userData) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(requireContext(), R.style.AlertDialogCustom));
         alertDialog.setTitle("ID: " + userData.getID());
-        alertDialog.setMessage("Date encountered: " + userData.getDateEncountered() + "\nDate reported: " + userData.getDateReported());
+        alertDialog.setMessage("Last encountered: " + userData.getDateEncountered() + "\nDate reported: " + userData.getDateReported());
         alertDialog.setNegativeButton("Back", null);
         alertDialog.show();
     }
