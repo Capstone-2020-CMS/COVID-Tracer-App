@@ -281,28 +281,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Method to check if Data is in DB and has boolean attached
     public boolean newCheckIsDataInDB(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        //String query = "SELECT (*) FROM ENCOUNTERS_TABLE WHERE ENCOUNTER_ID exists;
-/*        String[] columns = {"ID"};
-        String selection = "ID" + " =?";
-        String[] selectionArgs = {id};
-        String limit = "1";
-
-        Cursor cursor = db.query("Encounters_Table", columns, selection, selectionArgs, null, null, null, limit);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        return exists;*/
 
         String[] columns = {"ID"};
         String selection = "ID=? AND IS_INFECTED=?";
         String[] selectionArgs = {id, "true"};
         String limit = "1";
 
-        //Cursor cursor = db.query("ENCOUNTERS_TABLE", new String[]{"ID"}, "ID =? " + "AND" + " IS_INFECTED =?", new String[]{id, "true"}, null, null,  null);
         Cursor cursor = db.query("Encounters_Table", columns, selection, selectionArgs, null, null, null, limit);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
-
     }
 
     public void deleteAllInfectedData() {

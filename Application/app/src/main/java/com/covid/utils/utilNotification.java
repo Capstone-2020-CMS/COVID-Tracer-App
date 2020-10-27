@@ -2,12 +2,16 @@ package com.covid.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
+import com.covid.MainActivity;
 import com.covid.R;
 
 import static com.covid.MainActivity.NOTIFICATION_CHANNEL;
@@ -48,12 +52,19 @@ public class utilNotification {
     // Template for EXPONO
 
     public static void displayEXPONO(@NonNull Context context, @NonNull String content){
+
+        Intent goToMainActivityIntent = new Intent(context, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(goToMainActivityIntent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_emptybubble)
                 .setContentTitle("CONTACT EXPOSURE ALERT")
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent);
 
         notificationManager.notify(0, builder.build());
     }

@@ -1,6 +1,7 @@
 package com.covid.database.cloud;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -27,7 +29,7 @@ import static com.covid.MainActivity.setHasExpo;
 
 public class VolleyGET {
 
-
+    @Deprecated
     public static void getInfectedUsers(Context context) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -122,15 +124,14 @@ public class VolleyGET {
        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
            @Override
            public void onResponse(JSONArray response) {
-
-//               String infectedAgentID = "";
-//
-//               String userID = null;
-//               try {
-//                   userID = response.getString(1);
-//               } catch (JSONException e) {
-//                   e.printStackTrace();
-//               }
+               ArrayList<String> newInfectedList = new ArrayList<>();
+               ArrayList<String> oldInfectedList = new ArrayList<>();
+               String getOldQuery = "SELECT INFECTED_USER_ID FROM INFECTED_ENCOUNTERS_TABLE";
+               try (Cursor cursor = myDB.getWritableDatabase().rawQuery(getOldQuery, null)) {
+                   if (cursor.moveToNext()) {
+                       oldInfectedList.add(cursor.getString(0));
+                   }
+               }
 
                // Clear the current infected DB
                myDB.deleteAllInfectedData();
@@ -140,6 +141,7 @@ public class VolleyGET {
                    try {
                        userData = (JSONObject) response.get(i);
                        String infectedUserID = (String) userData.get("InfectedUserID");
+                       newInfectedList.add(infectedUserID);
                        long epochDate = (long) userData.get("date");
                        String dateReported = convertEpochDate(epochDate);
                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
@@ -165,29 +167,16 @@ public class VolleyGET {
                            }
                        }
 
-
-                       // Check if infectedUserID is in the contacts list
-/*                       if (myDB.checkIsDataInDB(infectedUserID)){
-                           infectedAgentID = infectedUserID;
-
-                           // if user has no previous exposure, set the boolean now
-                           if (hasExpo == false){
-                               setHasExpo(true);
-
-                               // Run the notification only once, even if there are multiple hits
-                               //utilNotification.displayEXPONO(context, content);
-                           }
-
-                           //Run the notification
-                           utilNotification.displayEXPONO(context, content);
-
-                       }*/
-
                    } catch (JSONException e) {
                        e.printStackTrace();
                    }
                }
 
+               for (String s : oldInfectedList) {
+                   if (!newInfectedList.contains(s)) {
+                       myDB.getWritableDatabase().execSQL("UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'false' WHERE ID='" + s + "'");
+                   }
+               }
            }
        };
 
