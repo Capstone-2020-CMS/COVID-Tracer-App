@@ -2,6 +2,7 @@ package com.covid.ui.notifications;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.covid.MainActivity;
+import com.covid.NotificationActivity;
 import com.covid.R;
 import com.covid.database.cloud.VolleyDELETE;
 import com.covid.database.cloud.VolleyPOST;
@@ -145,6 +148,17 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void showInfectedInfoDialog(InfectedUserData userData) {
+        Intent intent = new Intent();
+        intent.setClass(requireContext(), NotificationActivity.class);
+
+        intent.putExtra("id", userData.getID());
+        intent.putExtra("dateEncountered", userData.getDateEncountered());
+        intent.putExtra("dateReported", userData.getDateReported());
+
+        startActivity(intent);
+    }
+
+    private void oldshowInfectedInfoDialog(InfectedUserData userData) {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(requireContext(), R.style.AlertDialogCustom));
         alertDialog.setTitle("ID: " + userData.getID());
         alertDialog.setMessage("Last encountered: " + userData.getDateEncountered() + "\nDate reported: " + userData.getDateReported());

@@ -65,7 +65,7 @@
     <Button
         android:id="@+id/btnPrevDay"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="?android:attr/actionBarSize"
         android:backgroundTint="@color/motorwayGreen"
         android:insetTop="0dp"
         android:insetBottom="0dp"
@@ -79,7 +79,7 @@
     <Button
         android:id="@+id/btnNextDay"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="?android:attr/actionBarSize"
         android:backgroundTint="@color/red"
         android:insetTop="0dp"
         android:insetBottom="0dp"

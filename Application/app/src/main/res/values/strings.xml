@@ -46,7 +46,7 @@
         you will need <b>Internet</b> access to receive a notification informing you.
     </string>
 
-    <string name="tap_here_for_more_info"><u>Tap here to get more information</u></string>
+    <string name="tap_here_for_more_info"><u>Tap here for more information</u></string>
 
     <string name="notefragment_your_status">Your current status</string>
     <string name="notefragment_your_bubble_id">Your bubble ID</string>
@@ -58,4 +58,14 @@
     <string name="note_fragment_revert_expo">Revert Exposure</string>
 
     <string name="tap_to_expand">Tap here to expand</string>
+
+    <string name="next_steps">This is not a confirmation that you have COVID-19. We strongly
+        recommend you contact HealthLine and inform them that you may be a casual contact or possibly
+        even a close contact./n/nWe also recommend monitoring yourself for the following symptoms\n
+        \n- a new or worsening cough
+        \n- fever (at least 38˚C)
+        \n- shortness of breath
+        \n- a sore throat
+        \n- sneezing and runny nose
+        \n- temporary loss of smell</string>
 </resources>
