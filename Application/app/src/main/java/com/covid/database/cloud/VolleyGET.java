@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.covid.utils.InfectedUserData;
 import com.covid.utils.utilNotification;
 
 
@@ -163,7 +164,17 @@ public class VolleyGET {
                                SQLiteDatabase db = myDB.getWritableDatabase();
                                db.execSQL(sql);
 
-                               utilNotification.displayEXPONO(context, content);
+                               String encounterDate = "placeholder";
+                               String query2 = "SELECT ENCOUNTER_DATE FROM ENCOUNTERS_TABLE WHERE ID='" + infectedUserID + "'";
+                               try (Cursor cursor = db.rawQuery(query2, null)) {
+                                   if (cursor.moveToFirst()) {
+                                       encounterDate = cursor.getString(0);
+                                   }
+                               }
+
+                               InfectedUserData data = new InfectedUserData(infectedUserID, encounterDate, dateReported);
+
+                               utilNotification.displayEXPONO(context, content, data);
                            }
                        }
 
@@ -191,110 +202,6 @@ public class VolleyGET {
        rQueue.add(request);
 
    }
-
-   // ----------------------------------------------------------------------------------------------
-   // ----------------------------------------------------------------------------------------------
-   // NEW VOLLEY CODE
-   // ----------------------------------------------------------------------------------------------
-   // ----------------------------------------------------------------------------------------------
-    public interface VolleyCallBack{
-        void onSuccess();
-    }
-
-
-    public void callVolley(Context context){
-
-        volleyRequest(new VolleyCallBack(){
-            @Override
-            public void onSuccess() {
-                //do something
-
-            }
-        }, context);
-    }
-
-
-    public void volleyRequest(final VolleyCallBack callBack, Context context){
-
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String requestURL = "https://s6bimnllqb.execute-api.ap-southeast-2.amazonaws.com/prod/data";
-
-
-        final JSONArray[] jsonArrays = new JSONArray[1];
-        JsonArrayRequest request;
-
-        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                String userID = null;
-                try {
-                    userID = response.getString(1);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                // Clear the current infected DB
-                myDB.deleteAllInfectedData();
-
-                for (int i = 0; i < response.length(); i++) {
-                    JSONObject userData;
-                    try {
-                        userData = (JSONObject) response.get(i);
-                        String infectedUserID = (String) userData.get("InfectedUserID");
-                        long epochDate = (long) userData.get("date");
-                        String dateReported = convertEpochDate(epochDate);
-                        myDB.insertInfectedEncounterData(infectedUserID, dateReported);
-
-                        String encounterData = myDB.getEncounterData(infectedUserID);
-                        String content = "You encountered: " + encounterData;
-
-
-                        // NEW CODE------------------------------------------------------------------
-                        if(!myDB.getEncounterData(infectedUserID).equals("Data Not Found")) {
-
-                            if(hasExpo == false){
-                                setHasExpo(true);
-                            }
-
-                            if(!myDB.newCheckIsDataInDB(infectedUserID)){
-                                String sql  = "UPDATE ENCOUNTERS_TABLE SET IS_INFECTED = 'true' WHERE ID='" + infectedUserID + "'";
-                                SQLiteDatabase db = myDB.getWritableDatabase();
-                                db.execSQL(sql);
-
-                                utilNotification.displayEXPONO(context, content);
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                callBack.onSuccess();
-            }
-        };
-
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("error", error.getMessage());
-            }
-        };
-        request = new JsonArrayRequest(Request.Method.GET, requestURL, null, responseListener, errorListener);
-
-        queue.add(request);
-    }
-
-    // ----------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------
-    // END BLOCK
-    // ----------------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------
-
-
-
-
-
 
     public static String convertEpochDate(long epochDate) {
         Date date = new Date(epochDate);

@@ -158,14 +158,6 @@ public class NotificationsFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void oldshowInfectedInfoDialog(InfectedUserData userData) {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(requireContext(), R.style.AlertDialogCustom));
-        alertDialog.setTitle("ID: " + userData.getID());
-        alertDialog.setMessage("Last encountered: " + userData.getDateEncountered() + "\nDate reported: " + userData.getDateReported());
-        alertDialog.setNegativeButton("Back", null);
-        alertDialog.show();
-    }
-
     private void createCallbacks() {
         infectedCallback = new VolleyPOST.SetInfectedCallback() {
             @Override

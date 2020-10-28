@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 
 import com.covid.MainActivity;
+import com.covid.NotificationActivity;
 import com.covid.R;
 
 import static com.covid.MainActivity.NOTIFICATION_CHANNEL;
@@ -51,9 +52,12 @@ public class utilNotification {
 
     // Template for EXPONO
 
-    public static void displayEXPONO(@NonNull Context context, @NonNull String content){
+    public static void displayEXPONO(@NonNull Context context, @NonNull String content, @NonNull InfectedUserData userData){
 
-        Intent goToMainActivityIntent = new Intent(context, MainActivity.class);
+        Intent goToMainActivityIntent = new Intent(context, NotificationActivity.class);
+        goToMainActivityIntent.putExtra("id", userData.getID());
+        goToMainActivityIntent.putExtra("dateEncountered", userData.getDateEncountered());
+        goToMainActivityIntent.putExtra("dateReported", userData.getDateReported());
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntentWithParentStack(goToMainActivityIntent);
         PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

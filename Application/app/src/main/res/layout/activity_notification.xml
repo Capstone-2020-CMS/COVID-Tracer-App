@@ -179,6 +179,10 @@
                 android:clickable="true"
                 android:text="@string/tap_here_for_more_info"
                 android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="50dp"/>
         </LinearLayout>
     </ScrollView>
 
