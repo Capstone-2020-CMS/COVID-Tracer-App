@@ -12,7 +12,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import static com.myBubble.MainActivity.dateUpdated;
 import static com.myBubble.MainActivity.tableDataArrayList;
@@ -36,22 +39,26 @@ public class GetSummaryDataWorker extends Worker {
         }
         Elements newsHeadlines = doc.select(".table-style-two");
 
-        dateUpdated = newsHeadlines.get(0).children().get(0).text();
+        dateUpdated = getCurrentDate();
 
-        Element table = newsHeadlines.get(0).children().get(2);
+        Elements table = newsHeadlines.get(5).children().get(2).children();
+        Elements active = table.get(0).children();
+        Elements dead = table.get(2).children();
+        Elements recovered = table.get(1).children();
 
-        Elements temp = table.children().get(0).children();
-        TableData numConfirmedCases = new TableData(temp.get(0).text(), temp.get(1).text(), temp.get(2).text());
-
-        temp = table.children().get(4).children();
-        TableData numDeaths = new TableData(temp.get(0).text(), temp.get(1).text(), temp.get(2).text());
-
-        temp = table.children().get(3).children();
-        TableData numRecovered = new TableData(temp.get(0).text(), temp.get(1).text(), temp.get(2).text());
+        TableData numActive = new TableData(active.get(0).text(), active.get(2).text(), active.get(1).text());
+        TableData numDeaths = new TableData(dead.get(0).text(), dead.get(2).text(), dead.get(1).text());
+        TableData numRecovered = new TableData(recovered.get(0).text(), recovered.get(2).text(), recovered.get(1).text());
 
         tableDataArrayList.clear();
-        tableDataArrayList.addAll(Arrays.asList(numConfirmedCases, numDeaths, numRecovered));
+        tableDataArrayList.addAll(Arrays.asList(numActive, numDeaths, numRecovered));
 
         return Result.success();
+    }
+
+    private String getCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return dateFormat.format(cal.getTime());
     }
 }
