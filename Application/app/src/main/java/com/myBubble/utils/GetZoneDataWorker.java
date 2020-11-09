@@ -34,7 +34,7 @@ public class GetZoneDataWorker extends Worker {
         }
         Elements newsHeadlines = doc.select(".table-style-two");
 
-        Element table = newsHeadlines.get(2).children().get(2);
+        Element table = newsHeadlines.get(6).children().get(2);
 
         int i = 1;
         for (Element element : table.children()) {
