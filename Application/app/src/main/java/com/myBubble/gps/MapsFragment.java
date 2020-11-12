@@ -290,7 +290,11 @@ public class MapsFragment extends Fragment {
         int highMediumRate = Color.argb(100,255,165,0);
         int highRate = Color.argb(100,255,51,0);
 
-        int currentActive = Integer.parseInt(zoneCovidDataArray.get(21).getActive());
+        int currentActive = 0;//Integer.parseInt(zoneCovidDataArray.get(21).getActive());
+
+        for (int i=0; i<20; i++) {
+            currentActive += Integer.parseInt(zoneCovidDataArray.get(i).getActive());
+        }
 
         int i = 0;
         for (DHBZones zone : dhbZonesArrayList) {

@@ -41,7 +41,7 @@ public class GetSummaryDataWorker extends Worker {
 
         dateUpdated = getCurrentDate();
 
-        Elements table = newsHeadlines.get(5).children().get(2).children();
+        Elements table = newsHeadlines.get(1).children().get(2).children();
         Elements active = table.get(0).children();
         Elements dead = table.get(2).children();
         Elements recovered = table.get(1).children();
