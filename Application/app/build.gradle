@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        upload {
+            storeFile file('C:\\Users\\vikin\\keystores\\upload-keystore.jks')
+            storePassword 's7akaL#$'
+            keyAlias 'upload'
+            keyPassword 'd6%6dkLr'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
@@ -12,6 +20,7 @@ android {
         versionName '0.5.2'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.upload
     }
 
     testOptions {
